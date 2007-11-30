@@ -1,6 +1,15 @@
 #! /bin/bash
 #
-# $Id: bootstrap.sh 536 2007-11-29 13:38:32Z martinr $
+# $Id: bootstrap.sh 542 2007-11-30 07:49:51Z martinr $
+#
+# Authors:
+#     Martin Thorsen Ranang <mtr@linpro.no>
+#     Aslak Johannessen <aslakjo@ifi.uio.no>
+#
+# WARNING: This file is a copy of 'common_build_files/bootstrap.sh'.
+#     The next time 'common_build_files/distribute.sh' is run with the
+#     appropriate arguments, all changes to this file will disappear.
+#     Please edit the original.
 #
 
 # Get version and check if --install can be used.

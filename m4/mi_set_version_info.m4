@@ -1,5 +1,13 @@
 ##### http:///
 #
+# WARNING
+#
+#   This file is a copy of
+#   'common_build_files/m4/mi_set_version_info.m4'.  The next time
+#   'common_build_files/distribute.sh' is run with the appropriate
+#   arguments, all changes to this file will disappear.  Please edit
+#   the original.
+#
 # SYNOPSIS
 #
 #   MI_SET_VERSION_INFO [(VERSION [,PREFIX])]
@@ -50,6 +58,10 @@
 # 
 #     (Source: http://sourceware.org/autobook/autobook/autobook_91.html)
 #
+# AUTHORS
+#
+#   Martin Thorsen Ranang <mtr@linpro.no>
+#
 # THANKS
 #
 #   This file was based on ax_set_version_info.m4 by Guido U. Draheim
@@ -57,11 +69,11 @@
 #
 # LAST MODIFICATION
 #
-#   2007-11-29
+#   $Date: 2007-11-30 08:49:51 +0100 (fre, 30 nov 2007) $
 #
 # ID
 #
-#   $Id: mi_set_version_info.m4 537 2007-11-29 13:39:53Z martinr $
+#   $Id: mi_set_version_info.m4 542 2007-11-30 07:49:51Z martinr $
 #
 # COPYLEFT
 #
