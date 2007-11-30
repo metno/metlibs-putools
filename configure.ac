@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
-AC_INIT([libputools], [4.0.0], [diana@met.no])
+AC_INIT([putools], [4.0.0], [diana@met.no])
 AM_INIT_AUTOMAKE
 MI_SET_VERSION_INFO
 
@@ -40,7 +40,7 @@ AC_FUNC_STAT
 AC_CHECK_FUNCS([floor getcwd regcmp regcomp])
 
 AC_CONFIG_FILES([Makefile
-	         libputools.pc
+	         putools.pc
 		 include/Makefile
 		 src/Makefile])
 
