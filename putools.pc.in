@@ -7,4 +7,4 @@ Name: @PACKAGE_NAME@
 Description: The puTools Library
 Version: @VERSION@
 Libs: -L${libdir} -lputools
-Cflags: -I${includedir}/putools
+Cflags: -I${includedir}

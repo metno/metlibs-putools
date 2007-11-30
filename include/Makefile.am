@@ -1,18 +1,20 @@
-include_HEADERS=\
-    miClock.h\
-    miCommandLine.h\
-    miDate.h\
-    minmax.h\
-    miSort.h\
-    miString.h\
-    miTime.h\
-    puMathAlgo.h\
-    ttycols.h\
-    miClock.h\
-    miDate\
-    miDirtools.h\
-    miRing.h\
-    miString\
-    miTime\
-    puAlgo.h\
-    StlContainerUtil.h
+pkg_includedir = ${prefix}/include/${PACKAGE_NAME}
+
+pkg_include_HEADERS = \
+    StlContainerUtil.h \
+    miClock \
+    miClock.h \
+    miCommandLine.h \
+    miDate \
+    miDate.h \
+    miDirtools.h \
+    miRing.h \
+    miSort.h \
+    miString \
+    miString.h \
+    miTime \
+    miTime.h \
+    minmax.h \
+    puAlgo.h \
+    puMathAlgo.h \
+    ttycols.h
