@@ -1,0 +1,18 @@
+include_HEADERS=\
+    miClock.h\
+    miCommandLine.h\
+    miDate.h\
+    minmax.h\
+    miSort.h\
+    miString.h\
+    miTime.h\
+    puMathAlgo.h\
+    ttycols.h\
+    miClock.h\
+    miDate\
+    miDirtools.h\
+    miRing.h\
+    miString\
+    miTime\
+    puAlgo.h\
+    StlContainerUtil.h
