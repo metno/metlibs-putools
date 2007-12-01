@@ -6,5 +6,5 @@ includedir=@includedir@
 Name: @PACKAGE_NAME@
 Description: The puTools Library
 Version: @VERSION@
-Libs: -L${libdir} -lputools
+Libs: -L${libdir}/@PACKAGE_TARNAME@ -lputools
 Cflags: -I${includedir}

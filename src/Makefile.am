@@ -6,4 +6,5 @@ libputools_la_SOURCES=miClock.cc\
 	miString.cc\
 	miTime.cc  
 
-libputools_la_LDFLAGS = @VERSION_INFO@
+libputools_la_LDFLAGS = ${VERSION_INFO}
+

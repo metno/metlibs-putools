@@ -1,15 +1,16 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
-
+#
 AC_PREREQ([2.59])
 AC_INIT([puTools], [4.0.0], [diana@met.no])
 AM_INIT_AUTOMAKE
-MI_SET_VERSION_INFO
-
-AC_CONFIG_HEADER([include/config.h])
-AC_CONFIG_MACRO_DIR([m4])
+METNO_SET_VERSION_INFO
 
 AC_LANG(C++)
+
+AC_CONFIG_SRCDIR([src/miClock.cc])
+AC_CONFIG_HEADER([include/config.h])
+AC_CONFIG_MACRO_DIR([m4])
 
 # Checks for programs.
 AC_PROG_CXX
