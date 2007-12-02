@@ -41,7 +41,7 @@ AC_FUNC_STAT
 AC_CHECK_FUNCS([floor getcwd regcmp regcomp])
 
 AC_CONFIG_FILES([Makefile
-	         putools.pc
+	         $PACKAGE_TARNAME.pc
 		 include/Makefile
 		 src/Makefile])
 
