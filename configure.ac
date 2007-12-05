@@ -22,6 +22,8 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 
 # Checks for libraries.
+AC_CXX_HAVE_STD
+AC_CXX_HAVE_STL
 
 # Checks for header files.
 AC_HEADER_STDC

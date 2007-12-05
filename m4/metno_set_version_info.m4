@@ -69,11 +69,11 @@
 #
 # LAST MODIFICATION
 #
-#   $Date: 2007-11-30 08:49:51 +0100 (fre, 30 nov 2007) $
+#   $Date: 2007-12-03 09:22:35 +0100 (man, 03 des 2007) $
 #
 # ID
 #
-#   $Id: mi_set_version_info.m4 542 2007-11-30 07:49:51Z martinr $
+#   $Id: metno_set_version_info.m4 577 2007-12-03 08:22:35Z martinr $
 #
 # COPYLEFT
 #
