@@ -6,8 +6,6 @@ AC_INIT([puTools], [4.0.0], [diana@met.no])
 AM_INIT_AUTOMAKE
 METNO_SET_VERSION_INFO
 
-AC_LANG(C++)
-
 AC_CONFIG_SRCDIR([src/miClock.cc])
 AC_CONFIG_HEADER([include/config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -16,10 +14,12 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_CPP
-AC_PROG_LIBTOOL
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
+AC_PROG_LIBTOOL
+
+AC_LANG_PUSH(C++)
 
 # Checks for libraries.
 AC_CXX_HAVE_STD
@@ -41,6 +41,8 @@ AC_FUNC_CLOSEDIR_VOID
 AC_FUNC_ERROR_AT_LINE
 AC_FUNC_STAT
 AC_CHECK_FUNCS([floor getcwd regcmp regcomp])
+
+AC_LANG_POP(C++)
 
 AC_CONFIG_FILES([Makefile
 	         putools.pc
