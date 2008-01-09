@@ -18,3 +18,5 @@ pkg_include_HEADERS = \
     puAlgo.h \
     puMathAlgo.h \
     ttycols.h
+
+INSTALL=install -p #tells install to preserve timestamp
