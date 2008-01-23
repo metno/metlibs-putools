@@ -68,7 +68,7 @@ public:
   { setClock(s); }
 
   bool undef() const
-  { return (accSec==-1); }
+  { return (accSec==-3661); }
 
   static bool isValid(int, int, int);
   static bool isValid(const miString&);

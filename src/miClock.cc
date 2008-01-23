@@ -73,7 +73,7 @@ miutil::miClock::setClock(int h, int m, int s)
     Hour   = -1;
     Min    = -1;
     Sec    = -1;
-    accSec = -1;
+    accSec = Hour*3600+Min*60+Sec;
   }
   else {
     Hour=h;
