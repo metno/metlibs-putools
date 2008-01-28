@@ -44,9 +44,14 @@ AC_CHECK_FUNCS([floor getcwd regcmp regcomp])
 
 AC_LANG_POP(C++)
 
-AC_CONFIG_FILES([Makefile
-	         putools.pc
-		 include/Makefile
-		 src/Makefile])
+#making our own .pc file, checking that it is ok and forfilled
+AC_CONFIG_FILES(putools.pc)
+AC_OUTPUT
 
+export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:.
+PKG_CHECK_MODULES([own_dependencies], [${PACKAGE_TARNAME}])
+
+AC_CONFIG_FILES([Makefile
+                 include/Makefile
+                 src/Makefile])
 AC_OUTPUT
