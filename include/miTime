@@ -105,7 +105,7 @@ public:
   miString isoClock() const
   { return Clock.isoClock(); }
 
-  miString isoTime(bool withmin, bool withsec, miString delim=" ") const;
+  miString isoTime(bool withmin,  bool withsec) const;
   miString isoClock(bool withmin, bool withsec) const
   { return Clock.isoClock(withmin, withsec); }
 

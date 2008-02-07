@@ -184,7 +184,7 @@ miutil::miTime::isoTime( miString delim) const
 }
 
 miutil::miString
-miutil::miTime::isoTime(bool withmin, bool withsec,miString delim) const
+miutil::miTime::isoTime(bool withmin, bool withsec) const
 {
   if (undef())
     warning("isoTime: Object is not initialised.");
