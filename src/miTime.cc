@@ -64,8 +64,17 @@ miutil::miTime::miTime(const time_t& t)
 void 
 miutil::miTime::setTime(const miutil::miString& st)
 {
-  vector<miString> t=st.split();
+  vector<miString> t;
+  miString str=st;
+  if(str.contains("Z"))
+    str.replace("Z","");
   
+  str.trim();
+
+  if(str.contains("T"))
+    t=str.split("T");
+  else
+    t=str.split();
   
   if (t.size()>=2) {
     Date.setDate(t[0]);
@@ -74,11 +83,9 @@ miutil::miTime::setTime(const miutil::miString& st)
   }
   
   int yy, mm, dd;
-  int h = 0;
-  int m = 0;
-  int s = 0;
-  miString str=st;
-  str.trim();
+  int h   = 0;
+  int m   = 0;
+  int s   = 0;
   int len = str.length();
 
   if(str.contains("-")){
@@ -168,12 +175,12 @@ miutil::miTime::isValid(const miString& st)
 }
 
 miutil::miString 
-miutil::miTime::isoTime() const
+miutil::miTime::isoTime( miString delim) const
 {
   if (undef())
     warning("isoTime: Object is not initialised.");
 
-  return Date.isoDate() + " " + Clock.isoClock();
+  return Date.isoDate() + delim + Clock.isoClock();
 }
 
 miutil::miString
