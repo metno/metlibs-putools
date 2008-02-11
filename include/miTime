@@ -99,13 +99,13 @@ public:
   int weekNo() const
   { return Date.weekNo(); }
 
-  miString isoTime() const;
+  miString isoTime(miString delim=" ") const; // usefull delim="T"
   miString isoDate() const
   { return Date.isoDate(); }
   miString isoClock() const
   { return Clock.isoClock(); }
 
-  miString isoTime(bool withmin, bool withsec) const;
+  miString isoTime(bool withmin,  bool withsec) const;
   miString isoClock(bool withmin, bool withsec) const
   { return Clock.isoClock(withmin, withsec); }
 
