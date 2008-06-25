@@ -87,8 +87,9 @@ public:
 			      const bool =true) const;
 
 
-
-  template< template< typename T > class C, typename T>
+  template< template< typename T, 
+  typename ALLOC = std::allocator<T>  
+  > class C, typename T>
   void join(const C<T>& j , const miString delimiter=" ")
   {
     bool first=true;
@@ -101,6 +102,21 @@ public:
     *this=ost.str();
   }
 
+  template< template< typename T, 
+  typename  COMPARE = std::less<T>,
+  typename ALLOC = std::allocator<T>  
+  > class C, typename T>
+  void join(const C<T>& j , const miString delimiter=" ")
+  {
+    bool first=true;
+    std::ostringstream ost;
+    typename C<T>::const_iterator itr= j.begin();
+    for(;itr!=j.end();itr++){
+      ost << (first ? "" : delimiter ) << *itr;
+      first = false;
+    }
+    *this=ost.str();
+  }
 
   miString upcase(  int start=0, int len=0) const;
   miString downcase(int start=0, int len=0) const;
