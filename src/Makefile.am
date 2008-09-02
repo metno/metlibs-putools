@@ -6,7 +6,8 @@ libpuTools_la_SOURCES=\
 	miDirtools.cc \
 	miString.cc \
 	miTime.cc  \
-	ttycols.cc
+	ttycols.cc \
+	miSetupParser.cc
 
 libpuTools_la_LDFLAGS = ${VERSION_INFO}
 

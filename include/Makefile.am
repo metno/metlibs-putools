@@ -17,6 +17,7 @@ pkg_include_HEADERS = \
     minmax.h \
     puAlgo.h \
     puMathAlgo.h \
-    ttycols.h
+    ttycols.h \
+    miSetupParser.h
 
 INSTALL=install -p #tells install to preserve timestamp
