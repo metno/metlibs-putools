@@ -129,10 +129,11 @@ void SetupParser::cleanstr(miString& s){
 }
 
 void SetupParser::splitKeyValue(const miString& s,
-				miString& key, miString& value) {
+				miString& key, miString& value, bool keepCase) {
   vector<miString> vs= s.split(2,'=',true);
   if (vs.size()==2) {
-    key=vs[0].downcase(); // always converting keyword to lowercase !
+    if(keepCase) key=vs[0]; 
+    else key=vs[0].downcase(); 
     value=vs[1];
     // structures of type: A=B || C means A=B for existing B, otherwise C
     if ( value.contains("||") ){
@@ -146,7 +147,8 @@ void SetupParser::splitKeyValue(const miString& s,
     if (value[0]=='"' && value[value.length()-1]=='"')
       value= value.substr(1,value.length()-2);
   } else if (vs.size()>2){
-    key=vs[0].downcase(); // always converting keyword to lowercase !
+    if(keepCase) key=vs[0]; 
+    else key=vs[0].downcase();
     int n=vs.size();
     value.clear();
     for (int i=1;i<n;i++){
@@ -156,7 +158,8 @@ void SetupParser::splitKeyValue(const miString& s,
     if (value[0]=='"' && value[value.length()-1]=='"')
       value= value.substr(1,value.length()-2);
   } else{
-    key= s.downcase(); // assuming pure keyword (without value)
+    if(keepCase) key = s;
+    else key = s.downcase();
     value= "";
   }
 }

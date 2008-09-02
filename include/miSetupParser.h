@@ -71,7 +71,7 @@ namespace miutil{
     void cleanstr(miString&);
     /// finds key=value in string
     static void splitKeyValue(const miString& s, miString& key,
-			      miString& value);
+			      miString& value, bool keepCase = false);
     /// finds key=v1,v2,v3,... in string
     static void splitKeyValue(const miString& s, miString& key,
 			      std::vector<miString>& value);
