@@ -1,6 +1,6 @@
 /*
   libpuTools - Basic types/algorithms/containers
-  
+
   $Id$
 
   Copyright (C) 2006 met.no
@@ -11,7 +11,7 @@
   0313 OSLO
   NORWAY
   email: diana@met.no
-  
+
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -21,7 +21,7 @@
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-  
+
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -37,12 +37,12 @@
 using namespace std;
 
 static inline void warning(const miutil::miString& s)
-{ 
+{
   std::cerr << "Warning: miTime::" << s << std::endl;
 }
 static inline void invalid(const miutil::miString& s)
 {
-  std::cerr << "Warning: miTime::setTime: (" << s 
+  std::cerr << "Warning: miTime::setTime: (" << s
 	    << ") is not a valid time"       << std::endl;
 }
 
@@ -60,28 +60,28 @@ miutil::miTime::miTime(const time_t& t)
 }
 
 // make time from "yyyy-mm-dd hh:mm:ss", "yyyy-mm-dd"
-// from yyyymmddhhmmss, yyyymmddhhmm, yyyymmddhh or yyyymmdd 
-void 
+// from yyyymmddhhmmss, yyyymmddhhmm, yyyymmddhh or yyyymmdd
+void
 miutil::miTime::setTime(const miutil::miString& st)
 {
   vector<miString> t;
   miString str=st;
   if(str.contains("Z"))
     str.replace("Z","");
-  
+
   str.trim();
 
   if(str.contains("T"))
     t=str.split("T");
   else
     t=str.split();
-  
+
   if (t.size()>=2) {
     Date.setDate(t[0]);
     Clock.setClock(t[1]);
     return;
   }
-  
+
   int yy, mm, dd;
   int h   = 0;
   int m   = 0;
@@ -118,13 +118,13 @@ miutil::miTime::setTime(const miutil::miString& st)
     invalid(str);
     return;
   }
-  
+
   Date.setDate(yy,mm,dd);
   Clock.setClock(h,m,s);
 }
 
 
-bool 
+bool
 miutil::miTime::isValid(int y, int m, int d, int h, int min, int s)
 {
   if(!miutil::miClock::isValid(h,min,s))
@@ -132,11 +132,11 @@ miutil::miTime::isValid(int y, int m, int d, int h, int min, int s)
   return miutil::miDate::isValid(y,m,d);
 }
 
-bool 
+bool
 miutil::miTime::isValid(const miString& st)
 {
   vector<miString> t=st.split();
-  
+
   if (t.size()>=2) {
     if(!miutil::miDate::isValid(t[0]))
       return false;
@@ -170,11 +170,11 @@ miutil::miTime::isValid(const miString& st)
       return false;
   }else
     return false;
-  
+
   return isValid(yy,mm,dd,h,m,s);
 }
 
-miutil::miString 
+miutil::miString
 miutil::miTime::isoTime( miString delim) const
 {
   if (undef())
@@ -199,11 +199,11 @@ miutil::miTime::addDay(int d)
     warning("addDay: Can't add days. Object is not initialised.");
     return;
   }
-    
+
   Date.addDay(d);
 }
 
-void 
+void
 miutil::miTime::addHour(int h)      // add hours
 {
   if (undef()) {
@@ -223,7 +223,7 @@ miutil::miTime::addHour(int h)      // add hours
   Clock.setClock(h, Clock.min(), Clock.sec());
 }
 
-void 
+void
 miutil::miTime::addMin(int m)      // add minutes
 {
   if (undef()) {
@@ -243,7 +243,7 @@ miutil::miTime::addMin(int m)      // add minutes
   Clock.setClock(Clock.hour(), m, Clock.sec());
 }
 
-void 
+void
 miutil::miTime::addSec(int s)      // add seconds
 {
   if (undef()) {
@@ -263,23 +263,23 @@ miutil::miTime::addSec(int s)      // add seconds
   Clock.setClock(Clock.hour(), Clock.min(), s);
 }
 
-int 
+int
 miutil::miTime::hourDiff(const miTime& lhs, const miTime& rhs)
-{ 
+{
   if (lhs.undef() || rhs.undef()) {
     warning("hourDiff: One date is undefined. Can't subtract hours.");
     return 0;
   }
-  
+
   int dateDiff = lhs.Date-rhs.Date;
   if (lhs.hour()<rhs.hour())
     --dateDiff;
   return 24*(dateDiff)+((lhs.Clock.hour()+24-rhs.Clock.hour())%24);
-} 
+}
 
-int 
+int
 miutil::miTime::minDiff(const miTime& lhs, const miTime& rhs)
-{ 
+{
   if (lhs.undef() || rhs.undef()) {
     warning("minDiff: One date is undefined. Can't subtract minutes.");
     return 0;
@@ -289,11 +289,11 @@ miutil::miTime::minDiff(const miTime& lhs, const miTime& rhs)
   if (lhs.min()<rhs.min())
     --hDiff;
   return hDiff*60+((lhs.Clock.min()+60-rhs.Clock.min())%60);
-} 
+}
 
-int 
+int
 miutil::miTime::secDiff(const miTime& lhs, const miTime& rhs)
-{ 
+{
   if (lhs.undef() || rhs.undef()) {
     warning("secDiff: One date is undefined. Can't subtract seconds.");
     return 0;
@@ -303,19 +303,19 @@ miutil::miTime::secDiff(const miTime& lhs, const miTime& rhs)
   if (lhs.sec()<rhs.sec())
     --mDiff;
   return mDiff*60+((lhs.Clock.sec()+60-rhs.Clock.sec())%60);
-} 
+}
 
 // returns one for daylight saving time. else 0
 
-int 
+int
 miutil::miTime::dst() const
-{  
+{
   if(undef())
     return 0;
 
   int lsi;
   miDate sun(year(),month(),Date.daysInMonth());
-  
+
   if(month() > 3  && month() < 10) return 1;
   if(month() > 10 || month() < 3 ) return 0;
 
@@ -344,40 +344,40 @@ miutil::miTime::dst() const
 int
 miutil::miTime::timezone(miString stz)
 {
-  
-  if(stz=="UTC"   ) return  0; 
-  if(stz=="GMT"   ) return  0; 
-  if(stz=="CET"   ) return  1;  	
-  if(stz=="EET"   ) return  2;  	
-  if(stz=="BT"    ) return  3;  	
-  if(stz=="ZP4"   ) return  4;  	
-  if(stz=="ZP5"   ) return  5;  	
-  if(stz=="ZP6"   ) return  6;  	
-  if(stz=="ZP7"   ) return  7;  	
-  if(stz=="WAST"  ) return  8;  	
-  if(stz=="JST"   ) return  9;  	
+
+  if(stz=="UTC"   ) return  0;
+  if(stz=="GMT"   ) return  0;
+  if(stz=="CET"   ) return  1;
+  if(stz=="EET"   ) return  2;
+  if(stz=="BT"    ) return  3;
+  if(stz=="ZP4"   ) return  4;
+  if(stz=="ZP5"   ) return  5;
+  if(stz=="ZP6"   ) return  6;
+  if(stz=="ZP7"   ) return  7;
+  if(stz=="WAST"  ) return  8;
+  if(stz=="JST"   ) return  9;
   if(stz=="EAST"  ) return  10;
   if(stz=="UTC+11") return  11;
-  if(stz=="IDLE"  ) return  12;  	
-  if(stz=="IDLW"  ) return -12;  	
-  if(stz=="NT"    ) return -11;  		 
-  if(stz=="AHST"  ) return -10;  	
-  if(stz=="YST"   ) return -9;  	
-  if(stz=="PST"   ) return -8;  	
-  if(stz=="MST"   ) return -7;  	
-  if(stz=="CST"   ) return -6;  	
-  if(stz=="EST"   ) return -5;  
-  if(stz=="AST"   ) return -4;  	
+  if(stz=="IDLE"  ) return  12;
+  if(stz=="IDLW"  ) return -12;
+  if(stz=="NT"    ) return -11;
+  if(stz=="AHST"  ) return -10;
+  if(stz=="YST"   ) return -9;
+  if(stz=="PST"   ) return -8;
+  if(stz=="MST"   ) return -7;
+  if(stz=="CST"   ) return -6;
+  if(stz=="EST"   ) return -5;
+  if(stz=="AST"   ) return -4;
   if(stz=="UTC-3" ) return -3;
-  if(stz=="AT"    ) return -2;  	
+  if(stz=="AT"    ) return -2;
   if(stz=="WAT"   ) return -1;
-  return 0;  	
+  return 0;
 }
 
 miutil::miString
 miutil::miTime::format(miString newTime,const miDate::lang l) const
 {
-  return format(newTime, (l== miDate::Norwegian ? "no" : "" ) );
+  return format(newTime, (l== miDate::Norwegian ? "no" : "en" ) );
 }
 
 
@@ -393,7 +393,7 @@ miutil::miTime::format(miString newTime, miString l) const
 
   if(newTime.contains("$")) {
     token = newTime.split();
-    
+
     for(int i=0;i<token.size();i++) {
       if(token[i].contains("$")) {
 
@@ -452,7 +452,7 @@ miutil::miTime::format(miString newTime, miString l) const
 	    else
 	      newTime.replace(remove[n], "");
 	  }
-	  remove.clear();	
+	  remove.clear();
         }
       }
     }
