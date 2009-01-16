@@ -177,9 +177,10 @@ miutil::miTime::isValid(const miString& st)
 miutil::miString
 miutil::miTime::isoTime( miString delim) const
 {
-  if (undef())
+  if (undef()){
     warning("isoTime: Object is not initialised.");
-
+    return miutil::miString("0000-00-00") + delim + miutil::miString("--:--:--");
+  }
   return Date.isoDate() + delim + Clock.isoClock();
 }
 
