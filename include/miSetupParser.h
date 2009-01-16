@@ -13,7 +13,7 @@
   0313 OSLO
   NORWAY
   email: diana@met.no
-  
+
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -23,7 +23,7 @@
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-  
+
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -47,8 +47,10 @@ namespace miutil{
     static std::vector<miString> sfilename;
     /// Setuptext hashed by Section name
     static std::map<miString,SetupSection> sectionm;
-    
+
     static std::map<miString,miString>    substitutions;
+
+    static map<miString, miString> user_variables;
 
     /// report an error with filename and linenumber
     void internalErrorMsg(const miString& filename,
@@ -66,7 +68,9 @@ namespace miutil{
 
   public:
     SetupParser() {}
-    
+
+    /// set user variables
+    void setUserVariables(const map<miString,miString> & user_var);
     /// cleans a string
     void cleanstr(miString&);
     /// finds key=value in string
@@ -75,7 +79,7 @@ namespace miutil{
     /// finds key=v1,v2,v3,... in string
     static void splitKeyValue(const miString& s, miString& key,
 			      std::vector<miString>& value);
-    
+
     /// recursively parse setupfiles
     bool parse(const miString& mainfilename );
     /// get stringlist for a named section
