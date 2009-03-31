@@ -206,7 +206,12 @@ void SetupParser::splitKeyValue(const miString& s, miString& key, vector<
   }
 }
 
-// parse one setupfile
+
+/*
+ * parse one setupfile
+ *
+ */
+
 bool SetupParser::parseFile(const miString& filename, // name of file
     const miString& section, // inherited section
     int level) // recursive level
@@ -384,10 +389,15 @@ bool SetupParser::parseFile(const miString& filename, // name of file
   return true;
 }
 
+/*
+ * Clears everything and parses a new setup file
+ */
 bool SetupParser::parse(const miString& mainfilename)
 {
-
   sfilename.clear();
+  sectionm.clear();
+  substitutions.clear();
+  user_variables.clear();
 
   if (!parseFile(mainfilename, "", -1))
     return false;
