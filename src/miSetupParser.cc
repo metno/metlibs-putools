@@ -359,8 +359,11 @@ bool SetupParser::parseFile(const miString& filename, // name of file
         miString key, value;
         splitKeyValue(str, key, value);
         if (value.exists()) {
-          if (user_variables.count(key.upcase()) == 0) // user variables override setupfile
+          /*          if (user_variables.count(key.upcase()) == 0) // user variables override setupfile*/
+          // user variables override setupfile and redefinitions are ignored
+          if (user_variables.count(key.upcase()) == 0 && substitutions.count(key.upcase()) == 0 ) {
             substitutions[key.upcase()] = value;
+          }
         } else {
           cerr << "** setupfile WARNING, line " << linenum << " in file "
               << filename
@@ -396,7 +399,7 @@ bool SetupParser::parse(const miString& mainfilename)
   sfilename.clear();
   sectionm.clear();
   substitutions.clear();
-  user_variables.clear();
+  //user_variables.clear();
 
   if (!parseFile(mainfilename, "", -1))
     return false;
