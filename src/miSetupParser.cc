@@ -206,7 +206,6 @@ void SetupParser::splitKeyValue(const miString& s, miString& key, vector<
   }
 }
 
-
 /*
  * parse one setupfile
  *
