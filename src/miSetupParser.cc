@@ -15,15 +15,6 @@ using namespace std;
 void SetupParser::setUserVariables(const map<miString, miString> & user_var)
 {
   user_variables = user_var;
-
-  if (user_variables.size() > 0) {
-    cerr << "SetupParser::setUserVariables:" << endl;
-    map<miString, miString>::iterator itr = user_variables.begin();
-    for (; itr != user_variables.end(); itr++) {
-      cerr << itr->first << " = " << itr->second << endl;
-      substitutions[itr->first.upcase()] = itr->second;
-    }
-  }
 }
 
 bool SetupParser::checkSubstitutions(miString& t)
@@ -359,9 +350,8 @@ bool SetupParser::parseFile(const miString& filename, // name of file
         miString key, value;
         splitKeyValue(str, key, value);
         if (value.exists()) {
-          /*          if (user_variables.count(key.upcase()) == 0) // user variables override setupfile*/
-          // user variables override setupfile and redefinitions are ignored
-          if (user_variables.count(key.upcase()) == 0 && substitutions.count(key.upcase()) == 0 ) {
+          // Redefinitions are ignored
+          if (substitutions.count(key.upcase()) == 0 ) {
             substitutions[key.upcase()] = value;
           }
         } else {
@@ -399,7 +389,16 @@ bool SetupParser::parse(const miString& mainfilename)
   sfilename.clear();
   sectionm.clear();
   substitutions.clear();
-  //user_variables.clear();
+
+  // add user variables
+  if (user_variables.size() > 0) {
+     cerr << "SetupParser::parse, adding user variables:" << endl;
+     map<miString, miString>::iterator itr = user_variables.begin();
+     for (; itr != user_variables.end(); itr++) {
+       cerr << itr->first << " = " << itr->second << endl;
+       substitutions[itr->first.upcase()] = itr->second;
+     }
+   }
 
   if (!parseFile(mainfilename, "", -1))
     return false;
