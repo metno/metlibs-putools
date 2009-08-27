@@ -1,6 +1,6 @@
 /*
   libpuTools - Basic types/algorithms/containers
-  
+
   $Id$
 
   Copyright (C) 2006 met.no
@@ -11,7 +11,7 @@
   0313 OSLO
   NORWAY
   email: diana@met.no
-  
+
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -21,7 +21,7 @@
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-  
+
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -66,7 +66,7 @@ extern bool getFilenamesByExt(const miString& cat,
 // hardpath(/usr/local)  : result /usr/local
 
 extern miString hardpath(const miString&);
- 
+
 
 
 #ifdef WITH_REGEXP
@@ -90,7 +90,7 @@ bool getFilenamesByRegexp(const miString& cat,
   int nmatch= 0;
   int eflags= 0;
   regmatch_t pmatch;
-  for (int i=0; i<allnames.size(); i++){
+  for (unsigned int i=0; i<allnames.size(); i++){
     if (allnames[i]!="." && allnames[i]!=".."){
       res= regexec(&preg, allnames[i].cStr(), nmatch, &pmatch, eflags);
       if (res==0) names.push_back(allnames[i]);
@@ -102,7 +102,7 @@ bool getFilenamesByRegexp(const miString& cat,
   char *result;
   if (!creg || !getFilenames(cat, allnames))
     return false;
-  
+
   for (int i=0; i<allnames.size(); i++){
     if (allnames[i]!="." && allnames[i]!=".."){
       result= regex(creg, allnames[i].cStr());
@@ -112,7 +112,7 @@ bool getFilenamesByRegexp(const miString& cat,
   free(creg);
 #endif
   return true;
-};			
+};
 
 #endif
 #endif
