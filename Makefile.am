@@ -1,9 +1,43 @@
-SUBDIRS = include src
+# $Id: Makefile.am 2786 2009-09-23 11:39:02Z dages $
 
-ACLOCAL_AMFLAGS = -I m4 
+pkgname = puTools
 
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = @PACKAGE_TARNAME@.pc
+include $(top_srcdir)/metlibs.mk
 
-$(pkgconfig_DATA): config.status
+lib_LTLIBRARIES = libpuTools.la
+
+libpuTools_la_SOURCES = \
+	miClock.cc \
+	miCommandLine.cc \
+	miDate.cc \
+	miDirtools.cc \
+	miString.cc \
+	miTime.cc  \
+	ttycols.cc \
+	miSetupParser.cc
+
+libpuTools_la_LDFLAGS = \
+	${VERSION_INFO}
+
+pkg_includedir = ${prefix}/include/puTools
+
+pkg_include_HEADERS = \
+	StlContainerUtil.h \
+	miClock \
+	miClock.h \
+	miCommandLine.h \
+	miDate \
+	miDate.h \
+	miDirtools.h \
+	miRing.h \
+	miSort.h \
+	miString \
+	miString.h \
+	miTime \
+	miTime.h \
+	minmax.h \
+	puAlgo.h \
+	puMathAlgo.h \
+	ttycols.h \
+	miSetupParser.h
 
