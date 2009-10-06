@@ -41,7 +41,14 @@ pkg_include_HEADERS = \
 	ttycols.h \
 	miSetupParser.h
 
-check_PROGRAMS = check-miString
+check_PROGRAMS = \
+	check-miClock \
+	check-miString
+
+check_miClock_SOURCES = check-miClock.cc
+check_miClock_LDADD = libpuTools.la
+
 check_miString_SOURCES = check-miString.cc
 check_miString_LDADD = libpuTools.la
-TESTS = check-miString
+
+TESTS = ${check_PROGRAMS}
