@@ -55,12 +55,12 @@ class test_new_miString_contains_no: public TestCase {
 int
 main()
 {
-	TestSet ts;
-	ts.comment("miString");
-	ts.add(new test_new_miString_const_char());
-	ts.add(new test_new_miString_std_string());
-	ts.add(new test_new_miString_contains());
-	ts.add(new test_new_miString_contains_no());
-	ts.run();
-	return (ts.am_exit_code());
+	TestPlan tp;
+	tp.comment("miString");
+	tp.add(new test_new_miString_const_char());
+	tp.add(new test_new_miString_std_string());
+	tp.add(new test_new_miString_contains());
+	tp.add(new test_new_miString_contains_no());
+	tp.run();
+	return (tp.am_exit_code());
 }
