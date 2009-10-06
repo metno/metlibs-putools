@@ -4,7 +4,6 @@
  * $Id$
  */
 
-#include <iostream>
 #include <miString>
 
 #include <check/tap>
@@ -32,6 +31,8 @@ class test_new_miString_std_string: public TestCase {
 class test_new_miString_contains: public TestCase {
 	TestOutcome run(void) {
 		miString str("supercalifragilisticexpialadocious");
+		const char *sub = "fragil";
+		why = str + ".contains(\"" + sub + "\")";
 		return str.contains("fragil") ? pass : fail;
 	}
 };
