@@ -32,6 +32,7 @@
 // ØA, 1997
 
 #include <stdlib.h>
+#include <stdio.h>
 #include "miTime"
 
 using namespace std;

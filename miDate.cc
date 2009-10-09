@@ -34,6 +34,7 @@
 #include <sstream>
 #include <iomanip>
 #include <stdlib.h>
+#include <stdio.h>
 #include <time.h>
 
 #include "miDate"
