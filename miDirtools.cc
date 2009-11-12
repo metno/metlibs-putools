@@ -33,7 +33,7 @@
 miString  getRecent(const miString& cat)
 {
   DIR *dirp;
-  direct *dp;
+  dirent *dp;
   miString last;
   miString c = cat + "/";
   int l = 0;
@@ -59,7 +59,7 @@ bool getFilenames(const miString& cat,
 		  vector<miString>& names)
 {
   DIR *dirp;
-  direct *dp;
+  dirent *dp;
   if (!(dirp= opendir(cat.cStr())))
     return false;
 

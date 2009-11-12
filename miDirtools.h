@@ -41,7 +41,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/dir.h>
+#include <dirent.h>
 using namespace std;
 
 // get the newest modificated file from catalog 'cat'
