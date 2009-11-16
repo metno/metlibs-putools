@@ -1,6 +1,6 @@
 /*
   libpuTools - Basic types/algorithms/containers
-  
+
   $Id$
 
   Copyright (C) 2006 met.no
@@ -11,7 +11,7 @@
   0313 OSLO
   NORWAY
   email: diana@met.no
-  
+
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -21,7 +21,7 @@
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-  
+
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -29,6 +29,9 @@
 
 
 #include <miDirtools.h>
+
+using namespace std;
+using namespace miutil;
 
 miString  getRecent(const miString& cat)
 {
@@ -80,7 +83,7 @@ bool getFilenamesByExt(const miString& cat,
   miString cext;
   if (!getFilenames(cat, allnames))
     return false;
-  
+
   for (int i=0; i<allnames.size(); i++){
     if (allnames[i]!="." && allnames[i]!=".."){
       splitv= allnames[i].split('.');
@@ -102,7 +105,7 @@ miString hardpath(const miString& fname){
   cwd+="/"+fname;
   vector<miString> vcwd = cwd.split('/');
   vector<miString>::iterator itr = vcwd.begin();
-  
+
   if ( fname == "")
     return cwd;
   else if ( fname.cStr()[0] ==  '/')

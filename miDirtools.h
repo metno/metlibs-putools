@@ -46,18 +46,18 @@ using namespace std;
 
 // get the newest modificated file from catalog 'cat'
 
-extern miString  getRecent(const miString& cat);
+extern miutil::miString  getRecent(const miutil::miString& cat);
 
 
 
 // get all filenames from catalog 'cat'
-extern bool getFilenames(const miString& cat,
-			 vector<miString>& names);
+extern bool getFilenames(const miutil::miString& cat,
+			 vector<miutil::miString>& names);
 
 // get all files with extension 'ext' from catalog 'cat'
-extern bool getFilenamesByExt(const miString& cat,
-			      const miString& ext,
-			      vector<miString>& names);
+extern bool getFilenamesByExt(const miutil::miString& cat,
+			      const miutil::miString& ext,
+			      vector<miutil::miString>& names);
 
 // get a real path out of related path (uses current directory)
 // examples: ( you are in /pug/local/include )
@@ -66,7 +66,7 @@ extern bool getFilenamesByExt(const miString& cat,
 // hardpath(puTools)     : result /pug/local/include/puTools
 // hardpath(/usr/local)  : result /usr/local
 
-extern miString hardpath(const miString&);
+extern miutil::miString hardpath(const miutil::miString&);
 
 
 
@@ -77,11 +77,11 @@ extern miString hardpath(const miString&);
 #include <regex.h>
 #endif
 
-bool getFilenamesByRegexp(const miString& cat,
-			  const miString& reg,
-			  vector<miString>& names)
+bool getFilenamesByRegexp(const miutil::miString& cat,
+			  const miutil::miString& reg,
+			  vector<miutil::miString>& names)
 {
-  vector<miString> allnames;
+  vector<miutil::miString> allnames;
 #ifdef linux
   regex_t preg;
   int res= regcomp(&preg, reg.cStr(), REG_EXTENDED | REG_NOSUB);

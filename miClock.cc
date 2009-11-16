@@ -1,6 +1,6 @@
 /*
   libpuTools - Basic types/algorithms/containers
-  
+
   $Id$
 
   Copyright (C) 2006 met.no
@@ -11,7 +11,7 @@
   0313 OSLO
   NORWAY
   email: diana@met.no
-  
+
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -21,7 +21,7 @@
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-  
+
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -42,16 +42,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "miClock"
+#include "miClock.h"
 
 using namespace std;
+using namespace miutil;
 
 static inline void warning(const miutil::miString& s)
-{ 
+{
   std::cerr << "Warning: miClock::" << s << std::endl;
 }
 
-void 
+void
 miutil::miClock::accSecToClock()
 {
   accSec=(accSec+MAXACC)%MAXACC;   // caution if accSec < 0 or > MAXACC
@@ -63,7 +64,7 @@ miutil::miClock::accSecToClock()
   Sec=acc;
 }
 
-void 
+void
 miutil::miClock::setClock(int h, int m, int s)
 {
   // if any of the arguments have imposible values, prepare for undef
@@ -85,28 +86,28 @@ miutil::miClock::setClock(int h, int m, int s)
 }
 
 // converts "hh:mm:ss" to miClock
-void 
+void
 miutil::miClock::setClock(const miString& str)
 {
   int h=-1, m=-1, s=-1;
 
   if (!isValid(str))
     warning("setClock: Error in format. Should be `HH:MM:SS' (" + str + ")");
-  else 
+  else
     sscanf(str.cStr(), "%2d:%2d:%2d",&h, &m, &s);
   setClock(h,m,s);
 }
 
-bool 
+bool
 miutil::miClock::isValid(int h, int m, int s)
 {
-  if (h<0 || h>23 || m<0 || m>59 || s<0 || s>59) 
+  if (h<0 || h>23 || m<0 || m>59 || s<0 || s>59)
     if (!(h==-1 && m==-1 && s==-1)) // These `illegal' values are allowed
       return false;
   return true;
 }
 
-bool 
+bool
 miutil::miClock::isValid(const miString& str)
 {
   int h,m,s;
@@ -116,7 +117,7 @@ miutil::miClock::isValid(const miString& str)
 }
 
 // Format ISO "hh:mm:ss" string
-miutil::miString 
+miutil::miString
 miutil::miClock::isoClock() const
 {
   ostringstream ost;
@@ -168,7 +169,7 @@ miutil::miClock::addSec(int s)       // add seconds
   accSecToClock();
 }
 
-void 
+void
 miutil::miClock::addMin(int m)       // add minutes
 {
   if (undef()) {
@@ -180,7 +181,7 @@ miutil::miClock::addMin(int m)       // add minutes
   accSecToClock();
 }
 
-void 
+void
 miutil::miClock::addHour(int h)      // add hours
 {
   if (undef()) {
@@ -192,7 +193,7 @@ miutil::miClock::addHour(int h)      // add hours
   accSecToClock();
 }
 
-int 
+int
 miutil::miClock::hourDiff(const miClock& lhs, const miClock& rhs)
 {
   if (lhs.undef() || rhs.undef()) {
@@ -202,7 +203,7 @@ miutil::miClock::hourDiff(const miClock& lhs, const miClock& rhs)
   return (lhs.accSec-rhs.accSec)/3600;
 }
 
-int 
+int
 miutil::miClock::minDiff(const miClock& lhs, const miClock& rhs)
 {
   if (lhs.undef() || rhs.undef()) {
@@ -212,7 +213,7 @@ miutil::miClock::minDiff(const miClock& lhs, const miClock& rhs)
   return (lhs.accSec-rhs.accSec)/60;
 }
 
-int 
+int
 miutil::miClock::secDiff(const miClock& lhs, const miClock& rhs)
 {
   if (lhs.undef() || rhs.undef()) {
@@ -222,7 +223,7 @@ miutil::miClock::secDiff(const miClock& lhs, const miClock& rhs)
   return lhs.accSec-rhs.accSec;
 }
 
-miutil::miClock 
+miutil::miClock
 miutil::miClock::oclock()
 {
   time_t curTime_t=time(0);
@@ -236,7 +237,7 @@ miutil::miClock::format(miString newClock) const
 {
   if(undef())
     return newClock;
-  
+
 
   bool pm = (Hour < 1 || Hour > 12 ? true : false );
 
@@ -260,8 +261,8 @@ miutil::miClock::format(miString newClock) const
   newClock.replace("%k",miString(Hour));     /// %k hour ( 0..23)
   newClock.replace("%l",miString(tH));       /// %l hour ( 1..12)
   newClock.replace("%M",miString(Min,2));    /// %M min  (00..59)
-					    
-					    
+
+
   newClock.replace("%p",(pm ? "PM" : "AM")); /// %p locale's AM or PM
   newClock.replace("%S",miString(Sec,2));    /// %S second (00..60)
 

@@ -33,9 +33,10 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "miTime"
+#include "miTime.h"
 
 using namespace std;
+using namespace miutil;
 
 static inline void warning(const miutil::miString& s)
 {

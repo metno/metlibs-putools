@@ -3,14 +3,14 @@
 #include <list>
 #include <stdlib.h>
 
+using namespace std;
+using namespace miutil;
+
 // static members
 map<miString, miString> miutil::SetupParser::substitutions;
 vector<miString> miutil::SetupParser::sfilename;
 map<miString, miutil::SetupSection> miutil::SetupParser::sectionm;
 map<miString, miString> miutil::SetupParser::user_variables;
-
-using namespace miutil;
-using namespace std;
 
 void SetupParser::setUserVariables(const map<miString, miString> & user_var)
 {

@@ -1,6 +1,6 @@
 /*
   libpuTools - Basic types/algorithms/containers
-  
+
   $Id$
 
   Copyright (C) 2006 met.no
@@ -11,7 +11,7 @@
   0313 OSLO
   NORWAY
   email: diana@met.no
-  
+
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -21,14 +21,14 @@
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-  
+
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 
-#include "miString"
+#include "miString.h"
 
 
 using namespace puAlgo;
@@ -44,7 +44,7 @@ miutil::miString::miString(const char* s)
 {
   *this = (s ? std::string(s) : std::string(""));
 }
- 
+
 
 
 
@@ -54,7 +54,7 @@ miutil::miString::miString(const int i, const int width, const char fill)
 {
   ostringstream ost;
   if (width>0){
-#if defined(_WIN32) || defined(_WIN64) 
+#if defined(_WIN32) || defined(_WIN64)
     ost << setw(width) << setfill(static_cast<char>(fill)) << i;
 #else
     ost << setw(width) << setfill(fill) << i;
@@ -87,8 +87,8 @@ miutil::miString::miString(const float d, const int prec)
 
 
 
-int    
-miutil::miString::toInt( const int undefined ) const 
+int
+miutil::miString::toInt( const int undefined ) const
 {
   if(empty())
     return undefined;
@@ -97,8 +97,8 @@ miutil::miString::toInt( const int undefined ) const
   return atoi(c_str());
 }
 
-long    
-miutil::miString::toLong( const long undefined ) const 
+long
+miutil::miString::toLong( const long undefined ) const
 {
   if(empty())
     return undefined;
@@ -107,7 +107,7 @@ miutil::miString::toLong( const long undefined ) const
   return atol(c_str());
 }
 
-float  
+float
 miutil::miString::toFloat( const float undefined ) const
 {
   if(empty())
@@ -126,7 +126,7 @@ double miutil::miString::toDouble( const double undefined ) const
  return atof(c_str());
 }
 
-void 
+void
 miutil::miString::trim(bool l, bool r, const miString wspace)
 {
   int len;
@@ -156,7 +156,7 @@ miutil::miString::trim(bool l, bool r, const miString wspace)
   }
 }
 
-void 
+void
 miutil::miString::remove(const char c)
 {
   if (empty())
@@ -166,7 +166,7 @@ miutil::miString::remove(const char c)
     erase(pos,1);
 }
 
-miutil::miString 
+miutil::miString
 miutil::miString::replace(const char c1, const char c2) const
 {
   miString s(*this);
@@ -179,7 +179,7 @@ miutil::miString::replace(const char c1, const char c2) const
   return s;
 }
 
-void 
+void
 miutil::miString::replace(const miString& s1, const miString& s2)
 {
   if (empty())
@@ -193,20 +193,20 @@ miutil::miString::replace(const miString& s1, const miString& s2)
   }
 }
 
-vector<miutil::miString> 
+vector<miutil::miString>
 miutil::miString::split(const miString s, const bool clean) const
 {
   return split(0,s,clean);
 }
 
-vector<miutil::miString> 
+vector<miutil::miString>
 miutil::miString::split(const char c, const bool clean) const
 {
   return split(0,c, clean);
 }
 
 
-vector<miutil::miString> 
+vector<miutil::miString>
 miutil::miString::split(int nos, const char c, const bool clean) const
 {
   char cs[2];
@@ -216,7 +216,7 @@ miutil::miString::split(int nos, const char c, const bool clean) const
   return split(nos,cs, clean);
 }
 
-vector<miutil::miString> 
+vector<miutil::miString>
 miutil::miString::split(int nos,const miString s, const bool clean) const
 {
   int splitnumber = 0;
@@ -229,7 +229,7 @@ miutil::miString::split(int nos,const miString s, const bool clean) const
       if (stop<0 || stop>len)
 	stop=len;
       vec.push_back(substr(start,stop-start));
-      
+
       if(nos)
 	if(++splitnumber >= nos) {
 	  stop++;
@@ -254,10 +254,10 @@ miutil::miString::split(int nos,const miString s, const bool clean) const
 
 
 
-vector<miutil::miString> 
+vector<miutil::miString>
 miutil::miString::split(const char lb, // left border
 			const char rb, // right border
-			const miString s, 
+			const miString s,
 			const bool clean) const
 {
   vector<miString> vec;
@@ -271,7 +271,7 @@ miutil::miString::split(const char lb, // left border
       int stop;
 
       stop=find_first_of(s,start);
-      
+
       int  tmp= start;
       bool isok=false;
       while ( !isok ){
@@ -289,10 +289,10 @@ miutil::miString::split(const char lb, // left border
 	stop=len;
 
       vec.push_back(substr(start,stop-start));
-  
+
       start=(clean? find_first_not_of(s,stop+1): stop+1);
     }
-    
+
 
     if (clean)
       for (int i=0; i<vec.size(); i++) {
@@ -319,7 +319,7 @@ miutil::miString::split(const char lb, // left border
  *       .23  0.23 +0.23 -0.23 -0.23e-10
  *
  * ex. These strings are not considered as numbers.
- *     0.23e   
+ *     0.23e
  *     0.23 e+23 it is not allowed with a space before e.
  *     e+23
  *
@@ -337,7 +337,7 @@ miutil::miString::split(const char lb, // left border
  * \see atof(3), atoi(3), strtod(3), scanf(3), printf(3)
  */
 
-bool 
+bool
 miutil::miString::isNumber() const
 {
   if (empty())
@@ -352,20 +352,20 @@ miutil::miString::isNumber() const
     return false;
 
   for (i2=end()-1; isspace(*i2); i2--);
-  
+
   if(i2!=end())
     i2++;
 
   if(*i1=='-' || *i1=='+'){
     i1++;
-    
+
     if(*i1=='e' || *i1=='E')
       return false;
     // only a - or + is not accepted
     if(i1==i2)
       return false;
   }
-  
+
   if(*i1=='e' || *i1=='E')
     return false;
 
@@ -395,11 +395,11 @@ miutil::miString::isNumber() const
     if(i1==i2)
       return false;
   }
-  
+
   for (; i1!=i2; i1++)
     if (!isdigit(*i1))
       return false;
- 
+
  return true;
 }
 
@@ -414,7 +414,7 @@ miutil::miString::isNumber() const
  * \return true if this string is an int false otherwise.
  */
 
-bool 
+bool
 miutil::miString::isInt() const
 {
   if (empty())
@@ -428,18 +428,18 @@ miutil::miString::isInt() const
     return false;
 
   for (i2=end()-1; isspace(*i2); i2--);
-  
+
   if(i2!=end())
     i2++;
 
   if(*i1=='-' || *i1=='+'){
     i1++;
-    
+
     // only a - or + is not accepted
     if(i1==i2)
       return false;
   }
-  
+
   for (; i1!=i2; i1++){
     if (!isdigit(*i1)){
       return false;
@@ -449,19 +449,19 @@ miutil::miString::isInt() const
  return true;
 }
 
-miutil::miString 
+miutil::miString
 miutil::miString::upcase(int start, int len) const
 {
   if( start < 0 ) start = 0;
-  if( len   < 0 ) len   = 0;  
+  if( len   < 0 ) len   = 0;
 
   miString s(*this);
   int c, n=s.length(),stop=start+len;
-  
+
   if( start > n ) return s;
   if( !len      ) stop = n;
   if( stop > n  ) stop = n;
-  
+
   for (int i=start; i<stop; i++) {
     c=toupper(s[i]);
     if ((c>=224 && c<=246) || (c>=248 && c<=254))
@@ -471,20 +471,20 @@ miutil::miString::upcase(int start, int len) const
   return s;
 }
 
-miutil::miString 
+miutil::miString
 miutil::miString::downcase(int start, int len) const
 {
   if( start < 0 ) start = 0;
-  if( len   < 0 ) len   = 0;  
+  if( len   < 0 ) len   = 0;
 
   miString s(*this);
   int c, n=s.length(),stop=start+len;
-  
+
   if( start > n ) return s;
   if( !len      ) stop = n;
   if( stop > n  ) stop = n;
-   
-  
+
+
   for (int i=start; i<stop; i++) {
     c=tolower(s[i]);
     if ((c>=192 && c<=214) || (c>=215 && c<=222))

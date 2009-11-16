@@ -1,6 +1,6 @@
 /*
   libpuTools - Basic types/algorithms/containers
-  
+
   $Id$
 
   Copyright (C) 2006 met.no
@@ -11,7 +11,7 @@
   0313 OSLO
   NORWAY
   email: diana@met.no
-  
+
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -21,7 +21,7 @@
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-  
+
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -37,15 +37,16 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "miDate"
+#include "miDate.h"
 
 using namespace std;
+using namespace miutil;
 
 
 miutil::miString  miutil::miDate::defaultLanguage;
 
 static inline void warning(const miutil::miString& s)
-{ 
+{
   std::cerr << "Warning: miDate::" << s << std::endl;
 }
 
@@ -64,15 +65,15 @@ static inline long lfloor(const long a, const long b) // assumes b positive
 static inline int isLeap(const int y)
 { return ((y%4==0 && y%100!=0) || y%400==0); }
 
-int 
+int
 miutil::miDate::daysInYear() const
 { return 365+isLeap(Year); }
 
-int 
+int
 miutil::miDate::daysInMonth() const
 { return monthLength[Month]+(Month==2 && isLeap(Year)); }
 
-int 
+int
 miutil::miDate::dayOfYear() const
 { return cum_ml[isLeap(Year)][Month]+Day; }
 
@@ -80,7 +81,7 @@ miutil::miDate::dayOfYear() const
  * Constructors
  */
 
-void 
+void
 miutil::miDate::setDate(int y, int m, int d)
 {
   if(!isValid(y,m,d) ) {
@@ -89,31 +90,31 @@ miutil::miDate::setDate(int y, int m, int d)
     Year=Month=Day=jdn=0;
     return;
   }
-  
+
   Year  = y;
   Month = m;
   Day   = d;
-  
+
   jdn=(Year-1)*365 + lfloor(Year-1,4L) +
     lfloor(Year-1,400L) - lfloor(Year-1,100L) +
     cum_ml[isLeap(Year)][Month] + Day + julianDayZero;
 }
 
-void 
+void
 miutil::miDate::setDate(const miString& str)
 {
   int y=0, m=0, d=0;
   if(!isValid(str))
     warning( "setDate: Error in format. YYYY-MM-DD (" + str + ")" );
-  else 
+  else
     sscanf(str.cStr(), "%4d-%2d-%2d",&y, &m, &d);
   setDate(y,m,d);
 }
 
-bool 
+bool
 miutil::miDate::isValid(int y, int m, int d)
 {
-  
+
   if (m<=0 || m>12 || d<0 || d>31)
     return false;
   if ( d > ( monthLength[m]+(m==2 && isLeap(y))))
@@ -121,9 +122,9 @@ miutil::miDate::isValid(int y, int m, int d)
   return true;
 }
 
-bool 
+bool
 miutil::miDate::isValid(const miString& str)
-{ 
+{
   int y=0, m=0, d=0;
   if(sscanf(str.cStr(), "%4d-%2d-%2d",&y, &m, &d)!=3)
     return false;
@@ -134,7 +135,7 @@ miutil::miDate::isValid(const miString& str)
  * Arithmetic
  */
 
-void 
+void
 miutil::miDate::addDay(const long add)
 {
   if (undef()) {
@@ -150,7 +151,7 @@ miutil::miDate::addDay(const long add)
  * Conversion functions
  */
 
-miutil::miDate& 
+miutil::miDate&
 miutil::miDate::jdntodate(long dn) // Convert Julian day number (dn) to date
 {
   if (undef()) {
@@ -211,7 +212,7 @@ miutil::miDate::jdntodate(long dn) // Convert Julian day number (dn) to date
 
 // Return a string with date formatted according to ISO
 // standards (ISO 8601)
-miutil::miString 
+miutil::miString
 miutil::miDate::isoDate() const
 {
   if (undef())
@@ -228,7 +229,7 @@ miutil::miDate::isoDate() const
 
 // Returns the week number. Week 1 of a year is per definition the
 // first week that contains a Thursday.
-int 
+int
 miutil::miDate::weekNo() const
 {
   if (undef()) {
@@ -247,14 +248,14 @@ miutil::miDate::weekNo() const
   return (jdn-mon.jdn)/7+1;
 }
 
-miutil::miString 
+miutil::miString
 miutil::miDate::weekday(const lang l) const
 {
   return weekday( (l== Norwegian ? "no" : "" ) );
 }
 
 
-miutil::miString 
+miutil::miString
 miutil::miDate::weekday(miString l) const
 {
   if (undef()) {
@@ -298,7 +299,7 @@ miutil::miDate::weekday(miString l) const
 			     "Donnerstag",
 			     "Freitag",
 			     "Samstag" };
-  
+
   if (la=="no" || la=="nb")
     return nameNO[a];
   if (la=="nn")
@@ -309,7 +310,7 @@ miutil::miDate::weekday(miString l) const
   return nameEN[a];
 }
 
-miutil::miString 
+miutil::miString
 miutil::miDate::shortweekday(const lang l) const
 {
   return shortweekday( (l== Norwegian ? "no" : "" ) );
@@ -337,7 +338,7 @@ miutil::miDate::shortweekday(miString l) const
 			     "Thu",
 			     "Fri",
 			     "Sat" };
-  
+
   static miString nameNO[]={ "Søn",
 			     "Man",
 			     "Tir",
@@ -372,7 +373,7 @@ miutil::miDate::shortweekday(miString l) const
   return nameEN[a];
 }
 
-miutil::miString 
+miutil::miString
 miutil::miDate::monthname(const lang l) const
 {
   return monthname( (l== Norwegian ? "no" : "" ) );
@@ -389,40 +390,40 @@ miutil::miDate::monthname(miString l) const
   if(!l.exists()) l=defaultLanguage;
   miString la = l.downcase();
 
-  static miString nameEN[]={ "January", 
+  static miString nameEN[]={ "January",
 			     "February",
 			     "March",
-			     "April",   
+			     "April",
 			     "May",
 			     "June",
-			     "July",    
-			     "August",   
+			     "July",
+			     "August",
 			     "September",
 			     "October",
 			     "November",
 			     "December" };
-  
-  static miString nameNO[]={ "Januar", 
+
+  static miString nameNO[]={ "Januar",
 			     "Februar",
 			     "Mars",
-			     "April",   
+			     "April",
 			     "Mai",
 			     "Juni",
-			     "Juli",    
-			     "August",   
+			     "Juli",
+			     "August",
 			     "September",
 			     "Oktober",
 			     "November",
 			     "Desember" };
 
-  static miString nameDE[]={ "Januar", 
+  static miString nameDE[]={ "Januar",
 			     "Februar",
 			     "März",
-			     "April",   
+			     "April",
 			     "Mai",
 			     "Juni",
-			     "Juli",    
-			     "August",   
+			     "Juli",
+			     "August",
 			     "September",
 			     "Oktober",
 			     "November",
@@ -438,7 +439,7 @@ miutil::miDate::monthname(miString l) const
   return nameEN[Month-1];
 }
 
-miutil::miString 
+miutil::miString
 miutil::miDate::shortmonthname(const lang l) const
 {
   return shortmonthname( (l== Norwegian ? "no" : "" ) );
@@ -457,40 +458,40 @@ miutil::miDate::shortmonthname(miString l) const
   if(!l.exists()) l=defaultLanguage;
   miString la = l.downcase();
 
-  static miString nameEN[]={ "Jan", 
+  static miString nameEN[]={ "Jan",
 			     "Feb",
 			     "Mar",
-			     "Apr",   
+			     "Apr",
 			     "May",
 			     "Jun",
-			     "Jul",    
-			     "Aug",   
+			     "Jul",
+			     "Aug",
 			     "Sep",
 			     "Oct",
 			     "Nov",
 			     "Dec" };
 
-  static miString nameNO[]={ "Jan", 
+  static miString nameNO[]={ "Jan",
 			     "Feb",
 			     "Mar",
-			     "Apr",   
+			     "Apr",
 			     "Mai",
 			     "Jun",
-			     "Jul",    
-			     "Aug",   
+			     "Jul",
+			     "Aug",
 			     "Sep",
 			     "Okt",
 			     "Nov",
 			     "Des" };
-  
-  static miString nameDE[]={ "Jan", 
+
+  static miString nameDE[]={ "Jan",
 			     "Feb",
 			     "Mär",
-			     "Apr",   
+			     "Apr",
 			     "Mai",
 			     "Jun",
-			     "Jul",    
-			     "Aug",   
+			     "Jul",
+			     "Aug",
 			     "Sep",
 			     "Okt",
 			     "Nov",
@@ -528,7 +529,7 @@ miutil::miDate::easterSundayThisYear() const
   return easterSunday;
 }
 
-miutil::miDate 
+miutil::miDate
 miutil::miDate::today()
 {
   time_t tp=time(0);
@@ -539,9 +540,9 @@ miutil::miDate::today()
 
   return miDate(y,m,d);
 }
-  
 
-miutil::miString 
+
+miutil::miString
 miutil::miDate::format(miString newDate,const lang l) const
 {
   return format(newDate, (l== Norwegian ? "no" : "" ) );
@@ -555,7 +556,7 @@ miutil::miDate::format(miString newDate,miString l ) const
 
   newDate.replace("%y",miString(Year%100,2)); //!%y  last two digits of year (00..99)
   newDate.replace("%Y",miString(Year,4));     //!%Y  year (1970...)
-   
+
   newDate.replace("%d",miString(Day,2));      //!%d  day of month (01..31)
   newDate.replace("%e",miString(Day));        //!%e  day of month ( 1..31)
   newDate.replace("%m",miString(Month,2));    //!%m  month (01..12)

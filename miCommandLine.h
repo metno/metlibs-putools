@@ -55,22 +55,22 @@ public:
 
   struct option {
     char flag;
-    miString alias;
+    miutil::miString alias;
     bool hasArg;
 
     option()
       : flag('\0'), hasArg(false) {}
-    option(const char f, const miString& a, const bool h)
+    option(const char f, const miutil::miString& a, const bool h)
       : flag(f), alias(a), hasArg(h) {}
   };
 
 private:
   ostringstream est;
   vector<option> opts;
-  map<char,vector<miString> > args;
+  map<char,vector<miutil::miString> > args;
   bool err;
 
-  char aliasToFlag(const miString&) const;
+  char aliasToFlag(const miutil::miString&) const;
   bool flagLegal(const char) const;
   bool hasArg(const char) const;
 
@@ -84,16 +84,16 @@ public:
 
   miCommandLine(const vector<option>&, const int, char**);
 
-  vector<miString> arg(const char flag)
+  vector<miutil::miString> arg(const char flag)
   { return args[flag]; }
 
-  vector<miString> arg(const miString& alias)
+  vector<miutil::miString> arg(const miutil::miString& alias)
   { return args[aliasToFlag(alias)]; }
 
   bool hasFlag(const char flag) const
   { return args.count(flag)>0? true: false; }
 
-  bool hasFlag(const miString& alias) const
+  bool hasFlag(const miutil::miString& alias) const
   { return args.count(aliasToFlag(alias))>0? true: false; }
 
   bool empty() const
@@ -102,7 +102,7 @@ public:
   bool error() const
   { return err; }
 
-  miString errStr() {return est.str();}
+  miutil::miString errStr() {return est.str();}
 
 };
 

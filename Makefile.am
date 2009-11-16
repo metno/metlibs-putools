@@ -23,17 +23,13 @@ pkg_includedir = ${prefix}/include/puTools
 
 pkg_include_HEADERS = \
 	StlContainerUtil.h \
-	miClock \
 	miClock.h \
 	miCommandLine.h \
-	miDate \
 	miDate.h \
 	miDirtools.h \
 	miRing.h \
 	miSort.h \
-	miString \
 	miString.h \
-	miTime \
 	miTime.h \
 	minmax.h \
 	puAlgo.h \
