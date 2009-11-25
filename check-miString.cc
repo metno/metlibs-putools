@@ -4,7 +4,7 @@
  * $Id$
  */
 
-#include <miString>
+#include <miString.h>
 
 #include <check/tap>
 

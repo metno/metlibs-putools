@@ -5,8 +5,8 @@
  */
 
 #include <boost/format.hpp>
-#include <miClock>
-#include <miString>
+#include <miClock.h>
+#include <miString.h>
 
 #include <check/tap>
 
