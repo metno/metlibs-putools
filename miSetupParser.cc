@@ -74,7 +74,7 @@ bool SetupParser::checkEnvironment(miString& t)
 
 void SetupParser::cleanstr(miString& s)
 {
-  int p;
+  std::string::size_type p;
   if ((p = s.find("#")) != string::npos)
     s.erase(p);
 
@@ -94,7 +94,7 @@ void SetupParser::cleanstr(miString& s)
     while ((p = s.find_first_of("=", p)) != string::npos) {
       // check for "" - do not clean out blanks inside these
       vector<int> sf1, sf2;
-      int f1 = 0, f2;
+      std::string::size_type f1 = 0, f2;
       while ((f1 = s.find_first_of("\"", f1)) != string::npos && (f2
           = s.find_first_of("\"", f1 + 1)) != string::npos) {
         sf1.push_back(f1);
@@ -379,6 +379,13 @@ bool SetupParser::parseFile(const miString& filename, // name of file
     return false;
   }
   return true;
+}
+
+void SetupParser::clearSect()
+{
+  if (!sectionm.empty())
+    sectionm.clear();
+
 }
 
 /*

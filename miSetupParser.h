@@ -84,6 +84,8 @@ namespace miutil{
     bool parse(const miutil::miString& mainfilename );
     /// get stringlist for a named section
     bool getSection(const miutil::miString&,std::vector<miutil::miString>&);
+    /// clear the section map sectionm (now used in tsData, ptGribStream)
+    void clearSect();
     /// report an error with line# and sectionname
     void errorMsg(const miutil::miString&,const int,const miutil::miString&);
     /// report a warning with line# and sectionname
