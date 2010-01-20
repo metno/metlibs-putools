@@ -41,10 +41,10 @@ namespace puMathAlgo {
 class randomInt {
 public:
   unsigned long operator()(unsigned long max) {
-    unsigned long rval=random();
+    unsigned long rval=rand();
     return rval%max;
   }
-  void seed(long s) { srandom(s); }
+  void seed(long s) { srand(s); }
 };
 
   // Statistical functions: percentile, mean, and median
