@@ -6,5 +6,6 @@ includedir=@includedir@
 Name: puTools
 Description: The puTools Library
 Version: @VERSION@
+# Requires: @puTools_pc_requires@
 Libs: -L${libdir} -lpuTools
 Cflags: -I${includedir}
