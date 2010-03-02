@@ -4,6 +4,10 @@
  * $Id$
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <boost/format.hpp>
 #include <miClock.h>
 #include <miString.h>

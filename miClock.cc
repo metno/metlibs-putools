@@ -34,6 +34,10 @@
 //          LBS Nov. 1998: Changed the default state from being the
 //                         current UTC to an `undefined' state.
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <iostream>
 #include <sstream>
 #include <iomanip>

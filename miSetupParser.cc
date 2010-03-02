@@ -1,3 +1,7 @@
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "miSetupParser.h"
 #include <fstream>
 #include <list>
