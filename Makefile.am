@@ -19,7 +19,7 @@ libpuTools_la_SOURCES = \
 libpuTools_la_LDFLAGS = \
 	${VERSION_INFO}
 
-pkg_includedir = ${prefix}/include/puTools
+pkg_includedir = ${includedir}/puTools
 
 pkg_include_HEADERS = \
 	StlContainerUtil.h \
