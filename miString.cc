@@ -57,7 +57,7 @@ miutil::miString::miString(const int i, const int width, const char fill)
 {
   ostringstream ost;
   if (width>0){
-#if defined(_WIN32) || defined(_WIN64)
+#if defined(__WIN32__) || defined(__WIN64__)
     ost << setw(width) << setfill(static_cast<char>(fill)) << i;
 #else
     ost << setw(width) << setfill(fill) << i;
