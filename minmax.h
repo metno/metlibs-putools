@@ -33,8 +33,6 @@
 
 #include <vector>
 
-using namespace std;
-
 template<class T> T Max(T a, T b)
 {
   return a>b? a: b;
@@ -45,7 +43,7 @@ template<class T> T Min(T a, T b)
   return a<b? a: b;
 }
 
-template<class T> void MinMax(const vector<T>& s, T& min, T& max)
+template<class T> void MinMax(const std::vector<T>& s, T& min, T& max)
 {
   int nit=s.size();
   if (!nit) return;

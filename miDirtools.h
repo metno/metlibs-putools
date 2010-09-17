@@ -42,7 +42,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
-using namespace std;
 
 // get the newest modificated file from catalog 'cat'
 
@@ -52,12 +51,12 @@ extern miutil::miString  getRecent(const miutil::miString& cat);
 
 // get all filenames from catalog 'cat'
 extern bool getFilenames(const miutil::miString& cat,
-			 vector<miutil::miString>& names);
+			 std::vector<miutil::miString>& names);
 
 // get all files with extension 'ext' from catalog 'cat'
 extern bool getFilenamesByExt(const miutil::miString& cat,
 			      const miutil::miString& ext,
-			      vector<miutil::miString>& names);
+			      std::vector<miutil::miString>& names);
 
 // get a real path out of related path (uses current directory)
 // examples: ( you are in /pug/local/include )
@@ -79,9 +78,9 @@ extern miutil::miString hardpath(const miutil::miString&);
 
 bool getFilenamesByRegexp(const miutil::miString& cat,
 			  const miutil::miString& reg,
-			  vector<miutil::miString>& names)
+			  std::vector<miutil::miString>& names)
 {
-  vector<miutil::miString> allnames;
+  std::vector<miutil::miString> allnames;
 #ifdef linux
   regex_t preg;
   int res= regcomp(&preg, reg.cStr(), REG_EXTENDED | REG_NOSUB);

@@ -48,8 +48,6 @@
 #include <string.h>
 
 
-using namespace std;
-
 class miCommandLine {
 public:
 
@@ -65,9 +63,9 @@ public:
   };
 
 private:
-  ostringstream est;
-  vector<option> opts;
-  map<char,vector<miutil::miString> > args;
+  std::ostringstream est;
+  std::vector<option> opts;
+  std::map<char,std::vector<miutil::miString> > args;
   bool err;
 
   char aliasToFlag(const miutil::miString&) const;
@@ -82,12 +80,12 @@ private:
 
 public:
 
-  miCommandLine(const vector<option>&, const int, char**);
+  miCommandLine(const std::vector<option>&, const int, char**);
 
-  vector<miutil::miString> arg(const char flag)
+  std::vector<miutil::miString> arg(const char flag)
   { return args[flag]; }
 
-  vector<miutil::miString> arg(const miutil::miString& alias)
+  std::vector<miutil::miString> arg(const miutil::miString& alias)
   { return args[aliasToFlag(alias)]; }
 
   bool hasFlag(const char flag) const
