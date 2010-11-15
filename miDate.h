@@ -170,6 +170,7 @@ public:
 
 
   void setDefaultLanguage(const miString l=""){ defaultLanguage=l; }
+  static miString getDefaultLanguage() { return defaultLanguage; }
 
   static miDate today(); // return system date
 
