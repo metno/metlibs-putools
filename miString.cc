@@ -25,7 +25,7 @@
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -53,7 +53,7 @@ miutil::miString::miString(const char* s)
 
 
 miutil::miString::miString(const int i, const int width, const char fill)
-  : string()
+: string()
 {
   ostringstream ost;
   if (width>0){
@@ -69,7 +69,7 @@ miutil::miString::miString(const int i, const int width, const char fill)
 }
 
 miutil::miString::miString(const double d, const int prec)
-  : string()
+: string()
 {
   ostringstream ost;
   if (prec!=-1)
@@ -79,7 +79,7 @@ miutil::miString::miString(const double d, const int prec)
 }
 
 miutil::miString::miString(const float d, const int prec)
-  : string()
+: string()
 {
   ostringstream ost;
   if (prec!=-1)
@@ -122,18 +122,18 @@ miutil::miString::toFloat( const float undefined ) const
 
 double miutil::miString::toDouble( const double undefined ) const
 {
- if(empty())
-   return undefined;
- if(!isNumber())
-   return undefined;
- return atof(c_str());
+  if(empty())
+    return undefined;
+  if(!isNumber())
+    return undefined;
+  return atof(c_str());
 }
 
 void
 miutil::miString::trim(bool l, bool r, const miString wspace)
 {
-  int len;
-  int pos;
+  size_t len;
+  size_t pos;
 
   if (empty())
     return;
@@ -165,7 +165,7 @@ miutil::miString::remove(const char c)
   if (empty())
     return;
 
-  for (int pos=find(c); pos!=npos; pos=find(c))
+  for (size_t pos=find(c); pos!=npos; pos=find(c))
     erase(pos,1);
 }
 
@@ -174,10 +174,10 @@ miutil::miString::replace(const char c1, const char c2) const
 {
   miString s(*this);
   if (!empty()) {
-    int len=length();
-    for (int i=0; i<len; i++)
+    size_t len=length();
+    for (size_t i=0; i<len; i++)
       if (s[i]==c1)
-	s[i]=c2;
+        s[i]=c2;
   }
   return s;
 }
@@ -187,9 +187,9 @@ miutil::miString::replace(const miString& s1, const miString& s2)
 {
   if (empty())
     return;
-  int pos=0;
-  int len1=s1.length();
-  int len2=s2.length();
+  size_t pos=0;
+  size_t len1=s1.length();
+  size_t len2=s2.length();
   for (pos=find(s1,pos); pos!=npos; pos=find(s1,pos)) {
     string::replace(pos,len1,s2);
     pos+=len2;
@@ -225,29 +225,29 @@ miutil::miString::split(int nos,const miString s, const bool clean) const
   int splitnumber = 0;
   vector<miString> vec;
   if (!empty()) {
-    int len=length();
-    int start=(clean? find_first_not_of(s,0): 0);
+    size_t len=length();
+    size_t start=(clean? find_first_not_of(s,0): 0);
     while (start>=0 && start<len) {
-      int stop=find_first_of(s,start);
+      size_t stop=find_first_of(s,start);
       if (stop<0 || stop>len)
-	stop=len;
+        stop=len;
       vec.push_back(substr(start,stop-start));
 
       if(nos)
-	if(++splitnumber >= nos) {
-	  stop++;
-	  if(stop < len )
-	    vec.push_back(substr(stop,len-stop));
-	  break;
-	}
+        if(++splitnumber >= nos) {
+          stop++;
+          if(stop < len )
+            vec.push_back(substr(stop,len-stop));
+          break;
+        }
       start=(clean? find_first_not_of(s,stop+1): stop+1);
     }
 
     if (clean)
-      for (int i=0; i<vec.size(); i++) {
-	vec[i].trim();
-	if (!(vec[i].exists()))
-	  vec.erase(vec.begin()+i--);
+      for (size_t i=0; i<vec.size(); i++) {
+        vec[i].trim();
+        if (!(vec[i].exists()))
+          vec.erase(vec.begin()+i--);
       }
   }
   return vec;
@@ -259,37 +259,37 @@ miutil::miString::split(int nos,const miString s, const bool clean) const
 
 vector<miutil::miString>
 miutil::miString::split(const char lb, // left border
-			const char rb, // right border
-			const miString s,
-			const bool clean) const
+    const char rb, // right border
+    const miString s,
+    const bool clean) const
 {
   vector<miString> vec;
   if (!empty()) {
 
-    int len=length();
+    size_t len=length();
 
-    int start=(clean ? find_first_not_of(s,0): 0);
+    size_t start=(clean ? find_first_not_of(s,0): 0);
 
     while (start>=0 && start<len) {
-      int stop;
+      size_t stop;
 
       stop=find_first_of(s,start);
 
-      int  tmp= start;
+      size_t  tmp= start;
       bool isok=false;
       while ( !isok ){
-	int lbp = find(lb,tmp);
-	if ( lbp >= 0 && lbp < stop ){
-	  int rbp = find(rb,lbp+1);
-	  tmp=rbp+1;
-	  if ( rbp >= 0 && rbp > stop ){
-	    stop = find_first_of(s,tmp);
-	  }
-	} else isok=true;
+        size_t lbp = find(lb,tmp);
+        if ( lbp >= 0 && lbp < stop ){
+          size_t rbp = find(rb,lbp+1);
+          tmp=rbp+1;
+          if ( rbp >= 0 && rbp > stop ){
+            stop = find_first_of(s,tmp);
+          }
+        } else isok=true;
       }
 
       if (stop<0 || stop>len)
-	stop=len;
+        stop=len;
 
       vec.push_back(substr(start,stop-start));
 
@@ -298,10 +298,10 @@ miutil::miString::split(const char lb, // left border
 
 
     if (clean)
-      for (int i=0; i<vec.size(); i++) {
-	vec[i].trim();
-	if (!(vec[i].exists()))
-	  vec.erase(vec.begin()+i--);
+      for (size_t i=0; i<vec.size(); i++) {
+        vec[i].trim();
+        if (!(vec[i].exists()))
+          vec.erase(vec.begin()+i--);
       }
   }
   return vec;
@@ -375,12 +375,12 @@ miutil::miString::isNumber() const
   for (; i1!=i2; i1++){
     if (!isdigit(*i1)){
       if (*i1=='.'){
-	if (fl)
-	  return false;
-	else
-	  fl=true;
+        if (fl)
+          return false;
+        else
+          fl=true;
       }else
-	break;
+        break;
     }
   }
 
@@ -403,7 +403,7 @@ miutil::miString::isNumber() const
     if (!isdigit(*i1))
       return false;
 
- return true;
+  return true;
 }
 
 /**
@@ -449,7 +449,7 @@ miutil::miString::isInt() const
     }
   }
 
- return true;
+  return true;
 }
 
 miutil::miString
@@ -481,14 +481,14 @@ miutil::miString::downcase(int start, int len) const
   if( len   < 0 ) len   = 0;
 
   miString s(*this);
-  int c, n=s.length(),stop=start+len;
+  size_t c, n=s.length(),stop=start+len;
 
   if( start > n ) return s;
   if( !len      ) stop = n;
   if( stop > n  ) stop = n;
 
 
-  for (int i=start; i<stop; i++) {
+  for (size_t i=start; i<stop; i++) {
     c=tolower(s[i]);
     if ((c>=192 && c<=214) || (c>=215 && c<=222))
       c+=32;
