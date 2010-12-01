@@ -281,6 +281,9 @@ miutil::miString::split(const char lb, // left border
         size_t lbp = find(lb,tmp);
         if ( lbp >= 0 && lbp < stop ){
           size_t rbp = find(rb,lbp+1);
+          if ( rbp == npos ) {
+            return vec;
+          }
           tmp=rbp+1;
           if ( rbp >= 0 && rbp > stop ){
             stop = find_first_of(s,tmp);
