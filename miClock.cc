@@ -266,6 +266,9 @@ miutil::miClock::format(miString newClock) const
   newClock.replace("%l",miString(tH));       /// %l hour ( 1..12)
   newClock.replace("%M",miString(Min,2));    /// %M min  (00..59)
 
+  if(newClock.contains("$30M") ){
+    newClock.replace("$30M", (Min < 30 ? "00" : "30" )); /// SIGMET SPECIAL
+  }
 
   newClock.replace("%p",(pm ? "PM" : "AM")); /// %p locale's AM or PM
   newClock.replace("%S",miString(Sec,2));    /// %S second (00..60)
