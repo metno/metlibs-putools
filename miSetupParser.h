@@ -53,26 +53,29 @@ namespace miutil{
     static std::map<miutil::miString, miutil::miString> user_variables;
 
     /// report an error with filename and linenumber
-    void internalErrorMsg(const miutil::miString& filename,
+    static void internalErrorMsg(const miutil::miString& filename,
 			  const int linenum,
 			  const miutil::miString& error);
     // expand local variables in string
-    bool checkSubstitutions(miutil::miString& t);
+    static bool checkSubstitutions(miutil::miString& t);
     // expand environment values in string
-    bool checkEnvironment(miutil::miString& t);
+    static bool checkEnvironment(miutil::miString& t);
     /// parse one setupfile
-    bool parseFile(const miutil::miString& filename,
+    std::vector<miutil::miString> getFromHttp(miutil::miString url);
+    std::vector<miutil::miString> getFromFile(miutil::miString filename);
+
+    static bool parseFile(const miutil::miString& filename,
 		   const miutil::miString& section,
 		   int level);
 
-
   public:
+
     SetupParser() {}
 
     /// set user variables
-    void setUserVariables(const std::map<miutil::miString,miutil::miString> & user_var);
+    static void setUserVariables(const std::map<miutil::miString,miutil::miString> & user_var);
     /// cleans a string
-    void cleanstr(miutil::miString&);
+    static void cleanstr(miutil::miString&);
     /// finds key=value in string
     static void splitKeyValue(const miutil::miString& s, miutil::miString& key,
 			      miutil::miString& value, bool keepCase = false);
@@ -81,13 +84,13 @@ namespace miutil{
 			      std::vector<miutil::miString>& value);
 
     /// recursively parse setupfiles
-    bool parse(const miutil::miString& mainfilename );
+    static bool parse(const miutil::miString& mainfilename );
     /// get stringlist for a named section
-    bool getSection(const miutil::miString&,std::vector<miutil::miString>&);
+    static bool getSection(const miutil::miString&,std::vector<miutil::miString>&);
     /// clear the section map sectionm (now used in tsData, ptGribStream)
     void clearSect();
     /// report an error with line# and sectionname
-    void errorMsg(const miutil::miString&,const int,const miutil::miString&);
+    static void errorMsg(const miutil::miString&,const int,const miutil::miString&);
     /// report a warning with line# and sectionname
     void warningMsg(const miutil::miString&,const int,const miutil::miString&);
   };

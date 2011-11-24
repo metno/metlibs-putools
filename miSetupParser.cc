@@ -7,6 +7,8 @@
 #include <list>
 #include <stdlib.h>
 
+#include <curl/curl.h>
+
 using namespace std;
 using namespace miutil;
 
@@ -21,58 +23,49 @@ void SetupParser::setUserVariables(const map<miString, miString> & user_var)
   user_variables = user_var;
 }
 
-bool SetupParser::checkSubstitutions(miString& t)
+bool SetupParser::checkSubstitutions(miutil::miString& t)
 {
-  if (!t.contains("$("))
-    return false;
+  std::string::size_type start = 0, stop = 0;
 
-  int start, stop;
+  while ((start = t.find("$(", 0)) != t.npos) {
+    if ((stop = t.find(")", start)) == t.npos) {
+      // unterminated
+      return false;
+    }
+    miutil::miString s = t.substr(start + 2, stop - start - 2);
+    miutil::miString n;
+    s = s.upcase();
+    if (substitutions.count(s) > 0) {
+      n = substitutions[s];
+    }
+    // this would be the logical solution, but miutil::miString overrides replace()
+    // t.replace(start, stop - start + 1, n.c_str());
+    t = t.substr(0, start) + n + t.substr(stop + 1);
 
-  start = t.find("$(", 0) + 2;
-  stop = t.find(")", start);
-
-  if (stop < start) {
-    return false;
   }
-
-  miString s = t.substr(start, stop - start);
-  miString r = miString("$(") + s + ")";
-  miString n;
-  s = s.upcase();
-
-  if (substitutions.count(s) > 0)
-    n = substitutions[s];
-
-  t.replace(r, n);
-
-  //next substitution
-  checkSubstitutions(t);
-
   return true;
 }
 
 bool SetupParser::checkEnvironment(miString& t)
 {
-  if (!t.contains("${"))
-    return false;
+  std::string::size_type start = 0, stop = 0;
 
-  int start, stop;
-
-  start = t.find("${", 0) + 2;
-  stop = t.find("}", start);
-
-  if (stop < start) {
-    return false;
+  while ((start = t.find("${", stop)) != t.npos) {
+    if ((stop = t.find("}", start)) == t.npos)
+      // unterminated
+      return false;
+    miString s = t.substr(start + 2, stop - start - 2);
+    miString n;
+    s = s.upcase();
+    if (substitutions.count(s) > 0) {
+      n = substitutions[s];
+    } else {
+      n = getenv(s.c_str());
+    }
+    // this would be the logical solution, but miString overrides replace()
+    // t.replace(start, stop - start + 1, n.c_str());
+    t = t.substr(0, start) + n + t.substr(stop + 1);
   }
-
-  miString s = t.substr(start, stop - start);
-  miString r = miString("${") + s + "}";
-
-  s = s.upcase();
-
-  miString n = getenv(s.cStr());
-
-  t.replace(r, n);
   return true;
 }
 
@@ -106,7 +99,7 @@ void SetupParser::cleanstr(miString& s)
         f1 = f2 + 1;
       }
       bool dropit = false;
-      for (int i = 0; i < sf1.size(); i++) {
+      for (size_t i = 0; i < sf1.size(); i++) {
         f1 = sf1[i];
         f2 = sf2[i];
         if (f1 > p) {
@@ -206,6 +199,71 @@ void SetupParser::splitKeyValue(const miString& s, miString& key, vector<
  *
  */
 
+size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp)
+{
+  (*(ostringstream*) userp) << (char *) buffer;
+
+  return (size_t) (size * nmemb);
+}
+
+vector<miutil::miString> SetupParser::getFromHttp(miutil::miString url)
+{
+  CURL *curl = NULL;
+  CURLcode res;
+  ostringstream ost;
+  vector<miutil::miString> result;
+
+  curl = curl_easy_init();
+  if (curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &ost);
+    res = curl_easy_perform(curl);
+
+    curl_easy_cleanup(curl);
+  }
+
+  miutil::miString data = ost.str();
+
+  //must contain diana.setup tags
+  if (data.find("<diana.setup>") == data.npos || data.find("</diana.setup>") == data.npos) {
+    cerr <<"WARNING: SetupParser::getFromHttp: "<<url
+        <<": <diana.setup> or </diana.setup> tags are missing"<<endl;
+    return result;
+  }
+
+  data = data.substr(data.find("<diana.setup>") + 13);
+  data = data.substr(0,data.find("</diana.setup>"));
+
+  result = data.split("\n");
+
+  return result;
+}
+
+vector<miutil::miString> SetupParser::getFromFile(miutil::miString filename)
+{
+
+  vector<miutil::miString> result;
+
+  // open filestream
+  ifstream file(filename.cStr());
+  if (!file) {
+    cerr << "SetupParser::readSetup. cannot open setupfile " << filename
+    << endl;
+    return result;
+  }
+
+
+  miutil::miString str;
+  while (getline(file, str)) {
+    result.push_back(str);
+  }
+
+  file.close();
+  return result;
+
+}
+
 bool SetupParser::parseFile(const miString& filename, // name of file
     const miString& section, // inherited section
     int level) // recursive level
@@ -245,7 +303,7 @@ bool SetupParser::parseFile(const miString& filename, // name of file
     - accumulate strings for each section
    */
   miString tmpstr;
-  int tmpln;
+  int tmpln=0;
   bool merge = false, newmerge;
 
   while (getline(file, str)) {
