@@ -16,8 +16,12 @@ libpuTools_la_SOURCES = \
 	ttycols.cc \
 	miSetupParser.cc
 
+libpuTools_la_CPPFLAGS = \
+	$(CURL_CPPFLAGS)
+
 libpuTools_la_LDFLAGS = \
-	${VERSION_INFO}
+	${VERSION_INFO} \
+	$(CURL_LDFLAGS)
 
 pkg_includedir = ${includedir}/puTools
 
