@@ -142,6 +142,12 @@ bool
 miutil::miTime::isValid(const miString& st)
 {
   vector<miString> t=st.split();
+  if ( t.size() < 2 ) {
+    t=st.split("T");
+    if ( t.size() < 2  ) {
+      t=st.split("t");
+    }
+  }
 
   if (t.size()>=2) {
     if(!miutil::miDate::isValid(t[0]))
