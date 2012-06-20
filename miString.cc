@@ -39,7 +39,7 @@ using namespace std;
 
 
 
-string miutil::miString::whitespaces(" \r\t\n");
+const char miutil::miString::whitespaces[5] =" \r\t\n";
 
 
 

@@ -41,8 +41,8 @@
 
 namespace miutil{
 
-class miString: public std::string {
-  static std::string whitespaces;
+class miString : public std::string {
+  static const char whitespaces[5];
 
 public:
   miString()

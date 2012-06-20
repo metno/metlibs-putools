@@ -19,9 +19,8 @@ libpuTools_la_SOURCES = \
 libpuTools_la_CPPFLAGS = \
 	$(CURL_CPPFLAGS)
 
-libpuTools_la_LDFLAGS = \
-	${VERSION_INFO} \
-	$(CURL_LDFLAGS)
+libpuTools_la_LDFLAGS = ${VERSION_INFO} 
+#	$(CURL_LDFLAGS)
 
 pkg_includedir = ${includedir}/puTools
 
