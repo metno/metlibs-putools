@@ -1,5 +1,5 @@
 # $Id$
-
+#AM_CPPFLAGS = -I$(top_srcdir) 
 pkgname = puTools
 
 include $(top_srcdir)/metlibs.mk
@@ -45,9 +45,13 @@ check_PROGRAMS = \
 	check-miString
 
 check_miClock_SOURCES = check-miClock.cc
-check_miClock_LDADD = libpuTools.la
+check_miClock_CPPFLAGS = -I$(top_srcdir) $(CURL_CPPFLAGS)
+check_miClock_LDFLAGS = $(CURL_LDFLAGS)
+check_miClock_LDADD = libpuTools.la $(CURL_LIBS)
 
 check_miString_SOURCES = check-miString.cc
-check_miString_LDADD = libpuTools.la
+check_miString_CPPFLAGS = -I$(top_srcdir) $(CURL_CPPFLAGS)
+check_miString_LDFLAGS = $(CURL_LDFLAGS)
+check_miString_LDADD = libpuTools.la $(CURL_LIBS)
 
 TESTS = ${check_PROGRAMS}
