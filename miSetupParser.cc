@@ -23,6 +23,11 @@ void SetupParser::setUserVariables(const map<miString, miString> & user_var)
   user_variables = user_var;
 }
 
+void SetupParser::replaceUserVariables(const miString& key, const miString& value)
+{
+  user_variables[key] = value;
+}
+
 bool SetupParser::checkSubstitutions(miutil::miString& t)
 {
   std::string::size_type start = 0, stop = 0;

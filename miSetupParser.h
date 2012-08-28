@@ -74,6 +74,10 @@ namespace miutil{
 
     /// set user variables
     static void setUserVariables(const std::map<miutil::miString,miutil::miString> & user_var);
+    /// replace or add user variables
+    static void replaceUserVariables(const miutil::miString& key, const miutil::miString& value);
+    /// get list of user variables
+    static std::map<miutil::miString,miutil::miString> getUserVariables() {return substitutions;}
     /// cleans a string
     static void cleanstr(miutil::miString&);
     /// finds key=value in string
