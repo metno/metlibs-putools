@@ -450,6 +450,8 @@ miutil::miTime::format(miString newTime, miString l) const
 	    l = "no";
 	  else if(token[i].contains("eng"))
 	    l = "en";
+	  else if(token[i].contains("swe"))
+	    l = "se";
 	  else
 	    l=token[i];
 	  remove.push_back("$lg=" + token[i]);

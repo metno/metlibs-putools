@@ -304,12 +304,21 @@ miutil::miDate::weekday(miString l) const
 			     "Freitag",
 			     "Samstag" };
 
+  static miString nameSE[]={ "Söndag",
+			     "Måndag",
+			     "Tisdag",
+			     "Onsdag",
+			     "Torsdag",
+			     "Fredag",
+			     "Lördag" };
   if (la=="no" || la=="nb")
     return nameNO[a];
   if (la=="nn")
     return nameNN[a];
   if (la=="de")
     return nameDE[a];
+  if (la=="se" || la=="sv")
+    return nameSE[a];
 
   return nameEN[a];
 }
@@ -367,12 +376,21 @@ miutil::miDate::shortweekday(miString l) const
 			     "Fr",
 			     "Sa" };
 
+  static miString nameSE[]={ "Sön",
+			     "Mån",
+			     "Tis",
+			     "Ons",
+			     "Tor",
+			     "Fre",
+			     "Lör" };
   if (la=="no" || la=="nb")
     return nameNO[a];
   if (la=="nn")
     return nameNN[a];
   if (la=="de")
     return nameDE[a];
+  if (la=="se" || la=="sv")
+    return nameSE[a];
 
   return nameEN[a];
 }
@@ -434,11 +452,25 @@ miutil::miDate::monthname(miString l) const
 			     "Dezember" };
 
 
+  static miString nameSE[]={ "Januari",
+			     "Februari",
+			     "Mars",
+			     "April",
+			     "Maj",
+			     "Juni",
+			     "Juli",
+			     "Augusti",
+			     "September",
+			     "Oktober",
+			     "November",
+			     "December" };
 
   if (la=="no" || la=="nb" || la=="nn")
     return nameNO[Month-1];
   if( la=="de")
     return nameDE[Month-1];
+  if (la=="se" || la=="sv")
+    return nameSE[Month-1];
 
   return nameEN[Month-1];
 }
@@ -501,10 +533,24 @@ miutil::miDate::shortmonthname(miString l) const
 			     "Nov",
 			     "Dez" };
 
+  static miString nameSE[]={ "Jan",
+			     "Feb",
+			     "Mar",
+			     "Apr",
+			     "Maj",
+			     "Jun",
+			     "Jul",
+			     "Aug",
+			     "Sep",
+			     "Okt",
+			     "Nov",
+			     "Dec" };
   if (la=="no" || la=="nb" || la=="nn")
     return nameNO[Month-1];
   if (la=="de")
     return nameDE[Month-1];
+  if (la=="se" || la=="sv")
+    return nameSE[Month-1];
 
   return nameEN[Month-1];
 }

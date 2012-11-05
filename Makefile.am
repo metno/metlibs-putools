@@ -19,8 +19,13 @@ libpuTools_la_SOURCES = \
 libpuTools_la_CPPFLAGS = \
 	$(CURL_CPPFLAGS)
 
-libpuTools_la_LDFLAGS = ${VERSION_INFO} 
-#	$(CURL_LDFLAGS)
+libpuTools_la_LDFLAGS = ${VERSION_INFO}
+if ENABLE_SHARED_LIBRARY
+libpuTools_la_LDFLAGS += \
+	$(CURL_LDFLAGS)
+libpuTools_la_LIBADD = \
+	$(CURL_LIBS)
+endif
 
 pkg_includedir = ${includedir}/puTools
 
