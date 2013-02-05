@@ -39,7 +39,7 @@ using namespace std;
 
 
 
-const char miutil::miString::whitespaces[5] =" \r\t\n";
+const char miutil::miString::whitespaces[] =" \r\t\n";
 
 
 
@@ -478,10 +478,10 @@ miutil::miString::upcase(int start, int len) const
 }
 
 miutil::miString
-miutil::miString::downcase(int start, int len) const
+miutil::miString::downcase(int starti, int leni) const
 {
-  if( start < 0 ) start = 0;
-  if( len   < 0 ) len   = 0;
+  const size_t start = (starti > 0) ? starti : 0;
+  const size_t len   = (leni   > 0) ? leni   : 0;
 
   miString s(*this);
   size_t c, n=s.length(),stop=start+len;

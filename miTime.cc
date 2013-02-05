@@ -408,7 +408,7 @@ miutil::miTime::format(miString newTime, miString l) const
   if(newTime.contains("$")) {
     token = newTime.split();
 
-    for(int i=0;i<token.size();i++) {
+    for(unsigned int i=0;i<token.size();i++) {
       if(token[i].contains("$")) {
 
         if((k=token[i].find("$tz="))!=string::npos) {
@@ -458,7 +458,7 @@ miutil::miTime::format(miString newTime, miString l) const
         }
 
         if (remove.size()) {
-          for (int n=0; n<remove.size(); n++) {
+          for (unsigned int n=0; n<remove.size(); n++) {
 	    miString rm1= " " + remove[n];
 	    miString rm2= remove[n] + " ";
 	    if (newTime.contains(rm1))

@@ -44,8 +44,8 @@ miString  getRecent(const miString& cat)
   miString c = cat + "/";
   int l = 0;
 
-  if (dirp= opendir(cat.cStr())) {
-    while (dp= readdir(dirp)){
+  if ((dirp= opendir(cat.cStr()))) {
+      while ((dp= readdir(dirp))) {
       if (strlen(dp->d_name)>0) {
 	miString name = c + dp->d_name;
 	struct stat st;
@@ -69,7 +69,7 @@ bool getFilenames(const miString& cat,
   if (!(dirp= opendir(cat.cStr())))
     return false;
 
-  while (dp= readdir(dirp)){
+  while ((dp= readdir(dirp))) {
     if (strlen(dp->d_name)>0)
       //       dp->d_namlen)
       names.push_back(dp->d_name);
@@ -87,7 +87,7 @@ bool getFilenamesByExt(const miString& cat,
   if (!getFilenames(cat, allnames))
     return false;
 
-  for (int i=0; i<allnames.size(); i++){
+  for (unsigned int i=0; i<allnames.size(); i++){
     if (allnames[i]!="." && allnames[i]!=".."){
       splitv= allnames[i].split('.');
       if (splitv.size()){

@@ -100,7 +100,7 @@ miCommandLine::miCommandLine(const vector<option>& o,
 
 char miCommandLine::aliasToFlag(const miString& s) const
 {
-  for (int i=0; i<opts.size(); i++)
+  for (unsigned int i=0; i<opts.size(); i++)
     if (opts[i].alias==s)
       return opts[i].flag;
   return '\0';
@@ -108,7 +108,7 @@ char miCommandLine::aliasToFlag(const miString& s) const
 
 bool miCommandLine::flagLegal(const char c) const
 {
-  for (int i=0; i<opts.size(); i++)
+  for (unsigned int i=0; i<opts.size(); i++)
     if (opts[i].flag==c)
       return true;
   return false;
@@ -116,7 +116,7 @@ bool miCommandLine::flagLegal(const char c) const
 
 bool miCommandLine::hasArg(const char c) const
 {
-  for (int i=0; i<opts.size(); i++)
+  for (unsigned int i=0; i<opts.size(); i++)
     if (opts[i].flag==c)
       return opts[i].hasArg;
   return false;
