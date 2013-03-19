@@ -45,18 +45,11 @@ pkg_include_HEADERS = \
 	ttycols.h \
 	miSetupParser.h
 
-check_PROGRAMS = \
-	check-miClock \
-	check-miString
+check_PROGRAMS = checks
 
-check_miClock_SOURCES = check-miClock.cc
-check_miClock_CPPFLAGS = -I$(top_srcdir) $(CURL_CPPFLAGS)
-check_miClock_LDFLAGS = $(CURL_LDFLAGS)
-check_miClock_LDADD = libpuTools.la $(CURL_LIBS)
-
-check_miString_SOURCES = check-miString.cc
-check_miString_CPPFLAGS = -I$(top_srcdir) $(CURL_CPPFLAGS)
-check_miString_LDFLAGS = $(CURL_LDFLAGS)
-check_miString_LDADD = libpuTools.la $(CURL_LIBS)
+checks_SOURCES = check-miClock.cc check-miString.cc
+checks_CPPFLAGS = $(gtest_CFLAGS)
+checks_LDFLAGS = $(gtest_LDFLAGS)
+checks_LDADD = -lgtest_main libpuTools.la $(gtest_LIBS) -lpthread
 
 TESTS = ${check_PROGRAMS}

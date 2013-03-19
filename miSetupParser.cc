@@ -3,6 +3,7 @@
 #endif
 
 #include "miSetupParser.h"
+#include <iostream>
 #include <fstream>
 #include <list>
 #include <stdlib.h>

@@ -1,4 +1,4 @@
-/*
+/* -*- c++ -*-
   libpuTools - Basic types/algorithms/containers
   
   $Id$
@@ -30,108 +30,146 @@
 #ifndef __dnmi_miString__
 #define __dnmi_miString__
 
+#include "puCtools/deprecated.h"
 #include <string>
-#include <iostream>
-#include <iomanip>
 #include <sstream>
 #include <vector>
-#include <math.h>
-#include <limits.h> 
+#include <cmath>
+#include <climits> 
 #include "puAlgo.h"
 
-namespace miutil{
+namespace miutil {
 
-class miString : public std::string {
-  static const char whitespaces[];
+extern const char whitespaces[];
 
+inline int count_char(const std::string& text, char count_me)
+{ return std::count(text.begin(), text.end(), count_me); }
+
+inline std::string from_c_str(const char* s)
+{ return s ? std::string(s) : std::string(); }
+
+std::string from_number(const int d, const int width=0, const char fill='0');
+std::string from_number(const double d, const int prec =-1);
+std::string from_number(const float d, const int prec =-1);
+
+void trim(std::string& text, bool left=true, bool right=true, const char* wspace=whitespaces);
+inline std::string trimmed(const std::string& text, bool left=true, bool right=true, const char* wspace=whitespaces)
+{ std::string t(text); trim(t, left, right, wspace); return t; }
+void trim_remove_empty(std::vector<std::string>& strings);
+
+std::vector<std::string> split(const std::string& text, int nos=0, const char* separator_chars=whitespaces, const bool clean=true);
+std::vector<std::string> split_protected(const std::string& text, const char left, const char right,
+                                         const char* separator_chars=whitespaces, const bool clean=true);
+
+void remove(std::string& text, const char c);
+void replace(std::string& text, const char thys, const char that);
+void replace(std::string& text, const std::string& thys, const std::string& that);
+
+inline bool contains(const std::string& haystack, const std::string& needle)
+{ return haystack.find(needle) != std::string::npos; }
+
+bool is_number(const std::string& text);
+bool is_int(const std::string& text);
+
+int to_int(const std::string& text, const int undefined=INT_MIN);
+long to_long(const std::string& text, const long undefined=LONG_MIN);
+double to_double(const std::string& text, const double undefined=NAN);
+
+// ########################################################################
+
+class miString : public std::string
+{
 public:
   miString()
     : std::string() {}
-  miString(const char* s);
+  METLIBS_DEPRECATED(miString(const char* s), "use 'miutil::from_c_str(s)' if 0-protection is required");
   miString(const std::string& s)
     : std::string(s) {}
-  explicit miString(const int    d, const int =0, const char ='0');
-  explicit miString(const double d, const int prec =-1);
-  explicit miString(const float  d, const int prec =-1);
 
-  const char* cStr() const
+  METLIBS_DEPRECATED(METLIBS_CONCAT(explicit miString(const int    d, const int width=0, const char fill='0')), "use 'from_number(...)'");
+  METLIBS_DEPRECATED(METLIBS_CONCAT(explicit miString(const double d, const int prec =-1)), "use 'from_number(...)'");
+  METLIBS_DEPRECATED(METLIBS_CONCAT(explicit miString(const float  d, const int prec =-1)), "use 'from_number(...)'");
+
+  METLIBS_DEPRECATED(const char* cStr() const, "use c_str() directly")
   { return c_str(); }
 
-  bool contains(const miString& s) const
-  { return find(s)==npos ? false: true; }
+  METLIBS_DEPRECATED(bool contains(const miString& s) const, "use 'miutil::contains(haystack, needle)' directly")
+  { return miutil::contains(*this, s); }
 
-  bool exists() const { return !empty(); }
+  METLIBS_DEPRECATED(bool exists() const, "use 'not empty()'")
+  { return !empty(); }
 
-  void trim(bool =true, bool =true, const miString =whitespaces);
-  void rtrim(const miString ws=whitespaces) { trim(false, true, ws); }
-  void ltrim(const miString ws=whitespaces) { trim(true, false, ws); }
+  METLIBS_DEPRECATED(METLIBS_CONCAT(void trim(bool right=true, bool left=true, const miString=whitespaces)), "use 'miutil::split(...)'");
+  METLIBS_DEPRECATED(METLIBS_CONCAT(void rtrim(const miString ws=whitespaces)), "use 'miutil::trim(...)'") { trim(false, true, ws); }
+  METLIBS_DEPRECATED(METLIBS_CONCAT(void ltrim(const miString ws=whitespaces)), "use 'miutil::trim(...)'") { trim(true, false, ws); }
 
-  int countChar(const char c) const
-  { return std::count(begin(), end(), c); }
+  METLIBS_DEPRECATED(int countChar(const char c) const, "use miutil::count_char")
+  { return count_char(*this, c); }
 
-  void     remove( const char                      );
-  miString replace(const char, const char          ) const;
-  void     replace(const miString&, const miString&);
+  METLIBS_DEPRECATED(void remove(const char), "use 'miutil::remove(...)'");
+  METLIBS_DEPRECATED(METLIBS_CONCAT(miString replace(const char, const char          ) const), "use 'miutil::replace(...)'");
+  METLIBS_DEPRECATED(METLIBS_CONCAT(void     replace(const miString&, const miString&)), "use 'miutil::replace(...)'");
 
-  std::vector<miString> split(const miString =whitespaces, const bool =true) const;
-  std::vector<miString> split(const char, const bool =true) const;
+  METLIBS_DEPRECATED(METLIBS_CONCAT(std::vector<miString> split(const miString =whitespaces, const bool =true) const), "use 'miutil::split(...)'");
+  METLIBS_DEPRECATED(METLIBS_CONCAT(std::vector<miString> split(const char, const bool =true) const), "use 'miutil::split(...)'");
 
   // nos = max number of splits, 0 = split all elements
 
-  std::vector<miString> split(int nos, const miString =whitespaces, const bool =true) const;
-  std::vector<miString> split(int nos, const char, const bool =true) const;
+  METLIBS_DEPRECATED(METLIBS_CONCAT(std::vector<miString> split(int nos, const miString =whitespaces, const bool =true) const), "use 'miutil::split(...)'");
+  METLIBS_DEPRECATED(METLIBS_CONCAT(std::vector<miString> split(int nos, const char, const bool =true) const), "use 'miutil::split(...)'");
 
   // left/right border to protect strings inside the string () "" etc.
 
-  std::vector<miString> split(const char leftborder, const char rightborder,
-			      const miString =whitespaces, 
-			      const bool =true) const;
+  METLIBS_DEPRECATED(METLIBS_CONCAT(std::vector<miString> split(const char leftborder, const char rightborder,
+                                                const miString =whitespaces, 
+                                                const bool =true) const), "use 'miutil::split(...)'");
 
 
-  template< template< typename T, 
-  typename ALLOC = std::allocator<T>  
-  > class C, typename T>
-  void join(const C<T>& j , const miString delimiter=" ")
-  {
-    bool first=true;
-    std::ostringstream ost;
-    typename C<T>::const_iterator itr= j.begin();
-    for(;itr!=j.end();itr++){
-      ost << (first ? "" : delimiter ) << *itr;
-      first = false;
-    }
-    *this=ost.str();
-  }
+  METLIBS_DEPRECATED(METLIBS_CONCAT(template< template< typename T, typename ALLOC = std::allocator<T> > class C, typename T>
+                    inline void join(const C<T>& j, const miString delimiter=" ")), "use 'boost::algorithm::join(j, delimiter)'");
 
-  template< template< typename T, 
-  typename  COMPARE = std::less<T>,
-  typename ALLOC = std::allocator<T>  
-  > class C, typename T>
-  void join(const C<T>& j , const miString delimiter=" ")
-  {
-    bool first=true;
-    std::ostringstream ost;
-    typename C<T>::const_iterator itr= j.begin();
-    for(;itr!=j.end();itr++){
-      ost << (first ? "" : delimiter ) << *itr;
-      first = false;
-    }
-    *this=ost.str();
-  }
+  METLIBS_DEPRECATED(METLIBS_CONCAT(template< template< typename T, typename  COMPARE = std::less<T>, typename ALLOC = std::allocator<T> > class C, typename T>
+                    inline void join(const C<T>& j, const miString delimiter=" ")), "use 'boost::algorithm::join(j, delimiter)'");
 
-  miString upcase(  int start=0, int len=0) const;
-  miString downcase(int start=0, int len=0) const;
+  METLIBS_DEPRECATED(METLIBS_CONCAT(miString upcase(  int start=0, int len=0) const), "use a charset-aware upcase function");
+  METLIBS_DEPRECATED(METLIBS_CONCAT(miString downcase(int start=0, int len=0) const), "use a charset-aware downcase function");
 
-  bool     isNumber() const;
-  bool     isInt()    const;
+  METLIBS_DEPRECATED(bool isNumber() const, "use 'miutil::is_number(...)' directly");
+  METLIBS_DEPRECATED(bool isInt()    const, "use 'miutil::is_int(...)' directly");
 
-  int    toInt(    int    undefined=INT_MIN  ) const;
-  float  toFloat(  float  undefined=NAN      ) const;
-  double toDouble( double undefined=NAN      ) const;
-  long   toLong(   long   undefined=LONG_MIN ) const;
+  METLIBS_DEPRECATED(int    toInt(    int    undefined=INT_MIN  ) const, "use 'to_int(...)'");
+  METLIBS_DEPRECATED(float  toFloat(  float  undefined=NAN      ) const, "use 'to_double(...)'");
+  METLIBS_DEPRECATED(double toDouble( double undefined=NAN      ) const, "use 'to_double(...)'");
+  METLIBS_DEPRECATED(long   toLong(   long   undefined=LONG_MIN ) const, "use 'to_long(...)'");
 
 };
 
+template< template< typename T, typename ALLOC = std::allocator<T> > class C, typename T>
+inline void miString::join(const C<T>& j, const miString delimiter)
+{
+    bool first=true;
+    std::ostringstream ost;
+    typename C<T>::const_iterator itr= j.begin();
+    for(;itr!=j.end();itr++){
+      ost << (first ? "" : delimiter ) << *itr;
+      first = false;
+    }
+    *this=ost.str();
 }
+
+template< template< typename T, typename  COMPARE = std::less<T>, typename ALLOC = std::allocator<T> > class C, typename T>
+inline void miString::join(const C<T>& j, const miString delimiter)
+{
+    bool first=true;
+    std::ostringstream ost;
+    typename C<T>::const_iterator itr= j.begin();
+    for(;itr!=j.end();itr++){
+      ost << (first ? "" : delimiter ) << *itr;
+      first = false;
+    }
+    *this=ost.str();
+}
+
+} // namespace miutil
 
 #endif

@@ -31,67 +31,341 @@
 #include "config.h"
 #endif
 
+#define METLIBS_SUPPRESS_DEPRECATED
 #include "miString.h"
 
+#include <iomanip>
 
 using namespace puAlgo;
-using namespace std;
 
-
-
-const char miutil::miString::whitespaces[] =" \r\t\n";
-
-
-
-miutil::miString::miString(const char* s)
+namespace /* anonymous */ {
+bool empty_after_trim(std::string& text)
 {
-  *this = (s ? std::string(s) : std::string(""));
+    miutil::trim(text);
+    return text.empty();
 }
+} /* anonymous namespace */
 
+// ########################################################################
 
+namespace miutil {
 
-
-
-miutil::miString::miString(const int i, const int width, const char fill)
-: string()
+std::string from_number(const int i, const int width, const char fill)
 {
-  ostringstream ost;
-  if (width>0){
+    std::ostringstream ost;
+    if (width>0) {
 #if defined(__WIN32__) || defined(__WIN64__)
-    ost << setw(width) << setfill(static_cast<char>(fill)) << i;
+        ost << std::setw(width) << std::setfill(static_cast<char>(fill)) << i;
 #else
-    ost << setw(width) << setfill(fill) << i;
+        ost << std::setw(width) << std::setfill(fill) << i;
 #endif
-  } else
-    ost << i;
-
-  *this=ost.str();
+    } else {
+        ost << i;
+    }
+    return ost.str();
 }
 
-miutil::miString::miString(const double d, const int prec)
-: string()
+std::string from_number(const double d, const int prec)
 {
-  ostringstream ost;
-  if (prec!=-1)
-    ost.precision(prec);
-  ost << d;
-  *this=ost.str();
+    std::ostringstream ost;
+    if (prec!=-1)
+        ost.precision(prec);
+    ost << d;
+    return ost.str();
 }
 
-miutil::miString::miString(const float d, const int prec)
-: string()
+std::string from_number(const float d, const int prec)
 {
-  ostringstream ost;
-  if (prec!=-1)
-    ost.precision(prec);
-  ost << d;
-  *this=ost.str();
+    std::ostringstream ost;
+    if (prec!=-1)
+        ost.precision(prec);
+    ost << d;
+    return ost.str();
+}
+
+void trim(std::string& text, bool left, bool right, const char* wspace)
+{
+    if (text.empty())
+        return;
+    
+    const size_t len = text.length();
+    if (left) {
+        const size_t pos = text.find_first_not_of(wspace);
+        if (pos==std::string::npos) {
+            text.clear();
+            return;
+        }
+        if (pos>0 && pos<len)
+            text = text.substr(pos, len-pos);
+    }
+    if (right) {
+        const size_t pos = text.find_last_not_of(wspace);
+        if (pos==std::string::npos) {
+            text.clear();
+            return;
+        }
+        if (pos>=0 && pos<len-1)
+            text = text.substr(0, pos+1);
+    }
+}
+
+void trim_remove_empty(std::vector<std::string>& vec)
+{
+    std::vector<std::string> cleaned;
+    std::remove_copy_if(vec.begin(), vec.end(), std::back_inserter(cleaned), empty_after_trim);
+    vec = cleaned;
+}
+
+std::vector<std::string> split(const std::string& text, int nos, const char* separator_chars, const bool clean)
+{
+    std::vector<std::string> vec;
+    if (text.empty())
+        return vec;
+
+    int splitnumber = 0;
+    size_t len = text.length();
+    size_t start=(clean? text.find_first_not_of(separator_chars, 0): 0);
+    while (start>=0 && start<len) {
+        size_t stop = text.find_first_of(separator_chars, start);
+        if (stop<0 || stop>len)
+            stop=len;
+        vec.push_back(text.substr(start, stop-start));
+        
+        if(nos)
+            if(++splitnumber >= nos) {
+                stop++;
+                if(stop < len )
+                    vec.push_back(text.substr(stop,len-stop));
+                break;
+            }
+        start=(clean? text.find_first_not_of(separator_chars, stop+1): stop+1);
+    }
+    
+    if (clean)
+        trim_remove_empty(vec);
+
+    return vec;
+}
+
+std::vector<std::string> split_protected(const std::string& text,
+                                         const char lb, // left border
+                                         const char rb, // right border
+                                         const char* separator_chars,
+                                         const bool clean)
+{
+    std::vector<std::string> vec;
+    if (text.empty())
+        return vec;
+
+    const size_t len = text.length();
+    size_t start = (clean ? text.find_first_not_of(separator_chars, 0): 0);
+
+    while (start>=0 && start<len) {
+        size_t stop = text.find_first_of(separator_chars, start);
+        size_t tmp = start;
+        bool isok = false;
+        while (not isok) {
+            const size_t lbp = text.find(lb, tmp);
+            if (lbp >= 0 && lbp < stop) {
+                const size_t rbp = text.find(rb, lbp+1);
+                if (rbp == std::string::npos)
+                    return vec;
+                tmp = rbp+1;
+                if (rbp >= 0 && rbp > stop)
+                    stop = text.find_first_of(separator_chars, tmp);
+            } else {
+                isok = true;
+            }
+        }
+        if (stop<0 || stop>len)
+            stop=len;
+
+        vec.push_back(text.substr(start, stop-start));
+        start = (clean ? text.find_first_not_of(separator_chars, stop+1): stop+1);
+    }
+    
+    if (clean)
+        trim_remove_empty(vec);
+
+    return vec;
+}
+
+void remove(std::string& text, const char c)
+{
+    if (text.empty())
+        return;
+
+    for (size_t pos=text.find(c); pos!=std::string::npos; pos=text.find(c))
+        text.erase(pos,1);
 }
 
 
+void replace(std::string& text, const char thys, const char that)
+{
+    const size_t len = text.size();
+    for (size_t i=0; i<len; i++)
+        if (text[i]==thys)
+            text[i]=that;
+}
+
+void replace(std::string& text, const std::string& thys, const std::string& that)
+{
+    if (text.empty())
+        return;
+
+    const size_t len1=thys.length(), len2=that.length();
+    for (size_t pos=text.find(thys, pos); pos!=std::string::npos; pos=text.find(thys, pos)) {
+        text.replace(pos, len1, that);
+        pos += len2;
+    }
+}
+
+bool is_number(const std::string& text)
+{
+    if (text.empty())
+        return false;
+    
+    bool fl=false;
+    std::string::const_iterator i1, i2;
+    
+    for (i1=text.begin(); i1!=text.end() && isspace(*i1); i1++);
+    
+    if(i1==text.end())
+        return false;
+    
+    for (i2=text.end()-1; isspace(*i2); i2--);
+    
+    if(i2!=text.end())
+        i2++;
+    
+    if(*i1=='-' || *i1=='+'){
+        i1++;
+        
+        if(*i1=='e' || *i1=='E')
+            return false;
+        // only a - or + is not accepted
+        if(i1==i2)
+            return false;
+    }
+    
+    if(*i1=='e' || *i1=='E')
+        return false;
+    
+    for (; i1!=i2; i1++) {
+        if (!isdigit(*i1)) {
+            if (*i1=='.') {
+                if (fl)
+                    return false;
+                else
+                    fl=true;
+            } else
+                break;
+        }
+    }
+    
+    if(*i1=='e' || *i1=='E'){
+        i1++;
+        
+        // we dont accept a number ending in e or E.
+        if(i1==i2)
+            return false;
+    }
+    
+    if(*i1=='-' || *i1=='+'){
+        i1++;
+        
+        if(i1==i2)
+            return false;
+    }
+    
+    for (; i1!=i2; i1++)
+        if (!isdigit(*i1))
+            return false;
+    
+    return true;
+}
+
+bool is_int(const std::string& text)
+{
+    if (text.empty())
+        return false;
+    
+    std::string::const_iterator i1, i2;
+    
+    for (i1=text.begin(); i1!=text.end() && isspace(*i1); i1++);
+    
+    if(i1==text.end())
+        return false;
+    
+    for (i2=text.end()-1; isspace(*i2); i2--);
+    
+    if(i2!=text.end())
+        i2++;
+    
+    if(*i1=='-' || *i1=='+'){
+        i1++;
+        
+        // only a - or + is not accepted
+        if(i1==i2)
+            return false;
+    }
+    
+    for (; i1!=i2; i1++){
+        if (!isdigit(*i1)){
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+int to_int(const std::string& text, const int undefined)
+{
+    if (text.empty() or not is_number(text))
+        return undefined;
+    return std::atoi(text.c_str());
+}
+
+long to_long(const std::string& text, const long undefined)
+{
+    if (text.empty() or not is_number(text))
+        return undefined;
+    return std::atol(text.c_str());
+}
+
+double to_double(const std::string& text, const double undefined)
+{
+    if (text.empty() or not is_number(text))
+        return undefined;
+    return std::atof(text.c_str());
+}
+
+extern const char whitespaces[] =" \r\t\n";
+
+// ########################################################################
+
+miString::miString(const char* s)
+{
+  *this = std::string(s ? s : "");
+}
+
+miString::miString(const int i, const int width, const char fill)
+    : std::string(from_number(i, width, fill))
+{
+}
+
+miString::miString(const double d, const int prec)
+    : std::string(from_number(d, prec))
+{
+}
+
+miString::miString(const float f, const int prec)
+    : std::string(from_number(f, prec))
+{
+}
 
 int
-miutil::miString::toInt( const int undefined ) const
+miString::toInt( const int undefined ) const
 {
   if(empty())
     return undefined;
@@ -101,7 +375,7 @@ miutil::miString::toInt( const int undefined ) const
 }
 
 long
-miutil::miString::toLong( const long undefined ) const
+miString::toLong( const long undefined ) const
 {
   if(empty())
     return undefined;
@@ -111,7 +385,7 @@ miutil::miString::toLong( const long undefined ) const
 }
 
 float
-miutil::miString::toFloat( const float undefined ) const
+miString::toFloat( const float undefined ) const
 {
   if(empty())
     return undefined;
@@ -120,7 +394,7 @@ miutil::miString::toFloat( const float undefined ) const
   return atof(c_str());
 }
 
-double miutil::miString::toDouble( const double undefined ) const
+double miString::toDouble( const double undefined ) const
 {
   if(empty())
     return undefined;
@@ -130,140 +404,72 @@ double miutil::miString::toDouble( const double undefined ) const
 }
 
 void
-miutil::miString::trim(bool l, bool r, const miString wspace)
+miString::trim(bool l, bool r, const miString wspace)
 {
-  size_t len;
-  size_t pos;
-
-  if (empty())
-    return;
-
-  len=length();
-  if (l) {
-    pos=find_first_not_of(wspace);
-    if (pos==npos) {
-      erase();
-      return;
-    }
-    if (pos>0 && pos<len)
-      *this=substr(pos,len-pos);
-  }
-  if (r) {
-    pos=find_last_not_of(wspace);
-    if (pos==npos) {
-      erase();
-      return;
-    }
-    if (pos>=0 && pos<len-1)
-      *this=substr(0,pos+1);
-  }
+    miutil::trim(*this, l, r, wspace.c_str());
 }
 
 void
-miutil::miString::remove(const char c)
+miString::remove(const char c)
 {
-  if (empty())
-    return;
-
-  for (size_t pos=find(c); pos!=npos; pos=find(c))
-    erase(pos,1);
+    miutil::remove(*this, c);
 }
 
-miutil::miString
-miutil::miString::replace(const char c1, const char c2) const
+miString
+miString::replace(const char c1, const char c2) const
 {
-  miString s(*this);
-  if (!empty()) {
-    size_t len=length();
-    for (size_t i=0; i<len; i++)
-      if (s[i]==c1)
-        s[i]=c2;
-  }
-  return s;
+    miString r(*this);
+    miutil::replace(r, c1, c2);
+    return r;
 }
 
 void
-miutil::miString::replace(const miString& s1, const miString& s2)
+miString::replace(const miString& s1, const miString& s2)
 {
-  if (empty())
-    return;
-  size_t pos=0;
-  size_t len1=s1.length();
-  size_t len2=s2.length();
-  for (pos=find(s1,pos); pos!=npos; pos=find(s1,pos)) {
-    string::replace(pos,len1,s2);
-    pos+=len2;
-  }
+    miutil::replace(*this, s1, s2);
 }
 
-vector<miutil::miString>
-miutil::miString::split(const miString s, const bool clean) const
+std::vector<miString>
+miString::split(const miString s, const bool clean) const
 {
   return split(0,s,clean);
 }
 
-vector<miutil::miString>
-miutil::miString::split(const char c, const bool clean) const
+std::vector<miString>
+miString::split(const char c, const bool clean) const
 {
-  return split(0,c, clean);
+  return split(0, c, clean);
 }
 
 
-vector<miutil::miString>
-miutil::miString::split(int nos, const char c, const bool clean) const
+std::vector<miString>
+miString::split(int nos, const char c, const bool clean) const
 {
   char cs[2];
   cs[0]=c;
   cs[1]='\0';
   miString s(cs);
-  return split(nos,cs, clean);
+  return split(nos, cs, clean);
 }
 
-vector<miutil::miString>
-miutil::miString::split(int nos,const miString s, const bool clean) const
+std::vector<miString>
+miString::split(int nos, const miString sep, const bool clean) const
 {
-  int splitnumber = 0;
-  vector<miString> vec;
-  if (!empty()) {
-    size_t len=length();
-    size_t start=(clean? find_first_not_of(s,0): 0);
-    while (start>=0 && start<len) {
-      size_t stop=find_first_of(s,start);
-      if (stop<0 || stop>len)
-        stop=len;
-      vec.push_back(substr(start,stop-start));
-
-      if(nos)
-        if(++splitnumber >= nos) {
-          stop++;
-          if(stop < len )
-            vec.push_back(substr(stop,len-stop));
-          break;
-        }
-      start=(clean? find_first_not_of(s,stop+1): stop+1);
-    }
-
-    if (clean)
-      for (size_t i=0; i<vec.size(); i++) {
-        vec[i].trim();
-        if (!(vec[i].exists()))
-          vec.erase(vec.begin()+i--);
-      }
-  }
-  return vec;
+    const std::vector<std::string> s = miutil::split(*this, nos, sep.c_str(), clean);
+    return std::vector<miString>(s.begin(), s.end());
 }
 
 // split with protected entities (i.e. () "" etc...
 
 
 
-vector<miutil::miString>
-miutil::miString::split(const char lb, // left border
+std::vector<miString>
+miString::split(const char lb, // left border
     const char rb, // right border
     const miString s,
     const bool clean) const
 {
-  vector<miString> vec;
+  std::vector<miString> vec;
   if (!empty()) {
 
     size_t len=length();
@@ -342,71 +548,9 @@ miutil::miString::split(const char lb, // left border
  * \return true if this string is a number false otherwise.
  * \see atof(3), atoi(3), strtod(3), scanf(3), printf(3)
  */
-
-bool
-miutil::miString::isNumber() const
+bool miString::isNumber() const
 {
-  if (empty())
-    return false;
-
-  bool fl=false;
-  string::const_iterator i1, i2;
-
-  for (i1=begin(); i1!=end() && isspace(*i1); i1++);
-
-  if(i1==end())
-    return false;
-
-  for (i2=end()-1; isspace(*i2); i2--);
-
-  if(i2!=end())
-    i2++;
-
-  if(*i1=='-' || *i1=='+'){
-    i1++;
-
-    if(*i1=='e' || *i1=='E')
-      return false;
-    // only a - or + is not accepted
-    if(i1==i2)
-      return false;
-  }
-
-  if(*i1=='e' || *i1=='E')
-    return false;
-
-  for (; i1!=i2; i1++){
-    if (!isdigit(*i1)){
-      if (*i1=='.'){
-        if (fl)
-          return false;
-        else
-          fl=true;
-      }else
-        break;
-    }
-  }
-
-  if(*i1=='e' || *i1=='E'){
-    i1++;
-
-    // we dont accept a number ending in e or E.
-    if(i1==i2)
-      return false;
-  }
-
-  if(*i1=='-' || *i1=='+'){
-    i1++;
-
-    if(i1==i2)
-      return false;
-  }
-
-  for (; i1!=i2; i1++)
-    if (!isdigit(*i1))
-      return false;
-
-  return true;
+    return miutil::is_number(*this);
 }
 
 /**
@@ -419,44 +563,13 @@ miutil::miString::isNumber() const
  *
  * \return true if this string is an int false otherwise.
  */
-
-bool
-miutil::miString::isInt() const
+bool miString::isInt() const
 {
-  if (empty())
-    return false;
-
-  string::const_iterator i1, i2;
-
-  for (i1=begin(); i1!=end() && isspace(*i1); i1++);
-
-  if(i1==end())
-    return false;
-
-  for (i2=end()-1; isspace(*i2); i2--);
-
-  if(i2!=end())
-    i2++;
-
-  if(*i1=='-' || *i1=='+'){
-    i1++;
-
-    // only a - or + is not accepted
-    if(i1==i2)
-      return false;
-  }
-
-  for (; i1!=i2; i1++){
-    if (!isdigit(*i1)){
-      return false;
-    }
-  }
-
-  return true;
+    return miutil::is_int(*this);
 }
 
-miutil::miString
-miutil::miString::upcase(int start, int len) const
+miString
+miString::upcase(int start, int len) const
 {
   if( start < 0 ) start = 0;
   if( len   < 0 ) len   = 0;
@@ -477,8 +590,8 @@ miutil::miString::upcase(int start, int len) const
   return s;
 }
 
-miutil::miString
-miutil::miString::downcase(int starti, int leni) const
+miString
+miString::downcase(int starti, int leni) const
 {
   const size_t start = (starti > 0) ? starti : 0;
   const size_t len   = (leni   > 0) ? leni   : 0;
@@ -499,3 +612,6 @@ miutil::miString::downcase(int starti, int leni) const
   }
   return s;
 }
+
+} // namespace miutil
+
