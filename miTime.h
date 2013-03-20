@@ -54,10 +54,10 @@ public:
   miTime(const miDate& d, const miClock& c) :
     Date(d),
     Clock(c) {}
-  miTime(const time_t&);
-  miTime(const char* s)
+  explicit miTime(const time_t&);
+  explicit miTime(const char* s)
   { setTime(s); }
-  miTime(const std::string& s)
+  explicit miTime(const std::string& s)
   { setTime(s); }
 
   bool undef() const

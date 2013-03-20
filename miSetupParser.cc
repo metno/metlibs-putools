@@ -252,7 +252,7 @@ vector<miutil::miString> SetupParser::getFromFile(miutil::miString filename)
   vector<miutil::miString> result;
 
   // open filestream
-  ifstream file(filename.cStr());
+  ifstream file(filename.c_str());
   if (!file) {
     cerr << "SetupParser::readSetup. cannot open setupfile " << filename
     << endl;
@@ -295,7 +295,7 @@ bool SetupParser::parseFile(const miString& filename, // name of file
   int n, ln = 0, linenum;
 
   // open filestream
-  ifstream file(filename.cStr());
+  ifstream file(filename.c_str());
   if (!file) {
     cerr << "SetupParser::readSetup. cannot open setupfile " << filename
         << endl;

@@ -62,9 +62,9 @@ class miClock {
 public:
   miClock(int h =-1,int m =-1,int s =-1)  // (-1,-1,-1) is the undef state
   { setClock(h,m,s); }
-  miClock(const char* s)     // construct clock time from "hh:mm:ss"
+  explicit miClock(const char* s)     // construct clock time from "hh:mm:ss"
   { setClock(s); }
-  miClock(const std::string& s) // ---------------"-------------------
+  explicit miClock(const std::string& s) // ---------------"-------------------
   { setClock(s); }
 
   bool undef() const

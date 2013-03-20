@@ -88,9 +88,9 @@ public:
 
   miDate(int y =0, int m =0, int d =0)
     { setDate(y,m,d); }
-  miDate(const char* s)
+  explicit miDate(const char* s)
     { setDate(s); }
-  miDate(const std::string& s)
+  explicit miDate(const std::string& s)
     { setDate(s); }
 
   bool undef() const

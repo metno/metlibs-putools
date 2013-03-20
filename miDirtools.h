@@ -83,7 +83,7 @@ bool getFilenamesByRegexp(const miutil::miString& cat,
   std::vector<miutil::miString> allnames;
 #ifdef linux
   regex_t preg;
-  int res= regcomp(&preg, reg.cStr(), REG_EXTENDED | REG_NOSUB);
+  int res= regcomp(&preg, reg.c_str(), REG_EXTENDED | REG_NOSUB);
   if (res!=0 || !getFilenames(cat, allnames))
     return false;
 
@@ -92,20 +92,20 @@ bool getFilenamesByRegexp(const miutil::miString& cat,
   regmatch_t pmatch;
   for (unsigned int i=0; i<allnames.size(); i++){
     if (allnames[i]!="." && allnames[i]!=".."){
-      res= regexec(&preg, allnames[i].cStr(), nmatch, &pmatch, eflags);
+      res= regexec(&preg, allnames[i].c_str(), nmatch, &pmatch, eflags);
       if (res==0) names.push_back(allnames[i]);
     }
   }
   regfree(&preg);
 #else
-  char *creg= regcmp(reg.cStr(),(char*)0);
+  char *creg= regcmp(reg.c_str(),(char*)0);
   char *result;
   if (!creg || !getFilenames(cat, allnames))
     return false;
 
   for (int i=0; i<allnames.size(); i++){
     if (allnames[i]!="." && allnames[i]!=".."){
-      result= regex(creg, allnames[i].cStr());
+      result= regex(creg, allnames[i].c_str());
       if (result) names.push_back(allnames[i]);
     }
   }

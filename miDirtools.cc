@@ -44,12 +44,12 @@ miString  getRecent(const miString& cat)
   miString c = cat + "/";
   int l = 0;
 
-  if ((dirp= opendir(cat.cStr()))) {
+  if ((dirp= opendir(cat.c_str()))) {
       while ((dp= readdir(dirp))) {
       if (strlen(dp->d_name)>0) {
 	miString name = c + dp->d_name;
 	struct stat st;
-	stat(name.cStr(), &st);
+	stat(name.c_str(), &st);
 	if ( l < st.st_ctime ) {
 	  l = st.st_ctime;
 	  last = name;
@@ -66,7 +66,7 @@ bool getFilenames(const miString& cat,
 {
   DIR *dirp;
   dirent *dp;
-  if (!(dirp= opendir(cat.cStr())))
+  if (!(dirp= opendir(cat.c_str())))
     return false;
 
   while ((dp= readdir(dirp))) {
@@ -111,7 +111,7 @@ miString hardpath(const miString& fname){
 
   if ( fname == "")
     return cwd;
-  else if ( fname.cStr()[0] ==  '/')
+  else if ( fname.c_str()[0] ==  '/')
     return fname;
   cwd = "";
 
