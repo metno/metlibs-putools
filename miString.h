@@ -75,6 +75,9 @@ int to_int(const std::string& text, const int undefined=INT_MIN);
 long to_long(const std::string& text, const long undefined=LONG_MIN);
 double to_double(const std::string& text, const double undefined=NAN);
 
+std::string to_lower(const std::string& text);
+std::string to_upper(const std::string& text);
+
 // ########################################################################
 
 class miString : public std::string
@@ -100,8 +103,10 @@ public:
   { return !empty(); }
 
   METLIBS_DEPRECATED(METLIBS_CONCAT(void trim(bool right=true, bool left=true, const miString=whitespaces)), "use 'miutil::split(...)'");
-  METLIBS_DEPRECATED(METLIBS_CONCAT(void rtrim(const miString ws=whitespaces)), "use 'miutil::trim(...)'") { trim(false, true, ws); }
-  METLIBS_DEPRECATED(METLIBS_CONCAT(void ltrim(const miString ws=whitespaces)), "use 'miutil::trim(...)'") { trim(true, false, ws); }
+  METLIBS_DEPRECATED(METLIBS_CONCAT(void rtrim(const miString ws=whitespaces)), "use 'miutil::trim(...)'")
+        { miutil::trim(*this, false, true, ws.c_str()); }
+  METLIBS_DEPRECATED(METLIBS_CONCAT(inline void ltrim(const miString ws=whitespaces)), "use 'miutil::trim(...)'")
+        { miutil::trim(*this, true, false, ws.c_str()); }
 
   METLIBS_DEPRECATED(int countChar(const char c) const, "use miutil::count_char")
   { return count_char(*this, c); }
@@ -131,8 +136,8 @@ public:
   METLIBS_DEPRECATED(METLIBS_CONCAT(template< template< typename T, typename  COMPARE = std::less<T>, typename ALLOC = std::allocator<T> > class C, typename T>
                     inline void join(const C<T>& j, const miString delimiter=" ")), "use 'boost::algorithm::join(j, delimiter)'");
 
-  METLIBS_DEPRECATED(METLIBS_CONCAT(miString upcase(  int start=0, int len=0) const), "use a charset-aware upcase function");
-  METLIBS_DEPRECATED(METLIBS_CONCAT(miString downcase(int start=0, int len=0) const), "use a charset-aware downcase function");
+  METLIBS_DEPRECATED(METLIBS_CONCAT(miString upcase(  int start=0, int len=0) const), "use miutil::to_upper or a charset-aware upcase function");
+  METLIBS_DEPRECATED(METLIBS_CONCAT(miString downcase(int start=0, int len=0) const), "use miutil::to_lower or a charset-aware downcase function");
 
   METLIBS_DEPRECATED(bool isNumber() const, "use 'miutil::is_number(...)' directly");
   METLIBS_DEPRECATED(bool isInt()    const, "use 'miutil::is_int(...)' directly");

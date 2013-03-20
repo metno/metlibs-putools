@@ -41,8 +41,8 @@
 #ifndef __dnmi_miClock__
 #define __dnmi_miClock__
 
-#include <iostream>
-#include "miString.h"
+#include <iosfwd>
+#include <string>
 
 namespace miutil{
 
@@ -64,17 +64,17 @@ public:
   { setClock(h,m,s); }
   miClock(const char* s)     // construct clock time from "hh:mm:ss"
   { setClock(s); }
-  miClock(const miString& s) // ---------------"-------------------
+  miClock(const std::string& s) // ---------------"-------------------
   { setClock(s); }
 
   bool undef() const
   { return (accSec==-3661); }
 
   static bool isValid(int, int, int);
-  static bool isValid(const miString&);
+  static bool isValid(const std::string&);
 
   void setClock(int, int, int);
-  void setClock(const miString&);
+  void setClock(const std::string&);
 
   int hour() const
   { return Hour; }
@@ -83,8 +83,8 @@ public:
   int sec() const
   { return Sec; }
 
-  miString isoClock() const;
-  miString isoClock(bool withmin, bool withsec) const;
+  std::string isoClock() const;
+  std::string isoClock(bool withmin, bool withsec) const;
 
   friend int operator==(const miClock& lhs, const miClock& rhs)
   { return (lhs.accSec==rhs.accSec); }
@@ -109,7 +109,7 @@ public:
 
   static miClock oclock();
 
-  miString format(miString) const;
+  std::string format(const std::string&) const;
 
   friend std::ostream& operator<<(std::ostream& output, const miClock& c)
   { return output << c.isoClock(); }

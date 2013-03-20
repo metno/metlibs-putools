@@ -35,18 +35,20 @@
 #include "config.h"
 #endif
 
-#include <stdlib.h>
-#include <stdio.h>
 #include "miTime.h"
+#include "miString.h"
+
+#include <cstdio>
+#include <iostream>
 
 using namespace std;
 using namespace miutil;
 
-static inline void warning(const miutil::miString& s)
+static inline void warning(const std::string& s)
 {
   std::cerr << "Warning: miTime::" << s << std::endl;
 }
-static inline void invalid(const miutil::miString& s)
+static inline void invalid(const std::string& s)
 {
   std::cerr << "Warning: miTime::setTime: (" << s
 	    << ") is not a valid time"       << std::endl;
@@ -68,19 +70,19 @@ miutil::miTime::miTime(const time_t& t)
 // make time from "yyyy-mm-dd hh:mm:ss", "yyyy-mm-dd"
 // from yyyymmddhhmmss, yyyymmddhhmm, yyyymmddhh or yyyymmdd
 void
-miutil::miTime::setTime(const miutil::miString& st)
+miutil::miTime::setTime(const std::string& st)
 {
-  vector<miString> t;
-  miString str=st;
-  if(str.contains("Z"))
-    str.replace("Z","");
+  vector<std::string> t;
+  std::string str=st;
+  if(miutil::contains(str, "Z"))
+    miutil::replace(str, "Z", "");
 
-  str.trim();
+  miutil::trim(str);
 
-  if(str.contains("T"))
-    t=str.split("T");
+  if(miutil::contains(str, "T"))
+    t=miutil::split(str, 0, "T");
   else
-    t=str.split();
+    t=miutil::split(str);
 
   if (t.size()>=2) {
     Date.setDate(t[0]);
@@ -94,29 +96,29 @@ miutil::miTime::setTime(const miutil::miString& st)
   int s   = 0;
   int len = str.length();
 
-  if(str.contains("-")){
+  if(miutil::contains(str, "-")){
     Date.setDate(str);
     Clock.setClock(h,m,s);
     return;
   }
 
   if(len==14){
-    if(sscanf(str.cStr(), "%4d%2d%2d%2d%2d%2d", &yy,&mm,&dd, &h,&m,&s)!=6){
+    if(sscanf(str.c_str(), "%4d%2d%2d%2d%2d%2d", &yy,&mm,&dd, &h,&m,&s)!=6){
       invalid(str);
       return;
     }
   }else if(len==12){
-    if(sscanf(str.cStr(), "%4d%2d%2d%2d%2d"   , &yy,&mm,&dd, &h,&m)!=5){
+    if(sscanf(str.c_str(), "%4d%2d%2d%2d%2d"   , &yy,&mm,&dd, &h,&m)!=5){
       invalid(str);
       return;
     }
   }else if(len==10){
-    if(sscanf(str.cStr(), "%4d%2d%2d%2d"      , &yy,&mm,&dd, &h)!=4){
+    if(sscanf(str.c_str(), "%4d%2d%2d%2d"      , &yy,&mm,&dd, &h)!=4){
       invalid(str);
       return;
     }
   }else if(len==8){
-    if(sscanf(str.cStr(), "%4d%2d%2d"         , &yy,&mm,&dd)!=3){
+    if(sscanf(str.c_str(), "%4d%2d%2d"         , &yy,&mm,&dd)!=3){
       invalid(str);
       return;
     }
@@ -139,13 +141,13 @@ miutil::miTime::isValid(int y, int m, int d, int h, int min, int s)
 }
 
 bool
-miutil::miTime::isValid(const miString& st)
+miutil::miTime::isValid(const std::string& st)
 {
-  vector<miString> t=st.split();
+  vector<std::string> t=miutil::split(st);
   if ( t.size() < 2 ) {
-    t=st.split("T");
+    t=miutil::split(st, 0, "T");
     if ( t.size() < 2  ) {
-      t=st.split("t");
+      t=miutil::split(st, 0, "t");
     }
   }
 
@@ -160,25 +162,25 @@ miutil::miTime::isValid(const miString& st)
   int m  = 0;
   int s  = 0;
 
-  miString str=st;
+  std::string str=st;
 
-  str.trim();
+  miutil::trim(str);
   int len = str.length();
 
-  if(str.contains("-"))
+  if(miutil::contains(str, "-"))
     return miutil::miClock::isValid(str);
 
   if(len==14){
-    if(sscanf(str.cStr(), "%4d%2d%2d%2d%2d%2d", &yy,&mm,&dd, &h,&m,&s)!=6)
+    if(sscanf(str.c_str(), "%4d%2d%2d%2d%2d%2d", &yy,&mm,&dd, &h,&m,&s)!=6)
       return false;
   }else if(len==12){
-    if(sscanf(str.cStr(), "%4d%2d%2d%2d%2d"   , &yy,&mm,&dd, &h,&m)!=5)
+    if(sscanf(str.c_str(), "%4d%2d%2d%2d%2d"   , &yy,&mm,&dd, &h,&m)!=5)
       return false;
   }else if(len==10){
-    if(sscanf(str.cStr(), "%4d%2d%2d%2d"      , &yy,&mm,&dd, &h)!=4)
+    if(sscanf(str.c_str(), "%4d%2d%2d%2d"      , &yy,&mm,&dd, &h)!=4)
       return false;
   }else if(len==8) {
-    if(sscanf(str.cStr(), "%4d%2d%2d"         , &yy,&mm,&dd)!=3)
+    if(sscanf(str.c_str(), "%4d%2d%2d"         , &yy,&mm,&dd)!=3)
       return false;
   }else
     return false;
@@ -186,22 +188,22 @@ miutil::miTime::isValid(const miString& st)
   return isValid(yy,mm,dd,h,m,s);
 }
 
-miutil::miString
-miutil::miTime::isoTime(miString delim) const
+std::string
+miutil::miTime::isoTime(const std::string& delim) const
 {
   if (undef()){
     warning("isoTime: Object is not initialised.");
-    return miutil::miString("0000-00-00") + delim + miutil::miString("--:--:--");
+    return std::string("0000-00-00") + delim + std::string("--:--:--");
   }
   return Date.isoDate() + delim + Clock.isoClock();
 }
 
-miutil::miString
+std::string
 miutil::miTime::isoTime(bool withmin, bool withsec) const
 {
   if (undef()){
     warning("isoTime: Object is not initialised.");
-    return miutil::miString("0000-00-00 ") + miutil::miString("--:--:--");
+    return std::string("0000-00-00 ") + std::string("--:--:--");
   }
   return Date.isoDate() + " " + Clock.isoClock(withmin, withsec);
 }
@@ -356,7 +358,7 @@ miutil::miTime::dst() const
 }
 
 int
-miutil::miTime::timezone(miString stz)
+miutil::miTime::timezone(const std::string& stz)
 {
 
   if(stz=="UTC"   ) return  0;
@@ -388,69 +390,70 @@ miutil::miTime::timezone(miString stz)
   return 0;
 }
 
-miutil::miString
-miutil::miTime::format(miString newTime,const miDate::lang l) const
+std::string
+miutil::miTime::format(const std::string& newTime, const miDate::lang l) const
 {
   return format(newTime, (l== miDate::Norwegian ? "no" : "en" ) );
 }
 
 
-miutil::miString
-miutil::miTime::format(miString newTime, miString l) const
+std::string
+miutil::miTime::format(const std::string& nt, const std::string& lang) const
 {
-  newTime.replace("%c","%a %b %d %X GMT %Y");
+    std::string newTime(nt), l(lang);
+  miutil::replace(newTime, "%c","%a %b %d %X GMT %Y");
 
   miTime ftim(Date,Clock);
 
   int k;
-  vector<miString> token,remove;
+  vector<std::string> token,remove;
 
-  if(newTime.contains("$")) {
-    token = newTime.split();
+  if(miutil::contains(newTime, "$")) {
+    token = miutil::split(newTime);
 
     for(unsigned int i=0;i<token.size();i++) {
-      if(token[i].contains("$")) {
+      if(miutil::contains(token[i], "$")) {
 
         if((k=token[i].find("$tz="))!=string::npos) {
 	  token[i]= token[i].substr(k+4);
-	  newTime.replace("%tz", token[i]);
+	  miutil::replace(newTime, "%tz", token[i]);
 	  ftim.addHour( ftim.timezone(token[i]) );
 	  remove.push_back("$tz=" + token[i]);
         }
-        if(token[i].contains("$dst")){
+        if(miutil::contains(token[i], "$dst")){
 	  ftim.addHour(ftim.dst());
           remove.push_back("$dst");
         }
-        if(token[i].contains("$time")){
-	  newTime.replace(token[i],"%Y-%m-%d %H:%M:%S");
+        if(miutil::contains(token[i], "$time")){
+	  miutil::replace(newTime, token[i],"%Y-%m-%d %H:%M:%S");
         }
-        if(token[i].contains("$date")){
-	  newTime.replace(token[i],"%Y-%m-%d");
+        if(miutil::contains(token[i], "$date")){
+	  miutil::replace(newTime, token[i],"%Y-%m-%d");
         }
-        if(token[i].contains("$clock")){
-	  newTime.replace(token[i],"%H:%M:%S");
+        if(miutil::contains(token[i], "$clock")){
+	  miutil::replace(newTime, token[i],"%H:%M:%S");
         }
-        if(token[i].contains("$autoclock")){
+        if(miutil::contains(token[i], "$autoclock")){
           if(Clock.sec()!=0)
-	    newTime.replace(token[i],"%H:%M:%S");
+	    miutil::replace(newTime, token[i],"%H:%M:%S");
           else if(Clock.min()!=0)
-	    newTime.replace(token[i],"%H:%M");
+	    miutil::replace(newTime, token[i],"%H:%M");
 	  else
-	    newTime.replace(token[i],"%H");
+	    miutil::replace(newTime, token[i],"%H");
         }
-        if(token[i].contains("$miniclock")){
+        if(miutil::contains(token[i], "$miniclock")){
           if(Clock.min()!=0)
-	    newTime.replace(token[i],"%H:%M");
+	    miutil::replace(newTime, token[i],"%H:%M");
 	  else
-	    newTime.replace(token[i],"%H");
+	    miutil::replace(newTime, token[i],"%H");
         }
         if((k=token[i].find("$lg="))!=string::npos) {
 	  token[i]= token[i].substr(k+4);
-	  if(token[i].contains("nor"))
+	  if(miutil::contains(token[i], "nor"))
 	    l = "no";
-	  else if(token[i].contains("eng"))
+	  else if(miutil::contains(token[i], "eng"))
 	    l = "en";
-	  else if(token[i].contains("swe"))
+	  else if(miutil::contains(token[i], "swe"))
 	    l = "se";
 	  else
 	    l=token[i];
@@ -459,14 +462,14 @@ miutil::miTime::format(miString newTime, miString l) const
 
         if (remove.size()) {
           for (unsigned int n=0; n<remove.size(); n++) {
-	    miString rm1= " " + remove[n];
-	    miString rm2= remove[n] + " ";
-	    if (newTime.contains(rm1))
-	      newTime.replace(rm1, "");
-	    else if (newTime.contains(rm2))
-	      newTime.replace(rm2, "");
+	    std::string rm1= " " + remove[n];
+	    std::string rm2= remove[n] + " ";
+	    if (miutil::contains(newTime, rm1))
+	      miutil::replace(newTime, rm1, "");
+	    else if (miutil::contains(newTime, rm2))
+	      miutil::replace(newTime, rm2, "");
 	    else
-	      newTime.replace(remove[n], "");
+	      miutil::replace(newTime, remove[n], "");
 	  }
 	  remove.clear();
         }
@@ -474,13 +477,13 @@ miutil::miTime::format(miString newTime, miString l) const
     }
   }
 
-  if (newTime.contains("$midnight24")){
+  if (miutil::contains(newTime, "$midnight24")){
     if (ftim.clock().isoClock() == "00:00:00"){
       ftim.addDay(-1);
     } else {
-      newTime.replace(" $midnight24", "");
-      newTime.replace("$midnight24 ", "");
-      newTime.replace("$midnight24", "");
+      miutil::replace(newTime, " $midnight24", "");
+      miutil::replace(newTime, "$midnight24 ", "");
+      miutil::replace(newTime, "$midnight24", "");
     }
   }
 

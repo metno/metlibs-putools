@@ -50,10 +50,9 @@
 #ifndef __dnmi_miDate__
 #define __dnmi_miDate__
 
-#include <iostream>
-#include <iomanip>
+#include <iosfwd>
 
-#include "miString.h"
+#include <string>
 
 namespace miutil{
 
@@ -69,7 +68,7 @@ private:
   int intWeekday() const
     { return (((jdn+1)%7)+7)%7; }
 
-  static miString defaultLanguage;
+  static const char* defaultLanguage;
 
 public:
   enum lang {
@@ -91,19 +90,19 @@ public:
     { setDate(y,m,d); }
   miDate(const char* s)
     { setDate(s); }
-  miDate(const miString& s)
+  miDate(const std::string& s)
     { setDate(s); }
 
   bool undef() const
     { return jdn==0; }
 
   void setDate(int, int, int);
-  void setDate(const miString&);
+  void setDate(const std::string&);
 
 
   //IS THIS THREADSAFE
   static bool isValid(int, int, int);
-  static bool isValid(const miString&);
+  static bool isValid(const std::string&);
 
   int year() const
     { return Year; }
@@ -152,24 +151,24 @@ public:
 
   void addDay(const long =1);
 
-  miString isoDate() const;
+  std::string isoDate() const;
 
   // old versions kept for compability
-  miString weekday(        const lang ) const;
-  miString shortweekday(   const lang ) const;
-  miString monthname(      const lang ) const;
-  miString shortmonthname( const lang ) const;
-  miString format(miString,const lang ) const;
+  std::string weekday(                   const lang) const;
+  std::string shortweekday(              const lang) const;
+  std::string monthname(                 const lang) const;
+  std::string shortmonthname(            const lang) const;
+  std::string format(const std::string&, const lang) const;
 
   // new versions send in string lang as en/no/de etc.
-  miString weekday(         miString="" ) const;
-  miString shortweekday(    miString="" ) const;
-  miString monthname(       miString="" ) const;
-  miString shortmonthname(  miString="" ) const;
-  miString format(miString, miString="" ) const;
+  std::string weekday(         const std::string& lang="") const;
+  std::string shortweekday(    const std::string& lang="") const;
+  std::string monthname(       const std::string& lang="") const;
+  std::string shortmonthname(  const std::string& lang="") const;
+  std::string format(const std::string&, const std::string& lang="") const;
 
 
-  void setDefaultLanguage(const miString l=""){ defaultLanguage=l; }
+  void setDefaultLanguage(const char* l=""){ defaultLanguage=l; }
 
   static miDate today(); // return system date
 

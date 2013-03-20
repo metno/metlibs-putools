@@ -34,6 +34,7 @@
 #define METLIBS_SUPPRESS_DEPRECATED
 #include "miString.h"
 
+#include <boost/algorithm/string/case_conv.hpp>
 #include <iomanip>
 
 using namespace puAlgo;
@@ -340,6 +341,20 @@ double to_double(const std::string& text, const double undefined)
     return std::atof(text.c_str());
 }
 
+std::string to_lower(const std::string& text)
+{
+    std::string t(text);
+    boost::algorithm::to_lower(t);
+    return t;
+}
+
+std::string to_upper(const std::string& text)
+{
+    std::string t(text);
+    boost::algorithm::to_upper(t);
+    return t;
+}
+
 extern const char whitespaces[] =" \r\t\n";
 
 // ########################################################################
@@ -432,7 +447,7 @@ miString::replace(const miString& s1, const miString& s2)
 std::vector<miString>
 miString::split(const miString s, const bool clean) const
 {
-  return split(0,s,clean);
+  return split(0, s, clean);
 }
 
 std::vector<miString>

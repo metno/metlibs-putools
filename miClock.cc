@@ -38,6 +38,9 @@
 #include "config.h"
 #endif
 
+#include "miClock.h"
+#include "miString.h"
+
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -46,12 +49,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "miClock.h"
-
 using namespace std;
 using namespace miutil;
 
-static inline void warning(const miutil::miString& s)
+static inline void warning(const std::string& s)
 {
   std::cerr << "Warning: miClock::" << s << std::endl;
 }
@@ -73,8 +74,8 @@ miutil::miClock::setClock(int h, int m, int s)
 {
   // if any of the arguments have imposible values, prepare for undef
   if (!isValid(h,m,s)){
-    miString w="setClock: Illegal clock HH:MM:SS ("+
-      miString(h)+":"+miString(m)+":"+miString(s)+")";
+    std::string w="setClock: Illegal clock HH:MM:SS ("
+        + miutil::from_number(h)+":"+miutil::from_number(m)+":"+miutil::from_number(s)+")";
     warning(w);
     Hour   = -1;
     Min    = -1;
@@ -91,14 +92,14 @@ miutil::miClock::setClock(int h, int m, int s)
 
 // converts "hh:mm:ss" to miClock
 void
-miutil::miClock::setClock(const miString& str)
+miutil::miClock::setClock(const std::string& str)
 {
   int h=-1, m=-1, s=-1;
 
   if (!isValid(str))
     warning("setClock: Error in format. Should be `HH:MM:SS' (" + str + ")");
   else
-    sscanf(str.cStr(), "%2d:%2d:%2d",&h, &m, &s);
+    sscanf(str.c_str(), "%2d:%2d:%2d",&h, &m, &s);
   setClock(h,m,s);
 }
 
@@ -112,16 +113,16 @@ miutil::miClock::isValid(int h, int m, int s)
 }
 
 bool
-miutil::miClock::isValid(const miString& str)
+miutil::miClock::isValid(const std::string& str)
 {
   int h,m,s;
-  if(sscanf(str.cStr(), "%2d:%2d:%2d",&h, &m, &s)!=3)
+  if(sscanf(str.c_str(), "%2d:%2d:%2d",&h, &m, &s)!=3)
     return false;
   return isValid(h,m,s);
 }
 
 // Format ISO "hh:mm:ss" string
-miutil::miString
+std::string
 miutil::miClock::isoClock() const
 {
   ostringstream ost;
@@ -139,7 +140,7 @@ miutil::miClock::isoClock() const
 }
 
 // Format 'almost' ISO "hh[:mm:ss]" string
-miutil::miString
+std::string
 miutil::miClock::isoClock(bool withmin, bool withsec) const
 {
   ostringstream ost;
@@ -236,8 +237,8 @@ miutil::miClock::oclock()
   return miClock(curTime->tm_hour, curTime->tm_min, curTime->tm_sec);
 }
 
-miutil::miString
-miutil::miClock::format(miString newClock) const
+std::string
+miutil::miClock::format(const std::string& newClock) const
 {
   if(undef())
     return newClock;
@@ -247,33 +248,34 @@ miutil::miClock::format(miString newClock) const
 
   int tH =  ( Hour ? Hour : 24 ) - (pm ? 12 : 0);
 
+  std::string c(newClock);
 
-  newClock.replace("%X","%H:%M:%S");         /// %X 24-hour (hh:mm:ss)
-  newClock.replace("%T","%H:%M:%S");         /// %X 24-hour (hh:mm:ss)
-  newClock.replace("%r","%I:%M:%S %p");      /// %r 12-hour (hh:mm:ss [AP]M)
+  miutil::replace(c, "%X","%H:%M:%S");         /// %X 24-hour (hh:mm:ss)
+  miutil::replace(c, "%T","%H:%M:%S");         /// %X 24-hour (hh:mm:ss)
+  miutil::replace(c, "%r","%I:%M:%S %p");      /// %r 12-hour (hh:mm:ss [AP]M)
 
-  if ( newClock.contains("$midnight24") ){   /// show midnight as 24:00:00
-    newClock.replace("%H","24");
-    newClock.replace("%k","24");
-    newClock.replace(" $midnight24","");
-    newClock.replace("$midnight24 ","");
-    newClock.replace("$midnight24","");
+  if (miutil::contains(c, "$midnight24")){   /// show midnight as 24:00:00
+    miutil::replace(c, "%H","24");
+    miutil::replace(c, "%k","24");
+    miutil::replace(c, " $midnight24","");
+    miutil::replace(c, "$midnight24 ","");
+    miutil::replace(c, "$midnight24","");
   }
 
-  newClock.replace("%H",miString(Hour,2));   /// %H hour (00..23)
-  newClock.replace("%I",miString(tH,2));     /// %I hour (01..12)
-  newClock.replace("%k",miString(Hour));     /// %k hour ( 0..23)
-  newClock.replace("%l",miString(tH));       /// %l hour ( 1..12)
-  newClock.replace("%M",miString(Min,2));    /// %M min  (00..59)
+  miutil::replace(c, "%H", miutil::from_number(Hour,2));   /// %H hour (00..23)
+  miutil::replace(c, "%I", miutil::from_number(tH,2));     /// %I hour (01..12)
+  miutil::replace(c, "%k", miutil::from_number(Hour));     /// %k hour ( 0..23)
+  miutil::replace(c, "%l", miutil::from_number(tH));       /// %l hour ( 1..12)
+  miutil::replace(c, "%M", miutil::from_number(Min,2));    /// %M min  (00..59)
 
-  if(newClock.contains("$30M") ){
-    newClock.replace("$30M", (Min < 30 ? "00" : "30" )); /// SIGMET SPECIAL
+  if(miutil::contains(c, "$30M") ){
+    miutil::replace(c, "$30M", (Min < 30 ? "00" : "30" )); /// SIGMET SPECIAL
   }
 
-  newClock.replace("%p",(pm ? "PM" : "AM")); /// %p locale's AM or PM
-  newClock.replace("%S",miString(Sec,2));    /// %S second (00..60)
+  miutil::replace(c, "%p",(pm ? "PM" : "AM")); /// %p locale's AM or PM
+  miutil::replace(c, "%S", miutil::from_number(Sec,2));    /// %S second (00..60)
 
-  return newClock;
+  return c;
 }
 
 

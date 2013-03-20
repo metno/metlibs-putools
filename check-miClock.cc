@@ -6,12 +6,12 @@
 #include "config.h"
 #endif
 
-#define METLIBS_SUPPRESS_DEPRECATED
-#include "miClock.h"
-#include "miString.h"
+#include "miTime.h"
 #include <gtest/gtest.h>
 
 using miutil::miClock;
+using miutil::miDate;
+using miutil::miTime;
 
 TEST(MiClockTest, ctor)
 {
@@ -47,4 +47,27 @@ TEST(MiClockTest, add)
     { miClock add(23, 59,  7); add.addHour(0); add.addMin(1); add.addSec(0); EXPECT_EQ("00:00:07", add.isoClock()); }
     { miClock add(22,  7,  7); add.addHour(1); add.addMin(0); add.addSec(0); EXPECT_EQ("23:07:07", add.isoClock()); }
     { miClock add(23,  7,  7); add.addHour(1); add.addMin(0); add.addSec(0); EXPECT_EQ("00:07:07", add.isoClock()); }
+}
+
+TEST(MiTimeTest, ctor)
+{
+    {
+        miTime t(2013, 1, 1, 22, 58, 58);
+        EXPECT_EQ("2013-01-01 22:58:58", t.isoTime());
+    }
+    {
+        miTime t(miDate(2013, 1, 1), miClock(22, 58, 59));
+        EXPECT_EQ("2013-01-01 22:58:59", t.isoTime());
+    }
+    {
+        miTime t("2013-01-01 22:58:59");
+        EXPECT_EQ("2013-01-01 22:58:59", t.isoTime());
+    }
+
+    {
+        miTime t;
+        EXPECT_TRUE(t.undef());
+        t.setTime("2013-01-01 22:58:59");
+        EXPECT_EQ("2013-01-01 22:58:59", t.isoTime());
+    }
 }

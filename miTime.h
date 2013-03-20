@@ -35,9 +35,8 @@
 #define __dnmi_miTime__
 
 #include <time.h>
-#include <iostream>
+#include <iosfwd>
 
-#include "miString.h"
 #include "miDate.h"
 #include "miClock.h"
 
@@ -58,7 +57,7 @@ public:
   miTime(const time_t&);
   miTime(const char* s)
   { setTime(s); }
-  miTime(const miString& s)
+  miTime(const std::string& s)
   { setTime(s); }
 
   bool undef() const
@@ -68,10 +67,10 @@ public:
   { Date.setDate(y,m,d); Clock.setClock(h,min,s); }
   void setTime(const miDate& d, const miClock& c)
   { Date=d; Clock=c; }
-  void setTime(const miString&);
+  void setTime(const std::string&);
 
   static bool isValid(int, int, int, int, int =0, int =0);
-  static bool isValid(const miString&);
+  static bool isValid(const std::string&);
 
   miDate date() const
   { return Date; }
@@ -99,14 +98,14 @@ public:
   int weekNo() const
   { return Date.weekNo(); }
 
-  miString isoTime(miString delim=" ") const; // usefull delim="T"
-  miString isoDate() const
+  std::string isoTime(const std::string& delim=" ") const; // useful delim="T"
+  std::string isoDate() const
   { return Date.isoDate(); }
-  miString isoClock() const
+  std::string isoClock() const
   { return Clock.isoClock(); }
 
-  miString isoTime(bool withmin,  bool withsec) const;
-  miString isoClock(bool withmin, bool withsec) const
+  std::string isoTime(bool withmin,  bool withsec) const;
+  std::string isoClock(bool withmin, bool withsec) const
   { return Clock.isoClock(withmin, withsec); }
 
 
@@ -146,17 +145,17 @@ public:
   { return output << t.isoTime(); }
 
   int dst()     const;    // daylight saving time (added by JS/2001)
-  int timezone(miString); // hours from UTC
+  int timezone(const std::string&); // hours from UTC
 
   /// return formatted output (see man date)
 
   // old version kept for compability
-  miString format(miString,const miDate::lang) const;
+  std::string format(const std::string&, const miDate::lang) const;
 
   // new version - use no/en/de etc for language
-  miString format(miString, miString="") const;
+  std::string format(const std::string&, const std::string& lang="") const;
 
-  void setDefaultLanguage(const miString l) { Date.setDefaultLanguage(l);}
+  void setDefaultLanguage(const char* l) { Date.setDefaultLanguage(l);}
 
 };
 
