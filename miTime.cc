@@ -400,7 +400,7 @@ miutil::miTime::format(const std::string& newTime, const miDate::lang l) const
 std::string
 miutil::miTime::format(const std::string& nt, const std::string& lang) const
 {
-    std::string newTime(nt), l(lang);
+  std::string newTime(nt), l(lang);
   miutil::replace(newTime, "%c","%a %b %d %X GMT %Y");
 
   miTime ftim(Date,Clock);

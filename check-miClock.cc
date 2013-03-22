@@ -71,3 +71,19 @@ TEST(MiTimeTest, ctor)
         EXPECT_EQ("2013-01-01 22:58:59", t.isoTime());
     }
 }
+
+TEST(MiTimeTest, format)
+{
+    {
+        const miTime t(2013, 1, 1, 22, 58, 58);
+        EXPECT_EQ("2013-01-01 22:58:58", t.format("$time"));
+    }
+}
+
+TEST(MiDateTest, format)
+{
+    {
+        const miDate d(2013, 1, 1);
+        EXPECT_EQ("2013-01-01", d.format("%Y-%m-%d"));
+    }
+}

@@ -50,7 +50,7 @@ using namespace std;
 using namespace miutil;
 
 
-const char*  miutil::miDate::defaultLanguage;
+const char* miutil::miDate::defaultLanguage = "";
 
 static inline void warning(const std::string& s)
 {
