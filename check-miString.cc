@@ -189,3 +189,11 @@ TEST(miStringTest, to_double)
 
     EXPECT_EQ(12.3, miutil::to_double("1.23E1"));
 }
+
+TEST(miStringTest, to_upper_lower)
+{
+    EXPECT_EQ(" RIKTIG", miutil::to_upper(" riKTiG"));
+    EXPECT_EQ("$&/(HI)\"", miutil::to_upper("$&/(hi)\""));
+
+    EXPECT_EQ("hello $&/()\"", miutil::to_lower("hELLo $&/()\""));
+}

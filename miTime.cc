@@ -80,7 +80,7 @@ miutil::miTime::setTime(const std::string& st)
   miutil::trim(str);
 
   if(miutil::contains(str, "T"))
-    t=miutil::split(str, 0, "T");
+    t=miutil::split(str, "T");
   else
     t=miutil::split(str);
 
@@ -145,9 +145,9 @@ miutil::miTime::isValid(const std::string& st)
 {
   vector<std::string> t=miutil::split(st);
   if ( t.size() < 2 ) {
-    t=miutil::split(st, 0, "T");
+    t=miutil::split(st, "T");
     if ( t.size() < 2  ) {
-      t=miutil::split(st, 0, "t");
+      t=miutil::split(st, "t");
     }
   }
 
