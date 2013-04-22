@@ -3,33 +3,35 @@
 #endif
 
 #include "miSetupParser.h"
+#include "miString.h"
+
+#include <curl/curl.h>
+
 #include <iostream>
 #include <fstream>
 #include <list>
-#include <stdlib.h>
-
-#include <curl/curl.h>
+#include <cstdlib>
 
 using namespace std;
 using namespace miutil;
 
 // static members
-map<miString, miString> miutil::SetupParser::substitutions;
-vector<miString> miutil::SetupParser::sfilename;
-map<miString, miutil::SetupSection> miutil::SetupParser::sectionm;
-map<miString, miString> miutil::SetupParser::user_variables;
+map<std::string, std::string> miutil::SetupParser::substitutions;
+vector<std::string> miutil::SetupParser::sfilename;
+map<std::string, miutil::SetupSection> miutil::SetupParser::sectionm;
+map<std::string, std::string> miutil::SetupParser::user_variables;
 
-void SetupParser::setUserVariables(const map<miString, miString> & user_var)
+void SetupParser::setUserVariables(const map<std::string, std::string> & user_var)
 {
   user_variables = user_var;
 }
 
-void SetupParser::replaceUserVariables(const miString& key, const miString& value)
+void SetupParser::replaceUserVariables(const std::string& key, const std::string& value)
 {
   user_variables[key] = value;
 }
 
-bool SetupParser::checkSubstitutions(miutil::miString& t)
+bool SetupParser::checkSubstitutions(std::string& t)
 {
   std::string::size_type start = 0, stop = 0;
 
@@ -38,21 +40,21 @@ bool SetupParser::checkSubstitutions(miutil::miString& t)
       // unterminated
       return false;
     }
-    miutil::miString s = t.substr(start + 2, stop - start - 2);
-    miutil::miString n;
-    s = s.upcase();
+    std::string s = t.substr(start + 2, stop - start - 2);
+    std::string n;
+    s = miutil::to_upper(s);
     if (substitutions.count(s) > 0) {
       n = substitutions[s];
     }
-    // this would be the logical solution, but miutil::miString overrides replace()
-    // t.replace(start, stop - start + 1, n.c_str());
+    // this would be the logical solution, but std::string overrides replace()
+    // miutil::replace(t, start, stop - start + 1, n.c_str());
     t = t.substr(0, start) + n + t.substr(stop + 1);
 
   }
   return true;
 }
 
-bool SetupParser::checkEnvironment(miString& t)
+bool SetupParser::checkEnvironment(std::string& t)
 {
   std::string::size_type start = 0, stop = 0;
 
@@ -60,22 +62,22 @@ bool SetupParser::checkEnvironment(miString& t)
     if ((stop = t.find("}", start)) == t.npos)
       // unterminated
       return false;
-    miString s = t.substr(start + 2, stop - start - 2);
-    miString n;
-    s = s.upcase();
+    std::string s = t.substr(start + 2, stop - start - 2);
+    std::string n;
+    s = miutil::to_upper(s);
     if (substitutions.count(s) > 0) {
       n = substitutions[s];
     } else {
-      n = getenv(s.c_str());
+      n = miutil::from_c_str(getenv(s.c_str()));
     }
-    // this would be the logical solution, but miString overrides replace()
-    // t.replace(start, stop - start + 1, n.c_str());
+    // this would be the logical solution, but std::string overrides replace()
+    // miutil::replace(t, start, stop - start + 1, n.c_str());
     t = t.substr(0, start) + n + t.substr(stop + 1);
   }
   return true;
 }
 
-void SetupParser::cleanstr(miString& s)
+void SetupParser::cleanstr(std::string& s)
 {
   std::string::size_type p;
   if ((p = s.find("#")) != string::npos)
@@ -87,12 +89,12 @@ void SetupParser::cleanstr(miString& s)
   // substitute local/setupfile variables
   checkSubstitutions(s);
 
-  s.remove('\n');
-  s.trim();
+  miutil::remove(s, '\n');
+  miutil::trim(s);
 
   // prepare strings for easy split on '=' and ' '
   // : remove leading and trailing " " for each '='
-  if (s.contains("=") && s.contains(" ")) {
+  if (miutil::contains(s, "=") && miutil::contains(s, " ")) {
     p = 0;
     while ((p = s.find_first_of("=", p)) != string::npos) {
       // check for "" - do not clean out blanks inside these
@@ -135,23 +137,23 @@ void SetupParser::cleanstr(miString& s)
 
 }
 
-void SetupParser::splitKeyValue(const miString& s, miString& key,
-    miString& value, bool keepCase)
+void SetupParser::splitKeyValue(const std::string& s, std::string& key,
+    std::string& value, bool keepCase)
 {
-  vector<miString> vs = s.split(2, '=', true);
+  vector<std::string> vs = miutil::split(s, 2, "=", true);
   if (vs.size() == 2) {
     if (keepCase)
       key = vs[0];
     else
-      key = vs[0].downcase();
+      key = miutil::to_lower(vs[0]);
     value = vs[1];
     // structures of type: A=B || C means A=B for existing B, otherwise C
-    if (value.contains("||")) {
+    if (miutil::contains(value, "||")) {
       int j = value.find("||");
-      miString a1 = value.substr(0, j);
-      miString a2 = value.substr(j + 2, value.length() - j);
-      a1.trim();
-      a2.trim();
+      std::string a1 = value.substr(0, j);
+      std::string a2 = value.substr(j + 2, value.length() - j);
+      miutil::trim(a1);
+      miutil::trim(a2);
       value = (a1.length() > 0 ? a1 : a2);
     }
     // remove "" from value
@@ -161,7 +163,7 @@ void SetupParser::splitKeyValue(const miString& s, miString& key,
     if (keepCase)
       key = vs[0];
     else
-      key = vs[0].downcase();
+      key = miutil::to_lower(vs[0]);
     int n = vs.size();
     value.clear();
     for (int i = 1; i < n; i++) {
@@ -175,19 +177,19 @@ void SetupParser::splitKeyValue(const miString& s, miString& key,
     if (keepCase)
       key = s;
     else
-      key = s.downcase();
+      key = miutil::to_lower(s);
     value = "";
   }
 }
 
-void SetupParser::splitKeyValue(const miString& s, miString& key, vector<
-    miString>& value)
+void SetupParser::splitKeyValue(const std::string& s, std::string& key, vector<
+    std::string>& value)
 {
   value.clear();
-  vector<miString> vs = s.split(2, '=', true);
+  vector<std::string> vs = miutil::split(s, 2, "=", true);
   if (vs.size() == 2) {
-    key = vs[0].downcase(); // always converting keyword to lowercase !
-    vector<miString> vv = vs[1].split(',', true);
+    key = miutil::to_lower(vs[0]); // always converting keyword to lowercase !
+    vector<std::string> vv = miutil::split(vs[1], 0, ",", true);
     int n = vv.size();
     for (int i = 0; i < n; i++) {
       if (vv[i][0] == '"' && vv[i][vv[i].length() - 1] == '"')
@@ -196,7 +198,7 @@ void SetupParser::splitKeyValue(const miString& s, miString& key, vector<
         value.push_back(vv[i]);
     }
   } else {
-    key = s.downcase(); // assuming pure keyword (without value)
+    key = miutil::to_lower(s); // assuming pure keyword (without value)
   }
 }
 
@@ -212,12 +214,12 @@ size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp)
   return (size_t) (size * nmemb);
 }
 
-vector<miutil::miString> SetupParser::getFromHttp(miutil::miString url)
+vector<std::string> SetupParser::getFromHttp(std::string url)
 {
   CURL *curl = NULL;
   CURLcode res;
   ostringstream ost;
-  vector<miutil::miString> result;
+  vector<std::string> result;
 
   curl = curl_easy_init();
   if (curl) {
@@ -229,7 +231,7 @@ vector<miutil::miString> SetupParser::getFromHttp(miutil::miString url)
     curl_easy_cleanup(curl);
   }
 
-  miutil::miString data = ost.str();
+  std::string data = ost.str();
 
   //must contain diana.setup tags
   if (data.find("<diana.setup>") == data.npos || data.find("</diana.setup>") == data.npos) {
@@ -241,15 +243,15 @@ vector<miutil::miString> SetupParser::getFromHttp(miutil::miString url)
   data = data.substr(data.find("<diana.setup>") + 13);
   data = data.substr(0,data.find("</diana.setup>"));
 
-  result = data.split("\n");
+  result = miutil::split(data, "\n");
 
   return result;
 }
 
-vector<miutil::miString> SetupParser::getFromFile(miutil::miString filename)
+vector<std::string> SetupParser::getFromFile(std::string filename)
 {
 
-  vector<miutil::miString> result;
+  vector<std::string> result;
 
   // open filestream
   ifstream file(filename.c_str());
@@ -260,7 +262,7 @@ vector<miutil::miString> SetupParser::getFromFile(miutil::miString filename)
   }
 
 
-  miutil::miString str;
+  std::string str;
   while (getline(file, str)) {
     result.push_back(str);
   }
@@ -270,8 +272,8 @@ vector<miutil::miString> SetupParser::getFromFile(miutil::miString filename)
 
 }
 
-bool SetupParser::parseFile(const miString& filename, // name of file
-    const miString& section, // inherited section
+bool SetupParser::parseFile(const std::string& filename, // name of file
+    const std::string& section, // inherited section
     int level) // recursive level
 {
   // list of filenames, index to them
@@ -280,18 +282,18 @@ bool SetupParser::parseFile(const miString& filename, // name of file
 
   // ====== just output
   level++;
-  miString dummy = " ";
+  std::string dummy = " ";
   for (int i = 0; i <= level; i++)
     dummy += ".";
   cerr << dummy << " reading \t[" << filename << "] " << endl;
   // ===================
 
-  const miString undefsect = "_UNDEF_";
-  miString origsect = (section.exists() ? section : undefsect);
-  miString sectname = origsect;
-  list<miString> sectstack;
+  const std::string undefsect = "_UNDEF_";
+  std::string origsect = (not section.empty() ? section : undefsect);
+  std::string sectname = origsect;
+  list<std::string> sectstack;
 
-  miString str;
+  std::string str;
   int n, ln = 0, linenum;
 
   // open filestream
@@ -308,13 +310,13 @@ bool SetupParser::parseFile(const miString& filename, // name of file
    - merge lines ending with \
     - accumulate strings for each section
    */
-  miString tmpstr;
+  std::string tmpstr;
   int tmpln=0;
   bool merge = false, newmerge;
 
   while (getline(file, str)) {
     ln++;
-    str.trim();
+    miutil::trim(str);
     n = str.length();
     if (n == 0)
       continue;
@@ -380,22 +382,22 @@ bool SetupParser::parseFile(const miString& filename, // name of file
        include another setupfile
        */
       if (n < 10) {
-        miString error = "Missing filename for include";
+        std::string error = "Missing filename for include";
         internalErrorMsg(filename, linenum, error);
         return false;
       }
-      miString nextfile = str.substr(8, n);
-      nextfile.trim();
+      std::string nextfile = str.substr(8, n);
+      miutil::trim(nextfile);
       if (!parseFile(nextfile, sectname, level))
         return false;
 
-    } else if (str.upcase() == "CLEAR") {
+    } else if (miutil::to_upper(str) == "CLEAR") {
       /*
        Clear all strings for this section
        Only valid inside a section
        */
       if (sectname == undefsect) {
-        miString error = "CLEAR only valid within a section";
+        std::string error = "CLEAR only valid within a section";
         internalErrorMsg(filename, linenum, error);
         continue;
       }
@@ -415,12 +417,12 @@ bool SetupParser::parseFile(const miString& filename, // name of file
        If undefined section, check instead for variable declaration
        */
       if (sectname == undefsect) {
-        miString key, value;
+        std::string key, value;
         splitKeyValue(str, key, value);
-        if (value.exists()) {
+        if (not value.empty()) {
           // Redefinitions are ignored
-          if (substitutions.count(key.upcase()) == 0 ) {
-            substitutions[key.upcase()] = value;
+          if (substitutions.count(miutil::to_upper(key)) == 0 ) {
+            substitutions[miutil::to_upper(key)] = value;
           }
         } else {
           cerr << "** setupfile WARNING, line " << linenum << " in file "
@@ -441,7 +443,7 @@ bool SetupParser::parseFile(const miString& filename, // name of file
 
   // File should start and end in same section
   if (sectname != origsect) {
-    miString error = "File started in section " + origsect
+    std::string error = "File started in section " + origsect
         + " and ended in section " + sectname;
     internalErrorMsg(filename, linenum, error);
     return false;
@@ -459,7 +461,7 @@ void SetupParser::clearSect()
 /*
  * Clears everything and parses a new setup file
  */
-bool SetupParser::parse(const miString& mainfilename)
+bool SetupParser::parse(const std::string& mainfilename)
 {
   sfilename.clear();
   sectionm.clear();
@@ -468,10 +470,10 @@ bool SetupParser::parse(const miString& mainfilename)
   // add user variables
   if (user_variables.size() > 0) {
      cerr << "SetupParser::parse, adding user variables:" << endl;
-     map<miString, miString>::iterator itr = user_variables.begin();
+     map<std::string, std::string>::iterator itr = user_variables.begin();
      for (; itr != user_variables.end(); itr++) {
        cerr << itr->first << " = " << itr->second << endl;
-       substitutions[itr->first.upcase()] = itr->second;
+       substitutions[miutil::to_upper(itr->first)] = itr->second;
      }
    }
 
@@ -482,8 +484,8 @@ bool SetupParser::parse(const miString& mainfilename)
 }
 
 // report an error with filename and linenumber
-void SetupParser::internalErrorMsg(const miString& filename, const int linenum,
-    const miString& error)
+void SetupParser::internalErrorMsg(const std::string& filename, const int linenum,
+    const std::string& error)
 {
   cerr << "================================================" << endl;
   cerr << "Error in setupfile " << filename << endl
@@ -493,10 +495,10 @@ void SetupParser::internalErrorMsg(const miString& filename, const int linenum,
 }
 
 // report an error with line# and sectionname
-void SetupParser::errorMsg(const miString& sectname, const int linenum,
-    const miString& error)
+void SetupParser::errorMsg(const std::string& sectname, const int linenum,
+    const std::string& error)
 {
-  map<miString, SetupSection>::iterator p;
+  map<std::string, SetupSection>::iterator p;
   if ((p = sectionm.find(sectname)) != sectionm.end()) {
     int n = p->second.linenum.size();
     int lnum = (linenum >= 0 && linenum < n) ? p->second.linenum[linenum]
@@ -520,10 +522,10 @@ void SetupParser::errorMsg(const miString& sectname, const int linenum,
 }
 
 // give a warning with line# and sectionname
-void SetupParser::warningMsg(const miString& sectname, const int linenum,
-    const miString& warning)
+void SetupParser::warningMsg(const std::string& sectname, const int linenum,
+    const std::string& warning)
 {
-  map<miString, SetupSection>::iterator p;
+  map<std::string, SetupSection>::iterator p;
   if ((p = sectionm.find(sectname)) != sectionm.end()) {
     int n = p->second.linenum.size();
     int lnum = (linenum >= 0 && linenum < n) ? p->second.linenum[linenum]
@@ -545,10 +547,10 @@ void SetupParser::warningMsg(const miString& sectname, const int linenum,
   }
 }
 
-bool SetupParser::getSection(const miString& sectname,
-    vector<miString>& setuplines)
+bool SetupParser::getSection(const std::string& sectname,
+    vector<std::string>& setuplines)
 {
-  map<miString, SetupSection>::iterator p;
+  map<std::string, SetupSection>::iterator p;
   if ((p = sectionm.find(sectname)) != sectionm.end()) {
     setuplines = p->second.strlist;
     return true;

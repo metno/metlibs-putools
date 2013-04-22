@@ -1,11 +1,5 @@
-
-#ifndef MISETUPPARSER_H
-#define MISETUPPARSER_H
-
 /*
-  $Id$
-
-  Copyright (C) 2006 met.no
+  Copyright (C) 2013 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -29,14 +23,19 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#ifndef MISETUPPARSER_H
+#define MISETUPPARSER_H
+
 #include "miString.h"
-#include <vector>
+
 #include <map>
+#include <string>
+#include <vector>
 
 namespace miutil{
 
   struct SetupSection {
-    std::vector<miutil::miString> strlist;
+    std::vector<std::string> strlist;
     std::vector<int> linenum;
     std::vector<int> filenum;
   };
@@ -44,28 +43,28 @@ namespace miutil{
   class SetupParser {
   private:
     /// list of setup-filenames
-    static std::vector<miutil::miString> sfilename;
+    static std::vector<std::string> sfilename;
     /// Setuptext hashed by Section name
-    static std::map<miutil::miString,SetupSection> sectionm;
+    static std::map<std::string,SetupSection> sectionm;
 
-    static std::map<miutil::miString,miutil::miString>    substitutions;
+    static std::map<std::string,std::string>    substitutions;
 
-    static std::map<miutil::miString, miutil::miString> user_variables;
+    static std::map<std::string, std::string> user_variables;
 
     /// report an error with filename and linenumber
-    static void internalErrorMsg(const miutil::miString& filename,
+    static void internalErrorMsg(const std::string& filename,
 			  const int linenum,
-			  const miutil::miString& error);
+			  const std::string& error);
     // expand local variables in string
-    static bool checkSubstitutions(miutil::miString& t);
+    static bool checkSubstitutions(std::string& t);
     // expand environment values in string
-    static bool checkEnvironment(miutil::miString& t);
+    static bool checkEnvironment(std::string& t);
     /// parse one setupfile
-    std::vector<miutil::miString> getFromHttp(miutil::miString url);
-    std::vector<miutil::miString> getFromFile(miutil::miString filename);
+    std::vector<std::string> getFromHttp(std::string url);
+    std::vector<std::string> getFromFile(std::string filename);
 
-    static bool parseFile(const miutil::miString& filename,
-		   const miutil::miString& section,
+    static bool parseFile(const std::string& filename,
+		   const std::string& section,
 		   int level);
 
   public:
@@ -73,30 +72,37 @@ namespace miutil{
     SetupParser() {}
 
     /// set user variables
-    static void setUserVariables(const std::map<miutil::miString,miutil::miString> & user_var);
+    static void setUserVariables(const std::map<std::string,std::string> & user_var);
     /// replace or add user variables
-    static void replaceUserVariables(const miutil::miString& key, const miutil::miString& value);
+    static void replaceUserVariables(const std::string& key, const std::string& value);
     /// get list of user variables
-    static std::map<miutil::miString,miutil::miString> getUserVariables() {return substitutions;}
+    static std::map<std::string,std::string> getUserVariables() {return substitutions;}
     /// cleans a string
-    static void cleanstr(miutil::miString&);
+    static void cleanstr(std::string&);
     /// finds key=value in string
-    static void splitKeyValue(const miutil::miString& s, miutil::miString& key,
-			      miutil::miString& value, bool keepCase = false);
+    static void splitKeyValue(const std::string& s, std::string& key,
+			      std::string& value, bool keepCase = false);
     /// finds key=v1,v2,v3,... in string
-    static void splitKeyValue(const miutil::miString& s, miutil::miString& key,
-			      std::vector<miutil::miString>& value);
+    static void splitKeyValue(const std::string& s, std::string& key,
+			      std::vector<std::string>& value);
 
     /// recursively parse setupfiles
-    static bool parse(const miutil::miString& mainfilename );
+    static bool parse(const std::string& mainfilename);
     /// get stringlist for a named section
-    static bool getSection(const miutil::miString&,std::vector<miutil::miString>&);
+    static bool getSection(const std::string&,std::vector<std::string>&);
     /// clear the section map sectionm (now used in tsData, ptGribStream)
     void clearSect();
     /// report an error with line# and sectionname
-    static void errorMsg(const miutil::miString&,const int,const miutil::miString&);
+    static void errorMsg(const std::string&,const int,const std::string&);
     /// report a warning with line# and sectionname
-    void warningMsg(const miutil::miString&,const int,const miutil::miString&);
+    void warningMsg(const std::string&,const int,const std::string&);
+
+
+    // miString compatibility functions
+    static inline bool getSection(const std::string& s, std::vector<miutil::miString>& r)
+          { std::vector<std::string> rs; bool ok = getSection(s, rs); r = std::vector<miutil::miString>(rs.begin(), rs.end()); return ok; }
+    static inline void splitKeyValue(const std::string& s, std::string& k, std::vector<miutil::miString>& v)
+          { std::vector<std::string> vs; splitKeyValue(s, k, vs); v = std::vector<miutil::miString>(vs.begin(), vs.end()); }
   };
 
 }; // namespace miutil
