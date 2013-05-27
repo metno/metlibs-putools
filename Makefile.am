@@ -38,6 +38,7 @@ pkg_include_HEADERS = \
 	miRing.h \
 	miSort.h \
 	miString.h \
+	miStringBuilder.h \
 	miTime.h \
 	minmax.h \
 	puAlgo.h \
@@ -47,7 +48,7 @@ pkg_include_HEADERS = \
 
 check_PROGRAMS = checks
 
-checks_SOURCES = check-miClock.cc check-miString.cc
+checks_SOURCES = check-miClock.cc check-miString.cc check-miStringBuilder.cc
 checks_CPPFLAGS = $(gtest_CFLAGS)
 checks_LDFLAGS = $(gtest_LDFLAGS)
 checks_LDADD = -lgtest_main libpuTools.la $(gtest_LIBS) -lpthread
