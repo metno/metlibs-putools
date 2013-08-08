@@ -355,6 +355,25 @@ std::string to_upper(const std::string& text)
     return t;
 }
 
+std::string append(const std::string& a, const std::string& separator, const std::string& b)
+{
+  if (b.empty())
+    return a;
+  if (a.empty())
+    return b;
+  return a + separator + b;
+}
+
+void appendTo(std::string& a, const std::string& separator, const std::string& b)
+{
+  if (not b.empty()) {
+    if (a.empty())
+      a = b;
+    else
+      a += separator + b;
+  }
+}
+
 extern const char whitespaces[] =" \r\t\n";
 
 // ########################################################################

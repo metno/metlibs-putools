@@ -78,6 +78,10 @@ double to_double(const std::string& text, const double undefined=NAN);
 std::string to_lower(const std::string& text);
 std::string to_upper(const std::string& text);
 
+/** Appends b to a, with separator inbetween if a is not empty; returns a if b is empty. */
+std::string appended(const std::string& a, const std::string& separator, const std::string& b);
+void appendTo(std::string& a, const std::string& separator, const std::string& b);
+
 // ########################################################################
 
 class miString : public std::string

@@ -7,6 +7,8 @@
 
 #include <curl/curl.h>
 
+#include <boost/foreach.hpp>
+
 #include <iostream>
 #include <fstream>
 #include <list>
@@ -200,6 +202,15 @@ void SetupParser::splitKeyValue(const std::string& s, std::string& key, vector<
   } else {
     key = miutil::to_lower(s); // assuming pure keyword (without value)
   }
+}
+
+std::vector<KeyValue> SetupParser::splitManyKeyValue(const std::string& line, bool keepCase)
+{
+  std::vector<KeyValue> kvs;
+  const std::vector<std::string> tokens = miutil::split(line);
+  BOOST_FOREACH(const std::string& t, tokens)
+      kvs.push_back(splitKeyValue(t, keepCase));
+  return kvs;
 }
 
 /*

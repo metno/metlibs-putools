@@ -90,6 +90,7 @@ namespace miutil{
 			      std::string& value, bool keepCase = false);
     static KeyValue splitKeyValue(const std::string& s, bool keepCase = false)
       { KeyValue kv; splitKeyValue(s, kv.key, kv.value, keepCase); return kv; }
+    static std::vector<KeyValue> splitManyKeyValue(const std::string& line, bool keepCase = false);
 
     /// finds key=v1,v2,v3,... in string
     static void splitKeyValue(const std::string& s, std::string& key,
