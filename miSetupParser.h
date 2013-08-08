@@ -34,6 +34,12 @@
 
 namespace miutil{
 
+  struct KeyValue {
+    std::string key, value;
+    KeyValue() { }
+    KeyValue(const std::string& k, const std::string& v) : key(k), value(v) { }
+  };
+
   struct SetupSection {
     std::vector<std::string> strlist;
     std::vector<int> linenum;
@@ -82,6 +88,9 @@ namespace miutil{
     /// finds key=value in string
     static void splitKeyValue(const std::string& s, std::string& key,
 			      std::string& value, bool keepCase = false);
+    static KeyValue splitKeyValue(const std::string& s, bool keepCase = false)
+      { KeyValue kv; splitKeyValue(s, kv.key, kv.value, keepCase); return kv; }
+
     /// finds key=v1,v2,v3,... in string
     static void splitKeyValue(const std::string& s, std::string& key,
 			      std::vector<std::string>& value);
