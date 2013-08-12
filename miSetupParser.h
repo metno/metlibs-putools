@@ -63,8 +63,6 @@ namespace miutil{
 			  const std::string& error);
     // expand local variables in string
     static bool checkSubstitutions(std::string& t);
-    // expand environment values in string
-    static bool checkEnvironment(std::string& t);
     /// parse one setupfile
     std::vector<std::string> getFromHttp(std::string url);
     std::vector<std::string> getFromFile(std::string filename);
@@ -81,6 +79,9 @@ namespace miutil{
     static void setUserVariables(const std::map<std::string,std::string> & user_var);
     /// replace or add user variables
     static void replaceUserVariables(const std::string& key, const std::string& value);
+    // expand environment values in string
+    static bool checkEnvironment(std::string& t);
+
     /// get list of user variables
     static std::map<std::string,std::string> getUserVariables() {return substitutions;}
     /// cleans a string
