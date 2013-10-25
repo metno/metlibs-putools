@@ -17,7 +17,8 @@ libpuTools_la_SOURCES = \
 	miSetupParser.cc
 
 libpuTools_la_CPPFLAGS = \
-	$(CURL_CPPFLAGS)
+	$(CURL_CPPFLAGS) \
+	-I$(top_srcdir)
 
 libpuTools_la_LDFLAGS = ${puTools_VERSION_INFO}
 if ENABLE_SHARED_LIBRARY
@@ -49,7 +50,8 @@ pkg_include_HEADERS = \
 check_PROGRAMS = checks
 
 checks_SOURCES = check-miClock.cc check-miString.cc check-miStringBuilder.cc
-checks_CPPFLAGS = $(gtest_CFLAGS)
+checks_CPPFLAGS = $(gtest_CFLAGS) \
+	-I$(top_srcdir)
 checks_LDFLAGS = $(gtest_LDFLAGS)
 checks_LDADD = -lgtest_main libpuTools.la $(gtest_LIBS) -lpthread
 
