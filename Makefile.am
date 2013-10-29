@@ -40,6 +40,7 @@ pkg_include_HEADERS = \
 	miSort.h \
 	miString.h \
 	miStringBuilder.h \
+	miStringFunctions.h \
 	miTime.h \
 	minmax.h \
 	puAlgo.h \

@@ -28,61 +28,12 @@
 #ifndef __dnmi_miString__
 #define __dnmi_miString__
 
+#include "miStringFunctions.h"
 #include "puCtools/deprecated.h"
-#include <string>
 #include <sstream>
-#include <vector>
-#include <cmath>
-#include <climits> 
 #include "puAlgo.h"
 
 namespace miutil {
-
-extern const char whitespaces[];
-
-inline int count_char(const std::string& text, char count_me)
-{ return std::count(text.begin(), text.end(), count_me); }
-
-inline std::string from_c_str(const char* s)
-{ return s ? std::string(s) : std::string(); }
-
-std::string from_number(const int d, const int width=0, const char fill='0');
-std::string from_number(const double d, const int prec =-1);
-std::string from_number(const float d, const int prec =-1);
-
-void trim(std::string& text, bool left=true, bool right=true, const char* wspace=whitespaces);
-inline std::string trimmed(const std::string& text, bool left=true, bool right=true, const char* wspace=whitespaces)
-{ std::string t(text); trim(t, left, right, wspace); return t; }
-void trim_remove_empty(std::vector<std::string>& strings);
-
-std::vector<std::string> split(const std::string& text, int nos, const char* separator_chars=whitespaces, const bool clean=true);
-inline std::vector<std::string> split(const std::string& text, const char* separator_chars=whitespaces, const bool clean=true)
-{ return split(text, 0, separator_chars, clean); }
-std::vector<std::string> split_protected(const std::string& text, const char left, const char right,
-                                         const char* separator_chars=whitespaces, const bool clean=true);
-
-void remove(std::string& text, const char c);
-void replace(std::string& text, const char thys, const char that);
-void replace(std::string& text, const std::string& thys, const std::string& that);
-
-inline bool contains(const std::string& haystack, const std::string& needle)
-{ return haystack.find(needle) != std::string::npos; }
-
-bool is_number(const std::string& text);
-bool is_int(const std::string& text);
-
-int to_int(const std::string& text, const int undefined=INT_MIN);
-long to_long(const std::string& text, const long undefined=LONG_MIN);
-double to_double(const std::string& text, const double undefined=NAN);
-
-std::string to_lower(const std::string& text);
-std::string to_upper(const std::string& text);
-
-/** Appends b to a, with separator inbetween if a is not empty; returns a if b is empty. */
-std::string appended(const std::string& a, const std::string& separator, const std::string& b);
-void appendTo(std::string& a, const std::string& separator, const std::string& b);
-
-// ########################################################################
 
 class miString : public std::string
 {
