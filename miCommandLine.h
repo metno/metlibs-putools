@@ -1,9 +1,7 @@
 /*
   libpuTools - Basic types/algorithms/containers
 
-  $Id$
-
-  Copyright (C) 2006 met.no
+  Copyright (C) 2006-2013 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -41,12 +39,9 @@
 
 #include "miString.h"
 
-#include <iostream>
 #include <vector>
 #include <map>
 #include <sstream>
-#include <string.h>
-
 
 class miCommandLine {
 public:
