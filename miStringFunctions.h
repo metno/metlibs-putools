@@ -56,6 +56,8 @@ void trim_remove_empty(std::vector<std::string>& strings);
 std::vector<std::string> split(const std::string& text, int nos, const char* separator_chars=whitespaces, const bool clean=true);
 inline std::vector<std::string> split(const std::string& text, const char* separator_chars=whitespaces, const bool clean=true)
 { return split(text, 0, separator_chars, clean); }
+inline std::vector<std::string> split(const std::string& text, const std::string& separator_chars, const bool clean=true)
+{ return split(text, 0, separator_chars.c_str(), clean); }
 std::vector<std::string> split_protected(const std::string& text, const char left, const char right,
                                          const char* separator_chars=whitespaces, const bool clean=true);
 
