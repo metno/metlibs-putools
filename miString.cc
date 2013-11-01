@@ -336,9 +336,20 @@ long to_long(const std::string& text, const long undefined)
 
 double to_double(const std::string& text, const double undefined)
 {
+#if 1
+    double ret = undefined;
+    char test = 0;
+    std::istringstream iss(text);
+    iss.imbue(std::locale::classic());
+    iss >> ret >> test;
+    if (not iss.eof())
+      return undefined;
+    return ret;
+#else
     if (text.empty() or not is_number(text))
         return undefined;
     return std::atof(text.c_str());
+#endif
 }
 
 std::string to_lower(const std::string& text)

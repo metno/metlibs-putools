@@ -183,11 +183,17 @@ TEST(miStringTest, to_int)
 
 TEST(miStringTest, to_double)
 {
-    EXPECT_EQ(12.3, miutil::to_double("12.3"));
-    EXPECT_EQ(-1,   miutil::to_double("12.3 x", -1));
-    EXPECT_EQ(-1,   miutil::to_double("", -1));
+  EXPECT_EQ(12.3, miutil::to_double("12.3"));
+  EXPECT_EQ(12.3, miutil::to_double("12.3 "));
+  EXPECT_EQ(-1,   miutil::to_double("12.3 x", -1));
+  EXPECT_EQ(-1,   miutil::to_double("", -1));
+  
+  EXPECT_EQ(12.3, miutil::to_double("1.23E1"));
 
-    EXPECT_EQ(12.3, miutil::to_double("1.23E1"));
+  EXPECT_FLOAT_EQ(0.1,  miutil::to_double("0.1"));
+  EXPECT_FLOAT_EQ(0.2,  miutil::to_double("0.2"));
+  EXPECT_FLOAT_EQ(0.01, miutil::to_double("0.01"));
+  EXPECT_FLOAT_EQ(0.03, miutil::to_double("0.03"));
 }
 
 TEST(miStringTest, to_upper_lower)
