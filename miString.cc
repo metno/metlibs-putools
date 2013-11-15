@@ -359,11 +359,35 @@ std::string to_lower(const std::string& text)
     return t;
 }
 
+std::string to_lower_latin1(const std::string& text)
+{
+  std::string t(text);
+  for (size_t i=0; i<t.size(); ++i) {
+    unsigned char c = tolower(t[i]);
+    if ((c>=192 && c<=214) || (c>=216 && c<=222))
+      c+=32;
+    t[i] = c;
+  }
+  return t;
+}
+
 std::string to_upper(const std::string& text)
 {
     std::string t(text);
     boost::algorithm::to_upper(t);
     return t;
+}
+
+std::string to_upper_latin1(const std::string& text)
+{
+  std::string t(text);
+  for (size_t i=0; i<t.size(); ++i) {
+    unsigned char c = toupper(t[i]);
+    if ((c>=224 && c<=246) || (c>=248 && c<=254))
+      c-=32;
+    t[i] = c;
+  }
+  return t;
 }
 
 std::string append(const std::string& a, const std::string& separator, const std::string& b)

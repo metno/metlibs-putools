@@ -202,4 +202,10 @@ TEST(miStringTest, to_upper_lower)
     EXPECT_EQ("$&/(HI)\"", miutil::to_upper("$&/(hi)\""));
 
     EXPECT_EQ("hello $&/()\"", miutil::to_lower("hELLo $&/()\""));
+
+    EXPECT_EQ("aring\xC5\xE5 oslash\xD8\xF8", miutil::to_lower("aring\xC5\xE5 OSLASH\xD8\xF8"));
+    EXPECT_EQ("ARING\xC5\xE5 OSLASH\xD8\xF8", miutil::to_upper("aring\xC5\xE5 OSLASH\xD8\xF8"));
+
+    EXPECT_EQ("aring\xE5\xE5 oslash\xF8\xF8", miutil::to_lower_latin1("aring\xC5\xE5 OSLASH\xD8\xF8"));
+    EXPECT_EQ("ARING\xC5\xC5 OSLASH\xD8\xD8", miutil::to_upper_latin1("aring\xC5\xE5 OSLASH\xD8\xF8"));
 }
