@@ -17,6 +17,45 @@
 using namespace std;
 using namespace miutil;
 
+int KeyValue::toInt(bool& ok, int def) const
+{
+  ok = miutil::is_int(mValue);
+  if (ok)
+    return miutil::to_int(mValue);
+  else
+    return def;
+}
+
+double KeyValue::toDouble(bool& ok, double def) const
+{
+  ok = miutil::is_number(mValue);
+  if (ok)
+    return miutil::to_double(mValue);
+  else
+    return def;
+}
+
+bool KeyValue::toBool(bool& ok, bool def) const
+{
+  ok = true;
+  if (mValue == "0")
+    return false;
+  else if (mValue == "1")
+    return true;
+  else if (not mValue.empty()) {
+    const std::string lvalue = miutil::to_lower(mValue);
+    if (lvalue == "yes" or lvalue == "true" or lvalue == "on")
+      return true;
+    else if (lvalue == "no" or lvalue == "false" or lvalue == "off")
+      return false;
+  }
+
+  ok = false;
+  return def;
+}
+
+// ========================================================================
+
 // static members
 map<std::string, std::string> miutil::SetupParser::substitutions;
 vector<std::string> miutil::SetupParser::sfilename;
@@ -139,56 +178,63 @@ void SetupParser::cleanstr(std::string& s)
 
 }
 
+KeyValue SetupParser::splitKeyValue(const std::string& s, bool keepCase)
+{
+  string k, v;
+  const ssize_t eq = s.find("=");
+  if (eq < 0) {
+    k = s;
+  } else {
+    k = s.substr(0, eq);
+    v = s.substr(eq+1);
+    miutil::trim(v);
+
+    // handle quotes and ||, this is a mess
+    const int pos_or = v.find("||");
+    const int vsize = v.size();
+    bool quote_start = (not v.empty() and v[0] == '"');
+    bool quote_end   = (not v.empty() and v[vsize-1] == '"');
+    if (pos_or >= 0) {
+      const int last_before_or = (pos_or > 0) ? v.find_last_not_of(" ", pos_or-1) : -1;
+      const bool quoted_before_or = (quote_start and last_before_or > 0 and v[last_before_or]=='"');
+      const int first_after_or = v.find_first_not_of(" ", pos_or+2);
+      const bool quoted_after_or = (quote_end and first_after_or>=0 and first_after_or < vsize-1 and v[first_after_or]=='"');
+      if (not ((quote_start and not quoted_before_or) or (quote_end and not quoted_after_or))) {
+        const string before = (quoted_before_or)
+            ? v.substr(1, last_before_or-1)
+            : v.substr(0, last_before_or+1);
+        if (not before.empty()) {
+          v = before;
+        } else {
+          v = (quoted_after_or)
+              ? v.substr(first_after_or+1, vsize-first_after_or-2)
+              : v.substr(first_after_or, vsize-first_after_or);
+        }
+      } else if (quote_start and quote_end) {
+        v = v.substr(1, vsize-2);
+      }
+    } else if (quote_start and quote_end) {
+      v = v.substr(1, vsize-2);
+    }
+  }
+  miutil::trim(k);
+  if (not keepCase)
+    k = miutil::to_lower(k);
+  return KeyValue(k, v);
+}
+
 void SetupParser::splitKeyValue(const std::string& s, std::string& key,
     std::string& value, bool keepCase)
 {
-  vector<std::string> vs = miutil::split(s, 2, "=", true);
-  if (vs.size() == 2) {
-    if (keepCase)
-      key = vs[0];
-    else
-      key = miutil::to_lower(vs[0]);
-    value = vs[1];
-    // structures of type: A=B || C means A=B for existing B, otherwise C
-    if (miutil::contains(value, "||")) {
-      int j = value.find("||");
-      std::string a1 = value.substr(0, j);
-      std::string a2 = value.substr(j + 2, value.length() - j);
-      miutil::trim(a1);
-      miutil::trim(a2);
-      value = (a1.length() > 0 ? a1 : a2);
-    }
-    // remove "" from value
-    if (value[0] == '"' && value[value.length() - 1] == '"')
-      value = value.substr(1, value.length() - 2);
-  } else if (vs.size() > 2) {
-    if (keepCase)
-      key = vs[0];
-    else
-      key = miutil::to_lower(vs[0]);
-    int n = vs.size();
-    value.clear();
-    for (int i = 1; i < n; i++) {
-      value += vs[i];
-      if (i < n - 1)
-        value += "=";
-    }
-    if (value[0] == '"' && value[value.length() - 1] == '"')
-      value = value.substr(1, value.length() - 2);
-  } else {
-    if (keepCase)
-      key = s;
-    else
-      key = miutil::to_lower(s);
-    value = "";
-  }
+  const KeyValue kv = splitKeyValue(s, keepCase);
+  key   = kv.key();
+  value = kv.value();
 }
 
-void SetupParser::splitKeyValue(const std::string& s, std::string& key, vector<
-    std::string>& value)
+void SetupParser::splitKeyValue(const std::string& s, std::string& key, vector<std::string>& value)
 {
   value.clear();
-  vector<std::string> vs = miutil::split(s, 2, "=", true);
+  vector<std::string> vs = miutil::split(s, 1, "=", true);
   if (vs.size() == 2) {
     key = miutil::to_lower(vs[0]); // always converting keyword to lowercase !
     vector<std::string> vv = miutil::split(vs[1], 0, ",", true);

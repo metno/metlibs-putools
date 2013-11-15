@@ -50,10 +50,14 @@ pkg_include_HEADERS = \
 
 check_PROGRAMS = checks
 
-checks_SOURCES = check-miClock.cc check-miString.cc check-miStringBuilder.cc
+checks_SOURCES = check-miClock.cc check-miString.cc check-miStringBuilder.cc \
+	check-miSetupParser.cc
 checks_CPPFLAGS = $(gtest_CFLAGS) \
+	$(CURL_CPPFLAGS) \
 	-I$(top_srcdir)
-checks_LDFLAGS = $(gtest_LDFLAGS)
-checks_LDADD = -lgtest_main libpuTools.la $(gtest_LIBS) -lpthread
+checks_LDFLAGS = $(gtest_LDFLAGS) \
+	$(CURL_LDFLAGS)
+checks_LDADD = -lgtest_main libpuTools.la $(gtest_LIBS) -lpthread \
+	$(CURL_LIBS)
 
 TESTS = ${check_PROGRAMS}

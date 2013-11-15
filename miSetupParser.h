@@ -34,10 +34,29 @@
 
 namespace miutil{
 
-  struct KeyValue {
-    std::string key, value;
+  class KeyValue {
+  public:
     KeyValue() { }
-    KeyValue(const std::string& k, const std::string& v) : key(k), value(v) { }
+    KeyValue(const std::string& k, const std::string& v) : mKey(k), mValue(v) { }
+    const std::string& key() const
+      { return mKey; }
+    const std::string& value() const
+      { return mValue; }
+
+    int toInt(bool& ok, int def=0) const;
+    int toInt(int def=0) const
+      { bool ok; return toInt(ok, def); }
+
+    double toDouble(bool& ok, double def=0) const;
+    double toDouble(double def=0) const
+      { bool ok; return toDouble(ok, def); }
+
+    bool toBool(bool& ok, bool def=false) const;
+    bool toBool(bool def=false) const
+      { bool ok; return toBool(ok, def); }
+
+  private:
+    std::string mKey, mValue;
   };
 
   struct SetupSection {
@@ -89,8 +108,7 @@ namespace miutil{
     /// finds key=value in string
     static void splitKeyValue(const std::string& s, std::string& key,
 			      std::string& value, bool keepCase = false);
-    static KeyValue splitKeyValue(const std::string& s, bool keepCase = false)
-      { KeyValue kv; splitKeyValue(s, kv.key, kv.value, keepCase); return kv; }
+    static KeyValue splitKeyValue(const std::string& s, bool keepCase = false);
     static std::vector<KeyValue> splitManyKeyValue(const std::string& line, bool keepCase = false);
 
     /// finds key=v1,v2,v3,... in string
