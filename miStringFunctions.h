@@ -73,6 +73,7 @@ bool is_int(const std::string& text);
 
 int to_int(const std::string& text, const int undefined=INT_MIN);
 long to_long(const std::string& text, const long undefined=LONG_MIN);
+float to_float(const std::string& text, const float undefined=NAN);
 double to_double(const std::string& text, const double undefined=NAN);
 
 std::string to_lower(const std::string& text);

@@ -334,6 +334,24 @@ long to_long(const std::string& text, const long undefined)
     return std::atol(text.c_str());
 }
 
+float to_float(const std::string& text, const float undefined)
+{
+#if 1
+    float ret = undefined;
+    char test = 0;
+    std::istringstream iss(text);
+    iss.imbue(std::locale::classic());
+    iss >> ret >> test;
+    if (not iss.eof())
+      return undefined;
+    return ret;
+#else
+    if (text.empty() or not is_number(text))
+        return undefined;
+    return std::atof(text.c_str());
+#endif
+}
+
 double to_double(const std::string& text, const double undefined)
 {
 #if 1
