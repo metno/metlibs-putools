@@ -46,12 +46,13 @@ pkg_include_HEADERS = \
 	puAlgo.h \
 	puMathAlgo.h \
 	ttycols.h \
-	miSetupParser.h
+	miSetupParser.h \
+	mi_boost_compatibility.hh
 
 check_PROGRAMS = checks
 
 checks_SOURCES = check-miClock.cc check-miString.cc check-miStringBuilder.cc \
-	check-miSetupParser.cc
+	check-miSetupParser.cc check-mi_boost_compatibility.cc
 checks_CPPFLAGS = $(gtest_CFLAGS) \
 	$(CURL_CPPFLAGS) \
 	-I$(top_srcdir)
