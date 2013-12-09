@@ -208,4 +208,10 @@ TEST(miStringTest, to_upper_lower)
 
     EXPECT_EQ("aring\xE5\xE5 oslash\xF8\xF8", miutil::to_lower_latin1("aring\xC5\xE5 OSLASH\xD8\xF8"));
     EXPECT_EQ("ARING\xC5\xC5 OSLASH\xD8\xD8", miutil::to_upper_latin1("aring\xC5\xE5 OSLASH\xD8\xF8"));
+
+#if 0
+    const char* utf8 = "oslash\xc3\x98\xc3\xb8 aring\xc3\x85\xc3\xa5 uuml\xc3\x9c\xc3\xbc";
+    EXPECT_EQ("OSLASH\xc3\x98\xc3\x98 ARING\xc3\x85\xc3\x85 UUML\xc3\x9c\xc3\x9c", miutil::to_upper(utf8));
+    EXPECT_EQ("oslash\xc3\xb8\xc3\xb8 aring\xc3\xa5\xc3\xa5 uuml\xc3\xbc\xc3\xbc", miutil::to_lower(utf8));
+#endif
 }
