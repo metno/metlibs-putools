@@ -10,6 +10,12 @@
 #include <boost/range/adaptor/map.hpp>
 #endif
 
+#if BOOST_VERSION >= 1043000 && !defined(MI_BOOST_COMPATIBILITY_FORCE_FIND_IF)
+#include <boost/range/algorithm/find_if.hpp>
+#else
+#include <algorithm> // std::find_if
+#endif
+
 #if BOOST_VERSION >= 103900 && !defined(MI_BOOST_COMPATIBILITY_FORCE_SHARED_PTR)
 #include <boost/make_shared.hpp>
 namespace miutil {
@@ -249,6 +255,22 @@ typename map<const M>::values values(const M& m)
 }
 #endif // boost with map adaptors
 } // namespace adaptors
+
+#if BOOST_VERSION >= 1043000 && !defined(MI_BOOST_COMPATIBILITY_FORCE_FIND_IF)
+using boost::adaptors::find_if;
+#else
+template<class C, class P>
+typename C::iterator find_if(C& c, const P& p)
+{
+  return std::find_if(c.begin(), c.end(), p);
+}
+
+template<class C, class P>
+typename C::const_iterator find_if(const C& c, const P& p)
+{
+  return std::find_if(c.begin(), c.end(), p);
+}
+#endif // boost with find_if
 
 } // namespace miutil
 

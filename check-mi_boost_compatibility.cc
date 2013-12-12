@@ -1,6 +1,7 @@
 
 #define MI_BOOST_COMPATIBILITY_FORCE_SHARED_PTR
 #define MI_BOOST_COMPATIBILITY_FORCE_MAP_ADAPTORS
+#define MI_BOOST_COMPATIBILITY_FORCE_FIND_IF
 #include "mi_boost_compatibility.hh"
 
 #include <boost/foreach.hpp>
@@ -96,4 +97,30 @@ TEST(mi_boost_compatibility_test, map_keys_values)
     EXPECT_EQ(values[i7++] + " fish", mymap.at(*it));
   }
   EXPECT_EQ(N, i7);
+}
+
+namespace {
+typedef std::set<std::string> string_s;
+struct eq_string {
+  const std::string& s;
+  eq_string(const std::string& S) : s(S) { }
+  bool operator() (const std::string& o) const
+    { return s == o; }
+};
+}
+
+TEST(mi_boost_compatibility_test, find_if)
+{
+  string_s hello;
+  hello.insert("hello");
+  hello.insert("world");
+
+  const string_s::iterator it1 = miutil::find_if(hello, eq_string("world"));
+  EXPECT_EQ(++hello.begin(), it1);
+  const string_s::const_iterator it2 = miutil::find_if(hello, eq_string("hello"));
+  EXPECT_EQ(hello.begin(), it2);
+
+  const string_s hello_c(hello);
+  const string_s::const_iterator it3 = miutil::find_if(hello_c, eq_string("moon"));
+  EXPECT_EQ(hello_c.end(), it3);
 }
