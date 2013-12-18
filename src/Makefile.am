@@ -2,8 +2,6 @@
 #AM_CPPFLAGS = -I$(top_srcdir) 
 pkgname = puTools
 
-include $(top_srcdir)/metlibs.mk
-
 lib_LTLIBRARIES = libpuTools.la
 
 libpuTools_la_SOURCES = \
@@ -17,15 +15,15 @@ libpuTools_la_SOURCES = \
 	miSetupParser.cc
 
 libpuTools_la_CPPFLAGS = \
-	$(CURL_CPPFLAGS) \
+	$(CURL_CPPFLAGS) $(PUCTOOLS_CPPFLAGS)
 	-I$(top_srcdir)
 
-libpuTools_la_LDFLAGS = ${puTools_VERSION_INFO}
+libpuTools_la_LDFLAGS = ${VERSION_INFO}
 if ENABLE_SHARED_LIBRARY
 libpuTools_la_LDFLAGS += \
-	$(CURL_LDFLAGS)
+	$(CURL_LDFLAGS)  $(PUCTOOLS_LDFLAGS)
 libpuTools_la_LIBADD = \
-	$(CURL_LIBS)
+	$(CURL_LIBS) $(PUCTOOLS_LIBS)
 endif
 
 pkg_includedir = ${includedir}/puTools
@@ -54,11 +52,14 @@ check_PROGRAMS = checks
 checks_SOURCES = check-miClock.cc check-miString.cc check-miStringBuilder.cc \
 	check-miSetupParser.cc check-mi_boost_compatibility.cc
 checks_CPPFLAGS = $(gtest_CFLAGS) \
-	$(CURL_CPPFLAGS) \
+	$(CURL_CPPFLAGS) $(PUCTOOLS_CPPFLAGS)
 	-I$(top_srcdir)
 checks_LDFLAGS = $(gtest_LDFLAGS) \
-	$(CURL_LDFLAGS)
+	$(CURL_LDFLAGS)  $(PUCTOOLS_LDFLAGS)
 checks_LDADD = -lgtest_main libpuTools.la $(gtest_LIBS) -lpthread \
-	$(CURL_LIBS)
+	$(CURL_LIBS)  $(PUCTOOLS_LIBS)
 
 TESTS = ${check_PROGRAMS}
+
+
+INSTALL=install -p
