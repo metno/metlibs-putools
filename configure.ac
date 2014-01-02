@@ -31,10 +31,6 @@ AC_LANG_POP([C++])
 
 METNO_ENABLE_CONDITIONAL([SHARED_LIBRARY], [shared])
 
-METNO_ENABLE([XFONTS], [xfonts], [support for X bitmap fonts], [no])
-METNO_ENABLE_CONDITIONAL([XFONTS], [xfonts])
-
-
 METNO_REQUIRE_PKG([MILOGGER],[miLogger])
 METNO_REQUIRE_PKG([PUCTOOLS],[puCtools])
 METNO_REQUIRE_C_LIBRARY([CURL], [curl], [curl/curl.h])

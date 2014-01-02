@@ -14,9 +14,25 @@ libpuTools_la_SOURCES = \
 	ttycols.cc \
 	miSetupParser.cc
 
+
+pkg_includedir = ${includedir}/puTools
+
+pkg_include_HEADERS = \
+	$(libpuTools_la_SOURCES:.cc=.h) \
+	StlContainerUtil.h \
+	miRing.h \
+	miSort.h \
+	miStringBuilder.h \
+	miStringFunctions.h \
+	minmax.h \
+	puAlgo.h \
+	puMathAlgo.h \
+	mi_boost_compatibility.hh
+
+
+
 libpuTools_la_CPPFLAGS = \
 	$(CURL_CPPFLAGS) $(PUCTOOLS_CPPFLAGS)
-	-I$(top_srcdir)
 
 libpuTools_la_LDFLAGS = ${VERSION_INFO}
 if ENABLE_SHARED_LIBRARY
@@ -25,27 +41,6 @@ libpuTools_la_LDFLAGS += \
 libpuTools_la_LIBADD = \
 	$(CURL_LIBS) $(PUCTOOLS_LIBS)
 endif
-
-pkg_includedir = ${includedir}/puTools
-
-pkg_include_HEADERS = \
-	StlContainerUtil.h \
-	miClock.h \
-	miCommandLine.h \
-	miDate.h \
-	miDirtools.h \
-	miRing.h \
-	miSort.h \
-	miString.h \
-	miStringBuilder.h \
-	miStringFunctions.h \
-	miTime.h \
-	minmax.h \
-	puAlgo.h \
-	puMathAlgo.h \
-	ttycols.h \
-	miSetupParser.h \
-	mi_boost_compatibility.hh
 
 check_PROGRAMS = checks
 
