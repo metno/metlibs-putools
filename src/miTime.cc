@@ -40,9 +40,11 @@
 
 #include <cstdio>
 #include <iostream>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 using namespace std;
 using namespace miutil;
+using namespace boost::posix_time;
 
 static inline void warning(const std::string& s)
 {
@@ -195,7 +197,9 @@ miutil::miTime::isoTime(const std::string& delim) const
     warning("isoTime: Object is not initialised.");
     return std::string("0000-00-00") + delim + std::string("--:--:--");
   }
-  return Date.isoDate() + delim + Clock.isoClock();
+  std::string _format = std::string("%Y-%m-%d") + delim + std::string("%H:%M:%S");
+  return format(*this, _format);
+  //return Date.isoDate() + delim + Clock.isoClock();
 }
 
 std::string
@@ -205,7 +209,14 @@ miutil::miTime::isoTime(bool withmin, bool withsec) const
     warning("isoTime: Object is not initialised.");
     return std::string("0000-00-00 ") + std::string("--:--:--");
   }
-  return Date.isoDate() + " " + Clock.isoClock(withmin, withsec);
+  std::string _format;
+  if (withmin && withsec)
+	_format= std::string("%Y-%m-%d") + " " + std::string("%H:%M:%S");
+  if (!withmin && !withsec)
+	_format= std::string("%Y-%m-%d") + " " + std::string("%H");
+  if (withmin && !withsec)
+    _format= std::string("%Y-%m-%d") + " " + std::string("%H:%M");
+  return format(*this, _format);
 }
 
 void
@@ -490,4 +501,30 @@ miutil::miTime::format(const std::string& nt, const std::string& lang) const
   newTime = ftim.date().format(newTime,l);
   newTime = ftim.clock().format(newTime);
   return newTime;
+}
+
+std::string miutil::miTime::format(const miutil::miTime& time, const std::string& format)
+{
+	if (time.undef()){
+		warning("format: Object is not initialised.");
+		return format;
+	}
+	
+	time_facet tf(format.c_str());
+	stringstream log_stream;
+
+	struct tm t;
+	t.tm_sec=time.sec();
+	t.tm_min=time.min();
+	t.tm_hour=time.hour();
+	t.tm_mday=time.day();
+	t.tm_mon=time.month() - 1;
+	t.tm_year=time.year() - 1900;  
+	t.tm_wday=time.dayOfWeek();
+	t.tm_yday=time.dayOfYear();
+	t.tm_isdst=0;  
+
+	ptime _time = ptime_from_tm(t);
+	tf.put(log_stream, log_stream,' ', _time);
+	return log_stream.str();
 }

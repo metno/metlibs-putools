@@ -155,6 +155,9 @@ public:
   // new version - use no/en/de etc for language
   std::string format(const std::string&, const std::string& lang="") const;
 
+  // New faster version using boost date/time
+  static std::string format(const miutil::miTime& time, const std::string& format);
+
   void setDefaultLanguage(const char* l) { Date.setDefaultLanguage(l);}
 
 };
