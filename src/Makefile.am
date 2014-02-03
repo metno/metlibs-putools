@@ -42,6 +42,7 @@ libpuTools_la_LIBADD = \
 	$(CURL_LIBS) $(PUCTOOLS_LIBS)
 endif
 
+if HAVE_GTEST
 check_PROGRAMS = checks
 
 checks_SOURCES = check-miClock.cc check-miString.cc check-miStringBuilder.cc \
@@ -55,6 +56,7 @@ checks_LDADD = -lgtest_main libpuTools.la $(gtest_LIBS) -lpthread \
 	$(CURL_LIBS)  $(PUCTOOLS_LIBS)
 
 TESTS = ${check_PROGRAMS}
+endif # HAVE_GTEST
 
 
 INSTALL=install -p

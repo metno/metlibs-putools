@@ -5,6 +5,7 @@
 AC_PREREQ(2.59)
 AC_INIT([puTools], [5.0.0], [diana@met.no])
 AM_INIT_AUTOMAKE([foreign])
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 AC_CONFIG_SRCDIR([src/miString.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -35,11 +36,14 @@ METNO_REQUIRE_PKG([MILOGGER],[miLogger])
 METNO_REQUIRE_PKG([PUCTOOLS],[puCtools])
 METNO_REQUIRE_C_LIBRARY([CURL], [curl], [curl/curl.h])
 
+AC_PATH_PROG(CMAKE, cmake, false)
+GMOCK_DIST_CHECK([test/gtest])
 
 AC_CONFIG_FILES([
 	puTools.pc
 	Makefile
 	src/Makefile
+	test/gtest/Makefile
 ])
 
 AC_OUTPUT
