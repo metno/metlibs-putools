@@ -23,6 +23,6 @@ Makefile.in
 /debian/metlibs-putools-dev.substvars
 /debian/metlibs-putools-dev
 /debian/files
-/test/gtest/gtest
-/test/gtest/libgtest*
+/test/gtest/*.o
+/test/gtest/lib*.a
 /src/checks

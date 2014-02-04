@@ -1,5 +1,4 @@
-# $Id$
-#AM_CPPFLAGS = -I$(top_srcdir) 
+
 pkgname = puTools
 
 lib_LTLIBRARIES = libpuTools.la
@@ -14,7 +13,6 @@ libpuTools_la_SOURCES = \
 	ttycols.cc \
 	miSetupParser.cc
 
-
 pkg_includedir = ${includedir}/puTools
 
 pkg_include_HEADERS = \
@@ -28,8 +26,6 @@ pkg_include_HEADERS = \
 	puAlgo.h \
 	puMathAlgo.h \
 	mi_boost_compatibility.hh
-
-
 
 libpuTools_la_CPPFLAGS = \
 	$(CURL_CPPFLAGS) $(PUCTOOLS_CPPFLAGS)
@@ -47,16 +43,12 @@ check_PROGRAMS = checks
 
 checks_SOURCES = check-miClock.cc check-miString.cc check-miStringBuilder.cc \
 	check-miSetupParser.cc check-mi_boost_compatibility.cc
-checks_CPPFLAGS = $(gtest_CFLAGS) \
-	$(CURL_CPPFLAGS) $(PUCTOOLS_CPPFLAGS)
-	-I$(top_srcdir)
-checks_LDFLAGS = $(gtest_LDFLAGS) \
-	$(CURL_LDFLAGS)  $(PUCTOOLS_LDFLAGS)
-checks_LDADD = -lgtest_main libpuTools.la $(gtest_LIBS) -lpthread \
-	$(CURL_LIBS)  $(PUCTOOLS_LIBS)
+checks_CPPFLAGS = -I$(srcdir) \
+	$(CURL_CPPFLAGS) $(PUCTOOLS_CPPFLAGS) $(gtest_CPPFLAGS)
+checks_LDFLAGS = \
+	$(CURL_LDFLAGS)  $(PUCTOOLS_LDFLAGS) $(gtest_LDFLAGS)
+checks_LDADD = -lgtest_main libpuTools.la \
+	$(CURL_LIBS) $(PUCTOOLS_LIBS) $(gtest_LIBS)
 
 TESTS = ${check_PROGRAMS}
 endif # HAVE_GTEST
-
-
-INSTALL=install -p
