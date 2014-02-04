@@ -1,3 +1,9 @@
+metlibs-common-putools (5.0.0-2) unstable; urgency=low
+
+  * debian files and google tests
+
+ -- Lisbeth Bergholt <lisbeth.bergholt@met.no>  Tue, 04 Feb 2014 15:38:06 +0100
+
 metlibs-common-putools (5.0.0-1) unstable; urgency=low
 
   * Split from all-in-one metlibs

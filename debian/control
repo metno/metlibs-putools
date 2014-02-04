@@ -12,7 +12,7 @@ Section: libs
 Package: metlibs-putools-dev
 Section: libdevel
 Architecture: any
-Depends: metlibs-puctools-dev, metlibs-miLogger-dev,
+Depends: metlibs-puctools-dev, metlibs-milogger-dev,
  libboost-dev, libcurl4-openssl-dev | libcurl-dev,
  ${misc:Depends}
 Description: metlibs utility classes (miTime, miString, etc.)
