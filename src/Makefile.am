@@ -27,10 +27,10 @@ pkg_include_HEADERS = \
 	puMathAlgo.h \
 	mi_boost_compatibility.hh
 
-libpuTools_la_CPPFLAGS = \
+libpuTools_la_CPPFLAGS = -fPIC \
 	$(CURL_CPPFLAGS) $(PUCTOOLS_CPPFLAGS) $(BOOST_CPPFLAGS)
 
-libpuTools_la_LDFLAGS = ${VERSION_INFO}
+libpuTools_la_LDFLAGS = -fPIC ${VERSION_INFO}
 if ENABLE_SHARED_LIBRARY
 libpuTools_la_LDFLAGS += \
 	$(CURL_LDFLAGS)  $(PUCTOOLS_LDFLAGS) $(BOOST_LDFLAGS)
@@ -52,3 +52,5 @@ checks_LDADD = -lgtest_main libpuTools.la \
 
 TESTS = ${check_PROGRAMS}
 endif # HAVE_GTEST
+
+INSTALL=install -p # tells install to preserve timestamp

@@ -7,5 +7,5 @@ Name: puTools
 Description: The puTools Library
 Version: @VERSION@
 Requires: puCtools >= 5.0.0
-Libs: -L${libdir} -lpuTools @CURL_LDFLAGS@ @CURL_LIBS@ @BOOST_LDFLAGS@
-Cflags: -I${includedir} @CURL_CPPFLAGS@
+Libs: -fPIC -L${libdir} -lpuTools @CURL_LDFLAGS@ @CURL_LIBS@ @BOOST_LDFLAGS@
+Cflags: -I${includedir} -fPIC @CURL_CPPFLAGS@
