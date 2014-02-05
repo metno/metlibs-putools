@@ -111,10 +111,12 @@ void
 miutil::miDate::setDate(const std::string& str)
 {
   int y=0, m=0, d=0;
-  if(!isValid(str))
-    warning( "setDate: Error in format. YYYY-MM-DD (" + str + ")" );
+  std::string str_=str;
+  miutil::remove(str_,'-');
+  if(!isValid(str_))
+    warning( "setDate: Error in format. YYYY-MM-DD or YYYYMMDD (" + str + ")" );
   else
-    sscanf(str.c_str(), "%4d-%2d-%2d",&y, &m, &d);
+    sscanf(str_.c_str(), "%4d%2d%2d",&y, &m, &d);
   setDate(y,m,d);
 }
 
@@ -132,7 +134,9 @@ bool
 miutil::miDate::isValid(const std::string& str)
 {
   int y=0, m=0, d=0;
-  if(sscanf(str.c_str(), "%4d-%2d-%2d",&y, &m, &d)!=3)
+  std::string str_=str;
+  miutil::remove(str_,'-');
+  if(sscanf(str_.c_str(), "%4d%2d%2d",&y, &m, &d)!=3 )
     return false;
   return isValid(y,m,d);
 }
@@ -284,16 +288,16 @@ miutil::miDate::weekday(const std::string& l) const
 			     "Friday",
 			     "Saturday" };
 
-  static const char* nameNO[]={ "Søndag",
+  static const char* nameNO[]={ "Sï¿½ndag",
 			     "Mandag",
 			     "Tirsdag",
 			     "Onsdag",
 			     "Torsdag",
 			     "Fredag",
-			     "Lørdag" };
+			     "Lï¿½rdag" };
 
-  static const char* nameNN[]={ "Søndag",
-			     "Måndag",
+  static const char* nameNN[]={ "Sï¿½ndag",
+			     "Mï¿½ndag",
 			     "Tysdag",
 			     "Onsdag",
 			     "Torsdag",
@@ -308,13 +312,13 @@ miutil::miDate::weekday(const std::string& l) const
 			     "Freitag",
 			     "Samstag" };
 
-  static const char* nameSE[]={ "Söndag",
-			     "Måndag",
+  static const char* nameSE[]={ "Sï¿½ndag",
+			     "Mï¿½ndag",
 			     "Tisdag",
 			     "Onsdag",
 			     "Torsdag",
 			     "Fredag",
-			     "Lördag" };
+			     "Lï¿½rdag" };
   if (la=="no" || la=="nb")
     return nameNO[a];
   if (la=="nn")
@@ -358,16 +362,16 @@ miutil::miDate::shortweekday(const std::string& l) const
 			     "Fri",
 			     "Sat" };
 
-  static const char* nameNO[]={ "Søn",
+  static const char* nameNO[]={ "Sï¿½n",
 			     "Man",
 			     "Tir",
 			     "Ons",
 			     "Tor",
 			     "Fre",
-			     "Lør" };
+			     "Lï¿½r" };
 
-  static const char* nameNN[]={ "Søn",
-			     "Mån",
+  static const char* nameNN[]={ "Sï¿½n",
+			     "Mï¿½n",
 			     "Tys",
 			     "Ons",
 			     "Tor",
@@ -382,13 +386,13 @@ miutil::miDate::shortweekday(const std::string& l) const
 			     "Fr",
 			     "Sa" };
 
-  static const char* nameSE[]={ "Sön",
-			     "Mån",
+  static const char* nameSE[]={ "Sï¿½n",
+			     "Mï¿½n",
 			     "Tis",
 			     "Ons",
 			     "Tor",
 			     "Fre",
-			     "Lör" };
+			     "Lï¿½r" };
   if (la=="no" || la=="nb")
     return nameNO[a];
   if (la=="nn")
@@ -448,7 +452,7 @@ miutil::miDate::monthname(const std::string& l) const
 
   static const char* nameDE[]={ "Januar",
                                 "Februar",
-                                "März",
+                                "Mï¿½rz",
                                 "April",
                                 "Mai",
                                 "Juni",
@@ -530,7 +534,7 @@ miutil::miDate::shortmonthname(const std::string& l) const
   
   static const char* nameDE[]={ "Jan",
                                 "Feb",
-                                "Mär",
+                                "Mï¿½r",
                                 "Apr",
                                 "Mai",
                                 "Jun",

@@ -30,7 +30,7 @@
 
 // miClock.cc : Definitions for miClock class
 //
-// Authors: ØA/LBS 1997:   Creation
+// Authors: ï¿½A/LBS 1997:   Creation
 //          LBS Nov. 1998: Changed the default state from being the
 //                         current UTC to an `undefined' state.
 
@@ -95,11 +95,13 @@ void
 miutil::miClock::setClock(const std::string& str)
 {
   int h=-1, m=-1, s=-1;
-
-  if (!isValid(str))
-    warning("setClock: Error in format. Should be `HH:MM:SS' (" + str + ")");
+  std::string str_=str;
+  miutil::remove(str_,':');
+  sscanf(str_.c_str(), "%2d%2d%2d",&h, &m, &s);
+  if (!isValid(str_))
+    warning("setClock: Error in format. Should be `HH:MM:SS' or `HHMMSS' (" + str + ")");
   else
-    sscanf(str.c_str(), "%2d:%2d:%2d",&h, &m, &s);
+    sscanf(str_.c_str(), "%2d%2d%2d",&h, &m, &s);
   setClock(h,m,s);
 }
 
@@ -116,7 +118,9 @@ bool
 miutil::miClock::isValid(const std::string& str)
 {
   int h,m,s;
-  if(sscanf(str.c_str(), "%2d:%2d:%2d",&h, &m, &s)!=3)
+  std::string str_=str;
+  miutil::remove(str_,':');
+  if(sscanf(str_.c_str(), "%2d%2d%2d",&h, &m, &s)!=3)
     return false;
   return isValid(h,m,s);
 }
