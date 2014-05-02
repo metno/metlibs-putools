@@ -288,16 +288,16 @@ miutil::miDate::weekday(const std::string& l) const
 			     "Friday",
 			     "Saturday" };
 
-  static const char* nameNO[]={ "Sï¿½ndag",
+  static const char* nameNO[]={ "Søndag",
 			     "Mandag",
 			     "Tirsdag",
 			     "Onsdag",
 			     "Torsdag",
 			     "Fredag",
-			     "Lï¿½rdag" };
+			     "Lørdag" };
 
-  static const char* nameNN[]={ "Sï¿½ndag",
-			     "Mï¿½ndag",
+  static const char* nameNN[]={ "Søndag",
+			     "Måndag",
 			     "Tysdag",
 			     "Onsdag",
 			     "Torsdag",
@@ -312,13 +312,13 @@ miutil::miDate::weekday(const std::string& l) const
 			     "Freitag",
 			     "Samstag" };
 
-  static const char* nameSE[]={ "Sï¿½ndag",
-			     "Mï¿½ndag",
+  static const char* nameSE[]={ "Söndag",
+			     "Måndag",
 			     "Tisdag",
 			     "Onsdag",
 			     "Torsdag",
 			     "Fredag",
-			     "Lï¿½rdag" };
+			     "Lördag" };
   if (la=="no" || la=="nb")
     return nameNO[a];
   if (la=="nn")
@@ -362,16 +362,16 @@ miutil::miDate::shortweekday(const std::string& l) const
 			     "Fri",
 			     "Sat" };
 
-  static const char* nameNO[]={ "Sï¿½n",
+  static const char* nameNO[]={ "Søn",
 			     "Man",
 			     "Tir",
 			     "Ons",
 			     "Tor",
 			     "Fre",
-			     "Lï¿½r" };
+			     "Lør" };
 
-  static const char* nameNN[]={ "Sï¿½n",
-			     "Mï¿½n",
+  static const char* nameNN[]={ "Søn",
+			     "Mån",
 			     "Tys",
 			     "Ons",
 			     "Tor",
@@ -386,13 +386,13 @@ miutil::miDate::shortweekday(const std::string& l) const
 			     "Fr",
 			     "Sa" };
 
-  static const char* nameSE[]={ "Sï¿½n",
-			     "Mï¿½n",
+  static const char* nameSE[]={ "Sön",
+			     "Mån",
 			     "Tis",
 			     "Ons",
 			     "Tor",
 			     "Fre",
-			     "Lï¿½r" };
+			     "Lör" };
   if (la=="no" || la=="nb")
     return nameNO[a];
   if (la=="nn")
@@ -452,7 +452,7 @@ miutil::miDate::monthname(const std::string& l) const
 
   static const char* nameDE[]={ "Januar",
                                 "Februar",
-                                "Mï¿½rz",
+                                "März",
                                 "April",
                                 "Mai",
                                 "Juni",
@@ -534,7 +534,7 @@ miutil::miDate::shortmonthname(const std::string& l) const
   
   static const char* nameDE[]={ "Jan",
                                 "Feb",
-                                "Mï¿½r",
+                                "Mär",
                                 "Apr",
                                 "Mai",
                                 "Jun",
