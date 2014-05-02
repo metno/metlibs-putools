@@ -117,11 +117,10 @@ miutil::miClock::isValid(int h, int m, int s)
 bool
 miutil::miClock::isValid(const std::string& str)
 {
-  int h,m,s;
+  int h=0,m=0,s=0;
   std::string str_=str;
   miutil::remove(str_,':');
-  if(sscanf(str_.c_str(), "%2d%2d%2d",&h, &m, &s)!=3)
-    return false;
+  sscanf(str_.c_str(), "%2d%2d%2d",&h, &m, &s);
   return isValid(h,m,s);
 }
 
