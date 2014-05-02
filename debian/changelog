@@ -1,3 +1,16 @@
+metlibs-common-putools (5.0.2-2) unstable; urgency=low
+
+  * With m4, configure.ac and rules updates
+
+ -- Lisbeth Bergholt <lisbeth.bergholt@met.no>  Fri, 02 May 2014 10:48:37 +0200
+
+metlibs-common-putools (5.0.2-1) unstable; urgency=low
+
+  * Bugfix encoding (UTF-8 -> latin1)
+  * miClock accepts xx:xx:xx, xx:xx, xx, xxxx and xxxxxx
+
+ -- Lisbeth Bergholt <lisbeth.bergholt@met.no>  Fri, 02 May 2014 09:52:48 +0200
+
 metlibs-common-putools (5.0.1-1) unstable; urgency=low
 
   * workaround for bdiana using static libs to build shared lib
