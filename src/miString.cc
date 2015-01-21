@@ -215,7 +215,7 @@ void replace(std::string& text, const std::string& thys, const std::string& that
         return;
 
     const size_t len1=thys.length(), len2=that.length();
-    for (size_t pos=text.find(thys, pos); pos!=std::string::npos; pos=text.find(thys, pos)) {
+    for (size_t pos=text.find(thys, 0); pos!=std::string::npos; pos=text.find(thys, pos)) {
         text.replace(pos, len1, that);
         pos += len2;
     }
