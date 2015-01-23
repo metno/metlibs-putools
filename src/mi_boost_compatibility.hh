@@ -111,8 +111,9 @@ struct map_get_value {
 };
 
 template<class M, class G>
-struct map_wrapper
+class map_wrapper
 {
+public:
   typedef typename M::iterator               m_iterator;
   typedef typename M::reverse_iterator       m_reverse_iterator;
   typedef typename M::const_iterator         m_const_iterator;
