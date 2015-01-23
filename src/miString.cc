@@ -105,7 +105,7 @@ void trim(std::string& text, bool left, bool right, const char* wspace)
             text.clear();
             return;
         }
-        if (pos>=0 && pos<len-1)
+        if (pos<len-1)
             text = text.substr(0, pos+1);
     }
 }
@@ -126,9 +126,9 @@ std::vector<std::string> split(const std::string& text, int nos, const char* sep
     int splitnumber = 0;
     size_t len = text.length();
     size_t start=(clean? text.find_first_not_of(separator_chars, 0): 0);
-    while (start>=0 && start<len) {
+    while (start != std::string::npos && start<len) {
         size_t stop = text.find_first_of(separator_chars, start);
-        if (stop<0 || stop>len)
+        if (stop == std::string::npos || stop > len)
             stop=len;
         vec.push_back(text.substr(start, stop-start));
         
@@ -161,24 +161,24 @@ std::vector<std::string> split_protected(const std::string& text,
     const size_t len = text.length();
     size_t start = (clean ? text.find_first_not_of(separator_chars, 0): 0);
 
-    while (start>=0 && start<len) {
+    while (start != std::string::npos && start<len) {
         size_t stop = text.find_first_of(separator_chars, start);
         size_t tmp = start;
         bool isok = false;
         while (not isok) {
             const size_t lbp = text.find(lb, tmp);
-            if (lbp >= 0 && lbp < stop) {
+            if (lbp != std::string::npos && lbp < stop) {
                 const size_t rbp = text.find(rb, lbp+1);
                 if (rbp == std::string::npos)
                     return vec;
                 tmp = rbp+1;
-                if (rbp >= 0 && rbp > stop)
+                if (rbp != std::string::npos && rbp > stop)
                     stop = text.find_first_of(separator_chars, tmp);
             } else {
                 isok = true;
             }
         }
-        if (stop<0 || stop>len)
+        if (stop == std::string::npos || stop>len)
             stop=len;
 
         vec.push_back(text.substr(start, stop-start));
@@ -565,7 +565,7 @@ miString::split(const char lb, // left border
 
     size_t start=(clean ? find_first_not_of(s,0): 0);
 
-    while (start>=0 && start<len) {
+    while (start != std::string::npos && start<len) {
       size_t stop;
 
       stop=find_first_of(s,start);
@@ -574,19 +574,19 @@ miString::split(const char lb, // left border
       bool isok=false;
       while ( !isok ){
         size_t lbp = find(lb,tmp);
-        if ( lbp >= 0 && lbp < stop ){
+        if (lbp != std::string::npos && lbp < stop) {
           size_t rbp = find(rb,lbp+1);
           if ( rbp == npos ) {
             return vec;
           }
           tmp=rbp+1;
-          if ( rbp >= 0 && rbp > stop ){
+          if (rbp != std::string::npos && rbp > stop) {
             stop = find_first_of(s,tmp);
           }
         } else isok=true;
       }
 
-      if (stop<0 || stop>len)
+      if (stop == std::string::npos || stop>len)
         stop=len;
 
       vec.push_back(substr(start,stop-start));
