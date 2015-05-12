@@ -14,8 +14,7 @@
 #include <list>
 #include <cstdlib>
 
-using namespace std;
-using namespace miutil;
+namespace miutil {
 
 int KeyValue::toInt(bool& ok, int def) const
 {
@@ -56,72 +55,91 @@ bool KeyValue::toBool(bool& ok, bool def) const
 
 // ========================================================================
 
-// static members
-map<std::string, std::string> miutil::SetupParser::substitutions;
-vector<std::string> miutil::SetupParser::sfilename;
-map<std::string, miutil::SetupSection> miutil::SetupParser::sectionm;
-map<std::string, std::string> miutil::SetupParser::user_variables;
+SetupParser* SetupParser::self = 0;
 
-void SetupParser::setUserVariables(const map<std::string, std::string> & user_var)
+// static function
+SetupParser* SetupParser::instance()
 {
-  user_variables = user_var;
+  if (!self)
+    self = new SetupParser();
+  return self;
 }
 
+// static function
+void SetupParser::destroy()
+{
+  delete self;
+  self = 0;
+}
+
+SetupParser::SetupParser()
+{
+}
+
+// static function
+void SetupParser::setUserVariables(const string_string_m& user_var)
+{
+  instance()->user_variables = user_var;
+}
+
+// static function
+const std::map<std::string, std::string>& SetupParser::getUserVariables()
+{
+  return instance()->substitutions;
+}
+
+// static function
 void SetupParser::replaceUserVariables(const std::string& key, const std::string& value)
 {
-  user_variables[key] = value;
+  instance()->user_variables[key] = value;
 }
 
-bool SetupParser::checkSubstitutions(std::string& t)
+bool SetupParser::checkSubstitutions(std::string& t) const
 {
-  std::string::size_type start = 0, stop = 0;
-
-  while ((start = t.find("$(", 0)) != t.npos) {
-    if ((stop = t.find(")", start)) == t.npos) {
-      // unterminated
-      return false;
-    }
-    std::string s = t.substr(start + 2, stop - start - 2);
-    std::string n;
-    s = miutil::to_upper(s);
-    if (substitutions.count(s) > 0) {
-      n = substitutions[s];
-    }
-    // this would be the logical solution, but std::string overrides replace()
-    // miutil::replace(t, start, stop - start + 1, n.c_str());
-    t = t.substr(0, start) + n + t.substr(stop + 1);
-
-  }
-  return true;
+  return substitute(t, false);
 }
 
+// static function
 bool SetupParser::checkEnvironment(std::string& t)
 {
+  return instance()->substitute(t, true);
+}
+
+bool SetupParser::substitute(std::string& t, bool environment) const
+{
   std::string::size_type start = 0, stop = 0;
 
-  while ((start = t.find("${", stop)) != t.npos) {
-    if ((stop = t.find("}", start)) == t.npos)
+  const char* const s_begin = (environment) ? "${" : "$(";
+  const char* const s_end   = (environment) ? "}"  : ")";
+
+  while ((start = t.find(s_begin, stop)) != std::string::npos) {
+    if ((stop = t.find(s_end, start)) == std::string::npos)
       // unterminated
       return false;
-    std::string s = t.substr(start + 2, stop - start - 2);
+
     std::string n;
-    s = miutil::to_upper(s);
-    if (substitutions.count(s) > 0) {
-      n = substitutions[s];
-    } else {
+    const std::string s = miutil::to_upper(t.substr(start + 2, stop - start - 2));
+    string_string_m::const_iterator it = substitutions.find(s);
+    if (it != substitutions.end())
+      n = it->second;
+    else if (environment)
       n = miutil::from_c_str(getenv(s.c_str()));
-    }
-    // this would be the logical solution, but std::string overrides replace()
-    // miutil::replace(t, start, stop - start + 1, n.c_str());
-    t = t.substr(0, start) + n + t.substr(stop + 1);
+
+    t.replace(start, stop+1 - start, n);
   }
   return true;
 }
 
+// static function
 void SetupParser::cleanstr(std::string& s)
 {
+  instance()->substituteAll(s);
+}
+
+void SetupParser::substituteAll(std::string& s) const
+{
   std::string::size_type p;
-  if ((p = s.find("#")) != string::npos)
+  if ((p = s.find("#")) != std::string::npos)
     s.erase(p);
 
   // substitute environment/shell variables
@@ -137,12 +155,12 @@ void SetupParser::cleanstr(std::string& s)
   // : remove leading and trailing " " for each '='
   if (miutil::contains(s, "=") && miutil::contains(s, " ")) {
     p = 0;
-    while ((p = s.find_first_of("=", p)) != string::npos) {
+    while ((p = s.find_first_of("=", p)) != std::string::npos) {
       // check for "" - do not clean out blanks inside these
-      vector<int> sf1, sf2;
+      std::vector<int> sf1, sf2;
       std::string::size_type f1 = 0, f2;
-      while ((f1 = s.find_first_of("\"", f1)) != string::npos && (f2
-          = s.find_first_of("\"", f1 + 1)) != string::npos) {
+      while ((f1 = s.find_first_of("\"", f1)) != std::string::npos && (f2
+          = s.find_first_of("\"", f1 + 1)) != std::string::npos) {
         sf1.push_back(f1);
         sf2.push_back(f2);
         f1 = f2 + 1;
@@ -175,12 +193,12 @@ void SetupParser::cleanstr(std::string& s)
       p++;
     }
   }
-
 }
 
+// static function
 KeyValue SetupParser::splitKeyValue(const std::string& s, bool keepCase)
 {
-  string k, v;
+  std::string k, v;
   const ssize_t eq = s.find("=");
   if (eq < 0) {
     k = s;
@@ -200,7 +218,7 @@ KeyValue SetupParser::splitKeyValue(const std::string& s, bool keepCase)
       const int first_after_or = v.find_first_not_of(" ", pos_or+2);
       const bool quoted_after_or = (quote_end and first_after_or>=0 and first_after_or < vsize-1 and v[first_after_or]=='"');
       if (not ((quote_start and not quoted_before_or) or (quote_end and not quoted_after_or))) {
-        const string before = (quoted_before_or)
+        const std::string before = (quoted_before_or)
             ? v.substr(1, last_before_or-1)
             : v.substr(0, last_before_or+1);
         if (not before.empty()) {
@@ -223,6 +241,7 @@ KeyValue SetupParser::splitKeyValue(const std::string& s, bool keepCase)
   return KeyValue(k, v);
 }
 
+// static function
 void SetupParser::splitKeyValue(const std::string& s, std::string& key,
     std::string& value, bool keepCase)
 {
@@ -231,13 +250,14 @@ void SetupParser::splitKeyValue(const std::string& s, std::string& key,
   value = kv.value();
 }
 
-void SetupParser::splitKeyValue(const std::string& s, std::string& key, vector<std::string>& value)
+// static function
+void SetupParser::splitKeyValue(const std::string& s, std::string& key, string_v& value)
 {
   value.clear();
-  vector<std::string> vs = miutil::split(s, 1, "=", true);
+  string_v vs = miutil::split(s, 1, "=", true);
   if (vs.size() == 2) {
     key = miutil::to_lower(vs[0]); // always converting keyword to lowercase !
-    vector<std::string> vv = miutil::split(vs[1], 0, ",", true);
+    string_v vv = miutil::split(vs[1], 0, ",", true);
     int n = vv.size();
     for (int i = 0; i < n; i++) {
       if (vv[i][0] == '"' && vv[i][vv[i].length() - 1] == '"')
@@ -250,10 +270,11 @@ void SetupParser::splitKeyValue(const std::string& s, std::string& key, vector<s
   }
 }
 
+// static function
 std::vector<KeyValue> SetupParser::splitManyKeyValue(const std::string& line, bool keepCase)
 {
   std::vector<KeyValue> kvs;
-  const std::vector<std::string> tokens = miutil::split(line);
+  const string_v tokens = miutil::split(line);
   BOOST_FOREACH(const std::string& t, tokens)
       kvs.push_back(splitKeyValue(t, keepCase));
   return kvs;
@@ -263,28 +284,26 @@ std::vector<KeyValue> SetupParser::splitManyKeyValue(const std::string& line, bo
  * parse one setupfile
  *
  */
-
+namespace /*anonymous*/ {
 size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 {
-  (*(ostringstream*) userp) << (char *) buffer;
+  (*(std::ostringstream*) userp) << (char *) buffer;
 
   return (size_t) (size * nmemb);
 }
+} // namespace anonymous
 
-vector<std::string> SetupParser::getFromHttp(std::string url)
+// static function
+std::vector<std::string> SetupParser::getFromHttp(const std::string& url)
 {
-  CURL *curl = NULL;
-  CURLcode res;
-  ostringstream ost;
-  vector<std::string> result;
+  std::ostringstream ost;
 
-  curl = curl_easy_init();
+  CURL *curl = curl_easy_init();
   if (curl) {
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &ost);
-    res = curl_easy_perform(curl);
-
+    CURLcode res = curl_easy_perform(curl);
     curl_easy_cleanup(curl);
   }
 
@@ -292,41 +311,36 @@ vector<std::string> SetupParser::getFromHttp(std::string url)
 
   //must contain diana.setup tags
   if (data.find("<diana.setup>") == data.npos || data.find("</diana.setup>") == data.npos) {
-    cerr <<"WARNING: SetupParser::getFromHttp: "<<url
-        <<": <diana.setup> or </diana.setup> tags are missing"<<endl;
-    return result;
+    std::cerr << "WARNING: SetupParser::getFromHttp: " << url
+              << ": <diana.setup> or </diana.setup> tags are missing" << std::endl;
+    return string_v();
   }
 
   data = data.substr(data.find("<diana.setup>") + 13);
   data = data.substr(0,data.find("</diana.setup>"));
 
-  result = miutil::split(data, "\n");
-
-  return result;
+  return miutil::split(data, "\n");
 }
 
-vector<std::string> SetupParser::getFromFile(std::string filename)
+// static function
+std::vector<std::string> SetupParser::getFromFile(const std::string& filename)
 {
-
-  vector<std::string> result;
+  string_v result;
 
   // open filestream
-  ifstream file(filename.c_str());
+  std::ifstream file(filename.c_str());
   if (!file) {
-    cerr << "SetupParser::readSetup. cannot open setupfile " << filename
-    << endl;
+    std::cerr << "SetupParser::readSetup. cannot open setupfile " << filename
+         << std::endl;
     return result;
   }
 
-
   std::string str;
-  while (getline(file, str)) {
+  while (getline(file, str))
     result.push_back(str);
-  }
 
   file.close();
   return result;
-
 }
 
 bool SetupParser::parseFile(const std::string& filename, // name of file
@@ -342,22 +356,22 @@ bool SetupParser::parseFile(const std::string& filename, // name of file
   std::string dummy = " ";
   for (int i = 0; i <= level; i++)
     dummy += ".";
-  cerr << dummy << " reading \t[" << filename << "] " << endl;
+  std::cerr << dummy << " reading \t[" << filename << "] " << std::endl;
   // ===================
 
   const std::string undefsect = "_UNDEF_";
   std::string origsect = (not section.empty() ? section : undefsect);
   std::string sectname = origsect;
-  list<std::string> sectstack;
+  std::list<std::string> sectstack;
 
   std::string str;
   int n, ln = 0, linenum;
 
   // open filestream
-  ifstream file(filename.c_str());
+  std::ifstream file(filename.c_str());
   if (!file) {
-    cerr << "SetupParser::readSetup. cannot open setupfile " << filename
-        << endl;
+    std::cerr << "SetupParser::readSetup. cannot open setupfile " << filename
+         << std::endl;
     return false;
   }
 
@@ -482,10 +496,10 @@ bool SetupParser::parseFile(const std::string& filename, // name of file
             substitutions[miutil::to_upper(key)] = value;
           }
         } else {
-          cerr << "** setupfile WARNING, line " << linenum << " in file "
+          std::cerr << "** setupfile WARNING, line " << linenum << " in file "
               << filename
               << " is no variabledefinition, and is outside all sections:"
-              << str << endl;
+              << str << std::endl;
         }
         continue;
       }
@@ -508,17 +522,22 @@ bool SetupParser::parseFile(const std::string& filename, // name of file
   return true;
 }
 
+// static function
 void SetupParser::clearSect()
 {
-  if (!sectionm.empty())
-    sectionm.clear();
-
+  instance()->sectionm.clear();
 }
 
 /*
  * Clears everything and parses a new setup file
  */
+// static function
 bool SetupParser::parse(const std::string& mainfilename)
+{
+  return instance()->parseFile(mainfilename);
+}
+
+bool SetupParser::parseFile(const std::string& mainfilename)
 {
   sfilename.clear();
   sectionm.clear();
@@ -526,10 +545,10 @@ bool SetupParser::parse(const std::string& mainfilename)
 
   // add user variables
   if (user_variables.size() > 0) {
-     cerr << "SetupParser::parse, adding user variables:" << endl;
-     map<std::string, std::string>::iterator itr = user_variables.begin();
+     std::cerr << "SetupParser::parse, adding user variables:" << std::endl;
+     string_string_m::iterator itr = user_variables.begin();
      for (; itr != user_variables.end(); itr++) {
-       cerr << itr->first << " = " << itr->second << endl;
+       std::cerr << itr->first << " = " << itr->second << std::endl;
        substitutions[miutil::to_upper(itr->first)] = itr->second;
      }
    }
@@ -541,82 +560,69 @@ bool SetupParser::parse(const std::string& mainfilename)
 }
 
 // report an error with filename and linenumber
-void SetupParser::internalErrorMsg(const std::string& filename, const int linenum,
+// static function
+void SetupParser::internalErrorMsg(const std::string& filename, int linenum,
     const std::string& error)
 {
-  cerr << "================================================" << endl;
-  cerr << "Error in setupfile " << filename << endl
-      << "The error occured in line " << linenum << endl << "Message: "
-      << error << endl;
-  cerr << "================================================" << endl;
+  std::cerr << "================================================" << std::endl;
+  std::cerr << "Error in setupfile " << filename << std::endl
+      << "The error occured in line " << linenum << std::endl << "Message: "
+      << error << std::endl;
+  std::cerr << "================================================" << std::endl;
 }
 
 // report an error with line# and sectionname
-void SetupParser::errorMsg(const std::string& sectname, const int linenum,
-    const std::string& error)
+void SetupParser::errorMsg(const std::string& sectname, int linenum,
+    const std::string& msg)
 {
-  map<std::string, SetupSection>::iterator p;
-  if ((p = sectionm.find(sectname)) != sectionm.end()) {
-    int n = p->second.linenum.size();
-    int lnum = (linenum >= 0 && linenum < n) ? p->second.linenum[linenum]
-        : 9999;
-    int m = p->second.filenum.size();
-    int fnum = (linenum >= 0 && linenum < m) ? p->second.filenum[linenum] : 0;
-
-    cerr << "================================================" << endl;
-    cerr << "Error in setupfile " << sfilename[fnum] << endl
-        << "The error occured in section " << sectname << ", line " << lnum
-        << endl << "Line   : " << p->second.strlist[linenum] << endl
-        << "Message: " << error << endl;
-    cerr << "================================================" << endl;
-  } else {
-    cerr << "================================================" << endl;
-    cerr << "Internal SetupParser error." << endl
-        << "An error was reported for unknown section " << sectname << endl
-        << "The message is: " << error << endl;
-    cerr << "================================================" << endl;
-  }
+  instance()->writeMsg(sectname, linenum, msg, "Error");
 }
 
 // give a warning with line# and sectionname
 void SetupParser::warningMsg(const std::string& sectname, const int linenum,
-    const std::string& warning)
+    const std::string& msg)
 {
-  map<std::string, SetupSection>::iterator p;
+  instance()->writeMsg(sectname, linenum, msg, "Warning");
+}
+
+void SetupParser::writeMsg(const std::string& sectname, int linenum,
+    const std::string& msg, const std::string& Error)
+{
+  const std::string& error = miutil::to_lower(Error);
+
+  std::cerr << "================================================" << std::endl;
+  std::map<std::string, SetupSection>::iterator p;
   if ((p = sectionm.find(sectname)) != sectionm.end()) {
     int n = p->second.linenum.size();
-    int lnum = (linenum >= 0 && linenum < n) ? p->second.linenum[linenum]
-        : 9999;
+    int lnum = (linenum >= 0 && linenum < n) ? p->second.linenum[linenum] : 9999;
     int m = p->second.filenum.size();
     int fnum = (linenum >= 0 && linenum < m) ? p->second.filenum[linenum] : 0;
 
-    cerr << "================================================" << endl;
-    cerr << "Warning for setupfile " << sfilename[fnum] << endl << "Section "
-        << sectname << ", line " << lnum << endl << "Line   : "
-        << p->second.strlist[linenum] << endl << "Message: " << warning << endl;
-    cerr << "================================================" << endl;
+    std::cerr << Error << " in setupfile '" << sfilename[fnum] << "'" << std::endl
+              << "The " << error << " occured in section " << sectname << ", line " << lnum
+              << std::endl << "Line   : " << p->second.strlist[linenum] << std::endl;
   } else {
-    cerr << "================================================" << endl;
-    cerr << "Internal SetupParser warning." << endl
-        << "A warning was reported for unknown section " << sectname << endl
-        << "The message is: " << warning << endl;
-    cerr << "================================================" << endl;
+    std::cerr << "Internal SetupParser " << error << "." << std::endl
+              << "The " << error << " was reported for the unknown section '"
+              << sectname << "'" << std::endl;
   }
+  std::cerr << "Message: " << msg << std::endl;
+  std::cerr << "================================================" << std::endl;
 }
 
-bool SetupParser::getSection(const std::string& sectname,
-    vector<std::string>& setuplines)
+bool SetupParser::getSection(const std::string& sectname, string_v& setuplines)
 {
-  map<std::string, SetupSection>::iterator p;
-  if ((p = sectionm.find(sectname)) != sectionm.end()) {
+  std::map<std::string, SetupSection>::const_iterator p = instance()->sectionm.find(sectname);
+  if (p != instance()->sectionm.end()) {
     setuplines = p->second.strlist;
     return true;
   }
 #ifdef DEBUGPRINT1
-  cerr << "Warning: ++SetupParser::getSection for unknown or missing (from setupfile) section: " <<
-  sectname << endl;
+  std::cerr << "Warning: ++SetupParser::getSection for unknown or missing (from setupfile) section: "
+            << sectname << std::endl;
 #endif
   setuplines.clear();
   return false;
 }
 
+} // namespace miutil
