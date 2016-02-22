@@ -1,3 +1,9 @@
+metlibs-common-putools (5.0.4-1) unstable; urgency=low
+
+  * setupparser changes
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 22 Feb 2016 14:30:30 +0100
+
 metlibs-common-putools (5.0.2-2) unstable; urgency=low
 
   * With m4, configure.ac and rules updates
