@@ -5,8 +5,12 @@ if HAVE_GTEST
 
 check_PROGRAMS = checks
 
-checks_SOURCES = check-miClock.cc check-miString.cc check-miStringBuilder.cc \
-	check-TimeFilter.cc check-mi_boost_compatibility.cc
+checks_SOURCES = check-miClock.cc \
+	check-miString.cc \
+	check-miStringBuilder.cc \
+	check-TimeFilter.cc \
+	check-mi_boost_compatibility.cc \
+	check-MinMax.cc
 checks_CPPFLAGS = -I$(top_srcdir)/src \
 	$(CURL_CPPFLAGS) $(PUCTOOLS_CPPFLAGS) $(BOOST_CPPFLAGS) $(gtest_CPPFLAGS)
 checks_LDFLAGS = \
@@ -16,3 +20,8 @@ checks_LDADD = -lgtest_main $(top_builddir)/src/libpuTools.la \
 
 TESTS = ${check_PROGRAMS}
 endif # HAVE_GTEST
+
+# see https://lists.gnu.org/archive/html/automake/2013-06/msg00051.html
+display-testsuite-logs:
+	for f in $(TEST_LOGS); do printf "\n=== $$f ===\n\n"; cat $$f; done
+.PHONY: display-testsuite-logs
