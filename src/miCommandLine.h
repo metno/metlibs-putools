@@ -37,6 +37,8 @@
 #ifndef _miCommandLine_h
 #define _miCommandLine_h
 
+#include "puToolsVersion.h"
+
 #include <map>
 #include <vector>
 #include <string>
