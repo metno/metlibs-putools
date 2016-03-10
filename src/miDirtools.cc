@@ -1,9 +1,7 @@
 /*
   libpuTools - Basic types/algorithms/containers
 
-  $Id$
-
-  Copyright (C) 2006 met.no
+  Copyright (C) 2006-2016 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -31,29 +29,42 @@
 #include "config.h"
 #endif
 
-#include <miDirtools.h>
+#include "miDirtools.h"
+
+#include "miStringFunctions.h"
+
+#include <cstring>
+
+#include <dirent.h>
+#include <libgen.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#if defined(WITH_REGEXP) && defined(linux)
+#include <regex.h>
+#endif
 
 using namespace std;
-using namespace miutil;
 
-miString  getRecent(const miString& cat)
+std::string getRecent(const std::string& cat)
 {
   DIR *dirp;
   dirent *dp;
-  miString last;
-  miString c = cat + "/";
+  std::string last;
+  std::string c = cat + "/";
   int l = 0;
 
   if ((dirp= opendir(cat.c_str()))) {
-      while ((dp= readdir(dirp))) {
+    while ((dp= readdir(dirp))) {
       if (strlen(dp->d_name)>0) {
-	miString name = c + dp->d_name;
-	struct stat st;
-	stat(name.c_str(), &st);
-	if ( l < st.st_ctime ) {
-	  l = st.st_ctime;
-	  last = name;
-	}
+        std::string name = c + dp->d_name;
+        struct stat st;
+        stat(name.c_str(), &st);
+        if ( l < st.st_ctime ) {
+          l = st.st_ctime;
+          last = name;
+        }
       }
     }
     closedir(dirp);
@@ -61,8 +72,8 @@ miString  getRecent(const miString& cat)
   return last;
 }
 
-bool getFilenames(const miString& cat,
-		  vector<miString>& names)
+
+bool getFilenames(const std::string& cat, vector<std::string>& names)
 {
   DIR *dirp;
   dirent *dp;
@@ -70,30 +81,28 @@ bool getFilenames(const miString& cat,
     return false;
 
   while ((dp= readdir(dirp))) {
-    if (strlen(dp->d_name)>0)
-      //       dp->d_namlen)
+    if (strlen(dp->d_name) > 0)
       names.push_back(dp->d_name);
   }
   closedir(dirp);
   return true;
 }
 
-bool getFilenamesByExt(const miString& cat,
-		       const miString& ext,
-		       vector<miString>& names)
+
+bool getFilenamesByExt(const std::string& cat,
+    const std::string& ext, vector<std::string>& names)
 {
-  vector<miString> allnames, splitv;
-  miString cext;
+  vector<std::string> allnames;
   if (!getFilenames(cat, allnames))
     return false;
 
   for (unsigned int i=0; i<allnames.size(); i++){
     if (allnames[i]!="." && allnames[i]!=".."){
-      splitv= allnames[i].split('.');
-      if (splitv.size()){
-	cext= splitv[splitv.size()-1];
-	if (cext == ext)
-	  names.push_back(allnames[i]);
+      const vector<std::string> splitv = miutil::split(allnames[i], ".", false);
+      if (splitv.size()) {
+        const std::string& cext = splitv[splitv.size()-1];
+        if (cext == ext)
+          names.push_back(allnames[i]);
       }
     }
   }
@@ -101,13 +110,12 @@ bool getFilenamesByExt(const miString& cat,
 }
 
 
-
-
-miString hardpath(const miString& fname){
-  miString cwd =  getcwd(NULL,128);
+std::string hardpath(const std::string& fname)
+{
+  std::string cwd = getcwd(NULL,128);
   cwd+="/"+fname;
-  vector<miString> vcwd = cwd.split('/');
-  vector<miString>::iterator itr = vcwd.begin();
+  vector<std::string> vcwd = miutil::split(cwd, "/", true);
+  vector<std::string>::iterator itr = vcwd.begin();
 
   if ( fname == "")
     return cwd;
@@ -125,4 +133,46 @@ miString hardpath(const miString& fname){
    for(itr = vcwd.begin(); itr != vcwd.end(); itr++)
      cwd+="/"+(*itr);
    return cwd;
-};
+}
+
+
+bool getFilenamesByRegexp(const std::string& cat,
+    const std::string& reg, std::vector<std::string>& names)
+{
+#if defined(WITH_REGEXP)
+  std::vector<std::string> allnames;
+#ifdef linux
+  regex_t preg;
+  int res= regcomp(&preg, reg.c_str(), REG_EXTENDED | REG_NOSUB);
+  if (res!=0 || !getFilenames(cat, allnames))
+    return false;
+
+  int nmatch= 0;
+  int eflags= 0;
+  regmatch_t pmatch;
+  for (unsigned int i=0; i<allnames.size(); i++){
+    if (allnames[i]!="." && allnames[i]!=".."){
+      res= regexec(&preg, allnames[i].c_str(), nmatch, &pmatch, eflags);
+      if (res==0) names.push_back(allnames[i]);
+    }
+  }
+  regfree(&preg);
+#else // !linux
+  char *creg= regcmp(reg.c_str(),(char*)0);
+  char *result;
+  if (!creg || !getFilenames(cat, allnames))
+    return false;
+
+  for (int i=0; i<allnames.size(); i++){
+    if (allnames[i]!="." && allnames[i]!=".."){
+      result= regex(creg, allnames[i].c_str());
+      if (result) names.push_back(allnames[i]);
+    }
+  }
+  free(creg);
+#endif // !linux
+  return true;
+#else // !WITH_REGEXP
+  return false;
+#endif
+}
