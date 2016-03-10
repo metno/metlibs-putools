@@ -36,6 +36,7 @@ AC_CONFIG_FILES([
 	puTools.pc
 	Makefile
 	src/Makefile
+	test/Makefile
 	test/gtest/Makefile
 ])
 
