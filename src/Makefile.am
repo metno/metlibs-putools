@@ -25,6 +25,7 @@ pkg_include_HEADERS = \
 	miStringFunctions.h \
 	minmax.h \
 	puAlgo.h \
+	puToolsVersion.h \
 	mi_boost_compatibility.hh
 
 libpuTools_la_CPPFLAGS = -fPIC \

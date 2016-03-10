@@ -4,7 +4,7 @@
 
 AC_PREREQ(2.61)
 # version number must be in sync with src/puToolsVersion.h
-AC_INIT([puTools], [5.1.2], [diana@met.no])
+AC_INIT([puTools], [5.1.3], [diana@met.no])
 AM_INIT_AUTOMAKE([foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
