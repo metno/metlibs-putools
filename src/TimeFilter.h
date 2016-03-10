@@ -30,7 +30,7 @@
 #ifndef TimeFilter_h
 #define TimeFilter_h
 
-#include <puTools/miTime.h>
+#include "miTime.h"
 
 namespace miutil {
 
