@@ -37,10 +37,9 @@
 #ifndef _miCommandLine_h
 #define _miCommandLine_h
 
-#include "miString.h"
-
-#include <vector>
 #include <map>
+#include <vector>
+#include <string>
 #include <sstream>
 
 class miCommandLine {
@@ -48,24 +47,23 @@ public:
 
   struct option {
     char flag;
-    miutil::miString alias;
+    std::string alias;
     bool hasArg;
 
     option()
-      : flag('\0'), hasArg(false) {}
-    option(const char f, const miutil::miString& a, const bool h)
+      : flag(0), hasArg(false) {}
+    option(char f, const std::string& a, bool h)
       : flag(f), alias(a), hasArg(h) {}
   };
 
 private:
-  std::ostringstream est;
+  std::string errors;
   std::vector<option> opts;
-  std::map<char,std::vector<miutil::miString> > args;
-  bool err;
+  std::map<char,std::vector<std::string> > args;
 
-  char aliasToFlag(const miutil::miString&) const;
-  bool flagLegal(const char) const;
-  bool hasArg(const char) const;
+  char aliasToFlag(const std::string&) const;
+  bool flagLegal(char) const;
+  bool hasArg(char) const;
 
   void requiresArgumentError(const char*, const char*);
   void requiresArgumentError(const char*, const char);
@@ -74,29 +72,27 @@ private:
   void illegalOptionError(const char*, const char);
 
 public:
-
   miCommandLine(const std::vector<option>&, const int, char**);
 
-  std::vector<miutil::miString> arg(const char flag)
-  { return args[flag]; }
+  const std::vector<std::string>& arg(char flag) const;
 
-  std::vector<miutil::miString> arg(const miutil::miString& alias)
-  { return args[aliasToFlag(alias)]; }
+  const std::vector<std::string> arg(const std::string& alias) const
+    { return arg(aliasToFlag(alias)); }
 
-  bool hasFlag(const char flag) const
-  { return args.count(flag)>0? true: false; }
+  bool hasFlag(char flag) const
+    { return args.count(flag) > 0; }
 
-  bool hasFlag(const miutil::miString& alias) const
-  { return args.count(aliasToFlag(alias))>0? true: false; }
+  bool hasFlag(const std::string& alias) const
+    { return hasFlag(aliasToFlag(alias)); }
 
   bool empty() const
-  { return args.empty(); }
+    { return args.empty(); }
 
   bool error() const
-  { return err; }
+    { return !errors.empty(); }
 
-  miutil::miString errStr() {return est.str();}
-
+  const std::string& errStr()
+    { return errors; }
 };
 
 #endif

@@ -1,9 +1,7 @@
 /*
   libpuTools - Basic types/algorithms/containers
 
-  $Id$
-
-  Copyright (C) 2006 met.no
+  Copyright (C) 2006-2016 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -36,71 +34,55 @@
 #include <cstring>
 
 using namespace std;
-using namespace miutil;
 
-miCommandLine::miCommandLine(const vector<option>& o,
-			     const int argc, char** argv)
-  : opts(o), err(false)
+miCommandLine::miCommandLine(const vector<option>& o, const int argc, char** argv)
+  : opts(o)
 {
-  int i;
-
-  for (i=1; i<argc; i++)
+  for (int i=1; i<argc; i++) {
     if (*(argv[i])=='-') {
       if (strlen(argv[i])==1) {
-	illegalOptionError(argv[0], argv[i]);
-	continue;
+        illegalOptionError(argv[0], argv[i]);
+        continue;
       }
 
       if (*(argv[i]+1)!='-' && strlen(argv[i])>2) {
-	illegalOptionError(argv[0], (argv[i]+1));
-// 	for (char* cp=argv[i]+1; *cp; *cp++) {
-// 	  if (!flagLegal(*cp)) {
-// 	    illegalOptionError(argv[0], *cp);
-// 	    continue;
-// 	  }
-// 	  if (hasArg(*cp)) {
-// 	    requiresArgumentError(argv[0], *cp);
-// 	    continue;
-// 	  }
-// 	  args[*cp]=vector<miString>();
-// 	}
-      }
-      else {
-	char newflag;
-	if (*(argv[i]+1)=='-') { // alias
-	  newflag=aliasToFlag(argv[i]+2);
-	  if (!newflag) {
-	    illegalOptionError(argv[0], argv[i]);
-	    continue;
-	  }
-	}
-	else {
-	  newflag=*(argv[i]+1);
+        illegalOptionError(argv[0], (argv[i]+1));
+      } else {
+        char newflag;
+        if (*(argv[i]+1)=='-') { // alias
+          newflag=aliasToFlag(argv[i]+2);
+          if (!newflag) {
+            illegalOptionError(argv[0], argv[i]);
+            continue;
+          }
+        } else {
+          newflag=*(argv[i]+1);
 
-	  if (!flagLegal(newflag)) {
-	    illegalOptionError(argv[0], newflag);
-	    continue;
-	  }
-	}
+          if (!flagLegal(newflag)) {
+            illegalOptionError(argv[0], newflag);
+            continue;
+          }
+        }
 
-	if (args.count(newflag)==0)
-	  args[newflag]=vector<miString>();
+        if (args.count(newflag)==0)
+          args[newflag]=vector<string>();
 
-	if (hasArg(newflag)) {
-	  for (i++; i<argc && *(argv[i])!='-'; i++)
-	    args[newflag].push_back(argv[i]);
-	  i--;
-	  if (args[newflag].empty()) {
-	    requiresArgumentError(argv[0],argv[i]);
-	    args.erase(newflag);
-	    continue;
-	  }
-	}
+        if (hasArg(newflag)) {
+          for (i++; i<argc && *(argv[i])!='-'; i++)
+            args[newflag].push_back(argv[i]);
+          i--;
+          if (args[newflag].empty()) {
+            requiresArgumentError(argv[0],argv[i]);
+            args.erase(newflag);
+            continue;
+          }
+        }
       }
     }
+  }
 }
 
-char miCommandLine::aliasToFlag(const miString& s) const
+char miCommandLine::aliasToFlag(const string& s) const
 {
   for (unsigned int i=0; i<opts.size(); i++)
     if (opts[i].alias==s)
@@ -108,7 +90,7 @@ char miCommandLine::aliasToFlag(const miString& s) const
   return '\0';
 }
 
-bool miCommandLine::flagLegal(const char c) const
+bool miCommandLine::flagLegal(char c) const
 {
   for (unsigned int i=0; i<opts.size(); i++)
     if (opts[i].flag==c)
@@ -116,7 +98,7 @@ bool miCommandLine::flagLegal(const char c) const
   return false;
 }
 
-bool miCommandLine::hasArg(const char c) const
+bool miCommandLine::hasArg(char c) const
 {
   for (unsigned int i=0; i<opts.size(); i++)
     if (opts[i].flag==c)
@@ -126,28 +108,41 @@ bool miCommandLine::hasArg(const char c) const
 
 void miCommandLine::illegalOptionError(const char* prog, const char opt)
 {
-  err=true;
+  std::ostringstream est;
   est << prog << ": unknown option `" << opt << "'" << endl;
+  errors += est.str();
 }
 
 void miCommandLine::illegalOptionError(const char* prog, const char* opt)
 {
-  err=true;
+  std::ostringstream est;
   est << prog << ": unknown option `" << opt << "'"<< endl;
+  errors += est.str();
 }
 
 
 void miCommandLine::requiresArgumentError(const char* prog, const char opt)
 {
-  err=true;
+  std::ostringstream est;
   est << prog << ": option `" << opt << "' requires an argument"<< endl;
+  errors += est.str();
 }
 
 
 void miCommandLine::requiresArgumentError(const char* prog, const char* opt)
 {
-  err=true;
+  std::ostringstream est;
   est << prog << ": option `" << opt << "' requires an argument"<< endl;
+  errors += est.str();
 }
 
+static const std::vector<std::string> EMPTY;
 
+const std::vector<std::string>& miCommandLine::arg(char flag) const
+{
+  std::map<char,std::vector<std::string> >::const_iterator it = args.find(flag);
+  if (it != args.end())
+    return it->second;
+  else
+    return EMPTY;
+}
