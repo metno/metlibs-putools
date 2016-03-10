@@ -1,9 +1,7 @@
 /*
   libpuTools - Basic types/algorithms/containers
 
-  $Id$
-
-  Copyright (C) 2006 met.no
+  Copyright (C) 2006-2016 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -27,22 +25,18 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "ttycols.h"
 
 /* Created by met.no/PU
    at Fri Nov  1 10:26:17 2002 */
 
-using namespace std;
-using namespace miutil;
+namespace /* anonymous */ {
 
-static const miString ttcctrl = "[";
+using namespace ttc;
 
+const std::string ttcctrl = "[";
 
-miString ttc::foreground(ttc::color_ c)
+std::string foreground(color_ c)
 {
   switch (c) {
   case Black:
@@ -65,7 +59,7 @@ miString ttc::foreground(ttc::color_ c)
   return "30";
 }
 
-miString ttc::background(ttc::color_ c)
+std::string background(ttc::color_ c)
 {
   switch (c) {
   case Black:
@@ -88,8 +82,7 @@ miString ttc::background(ttc::color_ c)
   return "40";
 }
 
-
-miString ttc::attribute( ttc::attri_ att )
+std::string attribute(ttc::attri_ att)
 {
   switch (att) {
   case  Plain:
@@ -108,23 +101,20 @@ miString ttc::attribute( ttc::attri_ att )
   return "00;";
 }
 
-miString ttc::color(ttc::color_ fg, ttc::attri_ att )
+} // anonymous namespace
+
+namespace ttc {
+
+const std::string reset = "[0;0;0m";
+
+std::string color(color_ fg, attri_ att)
 {
   return ttcctrl + attribute(att) + foreground(fg) + "m";
 }
 
-miString ttc::color(ttc::color_ fg, ttc::color_ bg, ttc::attri_ att)
+std::string color(color_ fg, color_ bg, attri_ att)
 {
-  return ttcctrl+attribute(att)+foreground(fg)+";"+background(bg)+"m";
+  return ttcctrl + attribute(att) + foreground(fg) + ";" + background(bg) + "m";
 }
 
-
-
-
-
-
-
-
-
-
-
+} // namespace ttc

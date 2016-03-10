@@ -1,9 +1,7 @@
 /*
   libpuTools - Basic types/algorithms/containers
 
-  $Id$
-
-  Copyright (C) 2006 met.no
+  Copyright (C) 2016 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -31,33 +29,25 @@
 #ifndef _ttycols_h
 #define _ttycols_h
 
-#include "miString.h"
-
+#include <string>
 
 /* Created by met.no/FoU/PU
    at Fri Nov  1 10:07:39 2002 */
 
 namespace ttc {
 
-  enum attri_ { Plain, Bold, Underscore, Blink, Reverse, Concealed     };
-  enum color_ { Black, Red , Green, Yellow, Blue, Magenta, Cyan, White };
+enum attri_ { Plain, Bold, Underscore, Blink, Reverse, Concealed     };
+enum color_ { Black, Red , Green, Yellow, Blue, Magenta, Cyan, White };
 
-  // reset all tty Colors/Attributes to normal
-  const miutil::miString reset = "[0;0;0m";
+// reset all tty Colors/Attributes to normal
+extern const std::string reset;
 
+// Foreground , Attribute
+std::string color(color_, attri_ = Plain);
 
-  // Foreground , Attribute
-  miutil::miString color(ttc::color_, ttc::attri_ = ttc::Plain );
+// Foreground, Background, Attribute
+std::string color(color_, color_, attri_ = Plain);
 
-  // Foreground, Background, Attribute
-  miutil::miString color(ttc::color_, ttc::color_, ttc::attri_ = ttc::Plain );
+} // namespace ttc
 
-
-  // Internal stuff ...
-  miutil::miString foreground( ttc::color_ );
-  miutil::miString background( ttc::color_ );
-  miutil::miString attribute(  ttc::attri_ );
-
-};
-
-#endif
+#endif // _ttycols_h
