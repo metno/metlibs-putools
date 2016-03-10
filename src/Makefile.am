@@ -9,7 +9,8 @@ libpuTools_la_SOURCES = \
 	miDate.cc \
 	miDirtools.cc \
 	miString.cc \
-	miTime.cc  \
+	miTime.cc \
+	puMathAlgo.cc \
 	ttycols.cc \
 	TimeFilter.cc
 

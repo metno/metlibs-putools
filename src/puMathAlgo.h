@@ -1,9 +1,7 @@
 /*
   libpuTools - Basic types/algorithms/containers
-  
-  $Id$
 
-  Copyright (C) 2006 met.no
+  Copyright (C) 2006-2016 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -11,7 +9,7 @@
   0313 OSLO
   NORWAY
   email: diana@met.no
-  
+
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -21,107 +19,125 @@
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-  
+
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #ifndef _puMathAlgo_h
 #define _puMathAlgo_h
 
-#include <stdlib.h>
-#include <math.h>
+#include <iterator>
+
+#include <cstdlib>
+#include <cmath>
 #include <numeric>
 
 namespace puMathAlgo {
 
-  // Randomiser
+// Randomiser
 class randomInt {
 public:
-  unsigned long operator()(unsigned long max) {
-    unsigned long rval=rand();
-    return rval%max;
-  }
-  void seed(long s) { srand(s); }
+  unsigned long operator()(unsigned long max);
+  void seed(long s);
 };
 
-  // Statistical functions: percentile, mean, and median
-  // Works for (at least) vectors, lists and sets of numerical types.
-  // The return value is type double.
-  // Percentile and median need a functor for sorting.
 
-template<class C, class sorter>
-double percentile(const C& seq, const double p, sorter& sf) {
-  C sseq(seq);
-  sf(sseq);
-  int n=sseq.size();
-  double np=p*(n-1);
-  typename C::iterator low=sseq.begin(), high=sseq.begin();
-  advance(low, static_cast<int>(floor(np)));
-  advance(high, static_cast<int>(ceil(np)));
-  return (*high+*low)/2;
+template<class C>
+typename C::value_type percentile(const C& seq_sorted, const double p)
+{
+  double np = p*(seq_sorted.size()-1);
+  typename C::const_iterator low = seq_sorted.begin(), high = seq_sorted.begin();
+  std::advance(low,  static_cast<int>(std::floor(np)));
+  std::advance(high, static_cast<int>(std::ceil(np)));
+  return (*high + *low)/2;
 }
 
+
 template<class C, class sorter>
-inline double median(const C& seq, sorter& sf) {
+typename C::value_type percentile(const C& seq, const double p, sorter& sf)
+{
+  C sseq(seq);
+  sf(sseq);
+  return percentile(sseq, p);
+}
+
+
+template<class C, class sorter>
+inline typename C::value_type median(const C& seq, sorter& sf)
+{
   return percentile(seq, 0.5, sf);
 }
 
+
 template<class C>
-double mean(const C& seq) {
-  double acc=0;
-  int n=seq.size();
-  acc=accumulate(seq.begin(), seq.end(), 0);
-  return acc/n;
+inline typename C::value_type median(const C& seq_sorted)
+{
+  return percentile(seq_sorted, 0.5);
 }
+
+
+template<class C>
+typename C::value_type mean(const C& seq)
+{
+  typename C::value_type zero;
+  if (seq.empty())
+    return zero;
+  else
+    return std::accumulate(seq.begin(), seq.end(), zero) / seq.size();
+}
+
 
 // class to sum and average values
 
-template<class T> class average {
+template<class T>
+class average {
 private:
   T sum;
-  T iter;
+  size_t iter;
   T DUMMY;
+
 public:
-  average(const T& dum )
-    : sum(0),iter(0),DUMMY(dum) {}
-  
+  average(const T& dum)
+    : sum(), iter(0), DUMMY(dum) {}
+
   T operator()() const {
     return ( iter > 0 ? sum/iter : DUMMY );
   }
-  
-  void add(const T& s){
-    if(s != DUMMY){
+
+  void add(const T& s) {
+    if (s != DUMMY) {
       sum += s;
       iter++;
     }
-  };
-  
-  void clear(){
-    sum = 0;
+  }
+
+  void clear() {
+    sum = T();
     iter = 0;
   };
-   
-  T middle(){
-    T av =( iter > 0 ? sum/iter : DUMMY );
+
+  T middle() {
+    T av = (*this)();
     clear();
-  return(av);
+    return (av);
   };
 
-  friend average<T> operator+( const average<T>& lhs, const average<T>& rhs){
+  friend average<T> operator+(const average<T>& lhs, const average<T>& rhs){
     average<T> res(lhs.DUMMY);
     res.sum = lhs.sum+rhs.sum;
     res.iter = lhs.iter+rhs.iter;
     return res;
   }
 
-  average<T>& operator=(const average<T>& rhs){
+  average<T>& operator=(const average<T>& rhs) {
     sum = rhs.sum;
     iter = rhs.iter;
     DUMMY = rhs.DUMMY;
-  };
+  }
 };
-}
+
+} // namespace puMathAlgo
+
 #endif

@@ -10,7 +10,8 @@ checks_SOURCES = check-miClock.cc \
 	check-miStringBuilder.cc \
 	check-TimeFilter.cc \
 	check-mi_boost_compatibility.cc \
-	check-MinMax.cc
+	check-MinMax.cc \
+	check-mathalgo.cc
 checks_CPPFLAGS = -I$(top_srcdir)/src \
 	$(CURL_CPPFLAGS) $(PUCTOOLS_CPPFLAGS) $(BOOST_CPPFLAGS) $(gtest_CPPFLAGS)
 checks_LDFLAGS = \
