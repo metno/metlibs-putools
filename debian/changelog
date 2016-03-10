@@ -1,9 +1,9 @@
-metlibs-common-putools (5.1.0-1) unstable; urgency=low
+metlibs-common-putools (5.1.1-1) unstable; urgency=low
 
   * removed SetupParser; added TimeFilter
   * code cleanup; removed many miString
 
- -- Alexander Bürger <alexander.buerger@met.no>  Tue, 08 Mar 2016 14:00:00 +0100
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 10 Mar 2016 14:00:00 +0100
 
 metlibs-common-putools (5.0.4-1) unstable; urgency=low
 
