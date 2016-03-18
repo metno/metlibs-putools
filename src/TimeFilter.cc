@@ -101,10 +101,7 @@ bool TimeFilter::initFilter(std::string& filename, bool advanced)
     return false;
 
   if (advanced && (filename.find("[") == std::string::npos || filename.find("]") == std::string::npos)) {
-    // We dont know the time formats in the user setup files.
-    // Set advaned to false to be independent of user setup files.
-    // TBD: Maybe we should remove the advanced option in the future.
-    advanced = false;
+    return false;
   }
 
   noSlash = (filename.find("/") == std::string::npos);
