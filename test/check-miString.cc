@@ -95,6 +95,10 @@ TEST(miStringTest, split)
         EXPECT_EQ(ve1, s1);
         EXPECT_EQ(ve2, s2);
     }
+    {
+        EXPECT_EQ(0, miutil::split("", ":").size());
+        EXPECT_EQ(1, miutil::split("one", ":").size());
+    }
 }
 
 TEST(miStringTest, split_protected)
