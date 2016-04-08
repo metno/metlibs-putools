@@ -31,6 +31,16 @@
 #include <string>
 #include <vector>
 
+namespace miutil {
+
+/*! Determine the modification time for a given path.
+ * \param path the path to check
+ * \return the modification time, or 0 if not found
+ */
+long path_ctime(const std::string& path);
+
+} // namespace miutil
+
 // get the newest modificated file from catalog 'cat'
 extern std::string getRecent(const std::string& cat);
 

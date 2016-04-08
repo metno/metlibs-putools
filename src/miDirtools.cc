@@ -32,6 +32,7 @@
 #include "miDirtools.h"
 
 #include "miStringFunctions.h"
+#include <puCtools/stat.h>
 
 #include <cstring>
 
@@ -46,6 +47,16 @@
 #endif
 
 using namespace std;
+
+namespace miutil {
+long path_ctime(const std::string& path)
+{
+  pu_struct_stat buf;
+  if (pu_stat(path.c_str(), &buf) != 0)
+    return 0;
+  return buf.st_ctime;
+}
+} // namespace miutil
 
 std::string getRecent(const std::string& cat)
 {
