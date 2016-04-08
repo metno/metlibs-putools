@@ -1,3 +1,9 @@
+metlibs-common-putools (5.1.5~rc1-1) unstable; urgency=low
+
+  * added mutil::path_ctime
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 08 Apr 2016 15:00:00 +0200
+
 metlibs-common-putools (5.1.4-1) unstable; urgency=low
 
   * removed SetupParser; added TimeFilter
