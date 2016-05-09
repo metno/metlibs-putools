@@ -94,7 +94,7 @@ miutil::miClock::setClock(int h, int m, int s)
 void
 miutil::miClock::setClock(const std::string& str)
 {
-  int h=-1, m=-1, s=-1;
+  int h=0, m=0, s=0;
   std::string str_=str;
   miutil::remove(str_,':');
   sscanf(str_.c_str(), "%2d%2d%2d",&h, &m, &s);
