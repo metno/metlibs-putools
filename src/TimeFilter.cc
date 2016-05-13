@@ -83,9 +83,9 @@ TimeFilter::TimeFilter()
   reset();
 }
 
-TimeFilter::TimeFilter(std::string& filename, bool advanced_)
+TimeFilter::TimeFilter(std::string& filename)
 {
-  initFilter(filename, advanced_);
+  initFilter(filename);
 }
 
 void TimeFilter::reset()
@@ -93,21 +93,22 @@ void TimeFilter::reset()
   yyyy = yy = mm = dd = HH = MM = SS = std::string::npos;
 }
 
-bool TimeFilter::initFilter(std::string& filename, bool advanced)
+bool TimeFilter::initFilter(std::string& filename)
 {
+
   reset();
 
   if (filename == "OFF")
     return false;
 
-  if (advanced && (filename.find("[") == std::string::npos || filename.find("]") == std::string::npos)) {
+  if ( filename.find("[") == std::string::npos || filename.find("]") == std::string::npos ) {
     return false;
   }
 
   noSlash = (filename.find("/") == std::string::npos);
 
   try {
-    filename = parsePattern(filename, advanced);
+    filename = parse(filename);
     return ok();
   } catch (std::exception& e) {
     reset();
@@ -121,29 +122,8 @@ bool TimeFilter::ok() const
       (yy != std::string::npos || yyyy != std::string::npos));
 }
 
-std::string TimeFilter::parsePattern(const std::string& filename, bool advanced)
-{
-  if (advanced) {
-    return parseAdvanced(filename);
-  } else {
-    return parseSimple(filename);
-  }
-}
 
-std::string TimeFilter::parseSimple(const std::string& filename)
-{
-  std::string pattern = filename;
-  yyyy = replace_first_if(pattern, "yyyy", 4);
-  yy   = replace_first_if(pattern, "yy",   2);
-  mm   = replace_first_if(pattern, "mm",   2);
-  dd   = replace_first_if(pattern, "dd",   2);
-  HH   = replace_first_if(pattern, "HH",   2);
-  MM   = replace_first_if(pattern, "MM",   2);
-  SS   = replace_first_if(pattern, "SS",   2);
-  return pattern;
-}
-
-std::string TimeFilter::parseAdvanced(const std::string& filename)
+std::string TimeFilter::parse(const std::string& filename)
 {
   std::ostringstream pattern;
 

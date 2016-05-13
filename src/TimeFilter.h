@@ -40,10 +40,10 @@ namespace miutil {
 class TimeFilter {
 public:
   TimeFilter();
-  TimeFilter(std::string& filename, bool advanced_=false);
+  TimeFilter(std::string& filename);
 
   /// remember time info, return filename with time info replaced by '?'s
-  bool initFilter(std::string& filename, bool advanced_=false);
+  bool initFilter(std::string& filename);
 
   void reset();
 
@@ -56,9 +56,7 @@ public:
   std::string getTimeStr(const std::string& name) const;
 
 private:
-  std::string parsePattern(const std::string& filename, bool advanced);
-  std::string parseSimple(const std::string& filename);
-  std::string parseAdvanced(const std::string& filename);
+  std::string parse(const std::string& filename);
 
 private:
   std::string::size_type yyyy,yy,mm,dd,HH,MM,SS;
