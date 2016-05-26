@@ -1,3 +1,9 @@
+metlibs-common-putools (5.1.8-2) unstable; urgency=low
+
+  * update build-depends
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 26 May 2016 09:00:09 +0100
+
 metlibs-common-putools (5.1.8-1) unstable; urgency=low
 
   * TimeFilter - advanced option removed
