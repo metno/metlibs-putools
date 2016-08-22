@@ -1,4 +1,3 @@
-#/m4
 /autom4te.cache
 Makefile
 Makefile.in
@@ -26,3 +25,7 @@ Makefile.in
 /test/gtest/*.o
 /test/gtest/lib*.a
 /src/checks
+/m4/libtool.m4
+/m4/lt*.m4
+/compile
+/test-driver
