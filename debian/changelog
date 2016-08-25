@@ -1,3 +1,10 @@
+metlibs-common-putools (5.1.9-1) unstable; urgency=low
+
+  * use classic locale in to_lower and to_upper
+  * limit number of messages from miTime
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 25 Aug 2016 08:00:08 +0200
+
 metlibs-common-putools (5.1.8-2) unstable; urgency=low
 
   * update build-depends
