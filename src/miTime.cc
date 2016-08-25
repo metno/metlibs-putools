@@ -46,16 +46,31 @@ using namespace std;
 using namespace miutil;
 using namespace boost::posix_time;
 
-static inline void warning(const std::string& s)
+namespace /*anonymous*/ {
+bool show_message()
 {
-  std::cerr << "Warning: miTime::" << s << std::endl;
-}
-static inline void invalid(const std::string& s)
-{
-  std::cerr << "Warning: miTime::setTime: (" << s
-	    << ") is not a valid time"       << std::endl;
+  static const int message_counter_max = 100;
+  static int message_counter = 0;
+  if (message_counter < message_counter_max) {
+    message_counter += 1;
+    return true;
+  } else {
+    return false;
+  }
 }
 
+inline void warning(const std::string& s)
+{
+  if (show_message())
+    std::cerr << "Warning: miTime::" << s << std::endl;
+}
+
+inline void invalid(const std::string& s)
+{
+  if (show_message())
+    std::cerr << "Warning: miTime::setTime: (" << s << ") is not a valid time" << std::endl;
+}
+} // anonymous namespace
 
 /* Construct miTime from UNIX time (this function has a Y2038 problem
    with current UNIX implementaions) */
