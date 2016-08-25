@@ -372,10 +372,7 @@ double to_double(const std::string& text, const double undefined)
 
 std::string to_lower(const std::string& text)
 {
-    std::locale loc("");
-    std::string t(text);
-    boost::algorithm::to_lower(t,loc);
-    return t;
+  return boost::algorithm::to_lower_copy(text, std::locale::classic());
 }
 
 std::string to_lower_latin1(const std::string& text)
@@ -392,10 +389,7 @@ std::string to_lower_latin1(const std::string& text)
 
 std::string to_upper(const std::string& text)
 {
-    std::locale loc("");
-    std::string t(text);
-    boost::algorithm::to_upper(t,loc);
-    return t;
+  return boost::algorithm::to_upper_copy(text, std::locale::classic());
 }
 
 std::string to_upper_latin1(const std::string& text)
