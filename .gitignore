@@ -18,6 +18,8 @@ Makefile.in
 /ltmain.sh
 /puTools.pc
 /missing
+/debian/.debhelper/
+/debian/debhelper-build-stamp
 /debian/metlibs-putools-dev.debhelper.log
 /debian/metlibs-putools-dev.substvars
 /debian/metlibs-putools-dev
