@@ -31,3 +31,8 @@ Makefile.in
 /m4/lt*.m4
 /compile
 /test-driver
+/test/checks
+/test/checks-*.o
+/test/checks.log
+/test/checks.trs
+/test/test-suite.log

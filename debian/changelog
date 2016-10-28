@@ -1,3 +1,9 @@
+metlibs-common-putools (5.1.11-1) unstable; urgency=low
+
+  * fix version mismatch between puToolsVersion.h and configure.ac
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 28 Oct 2016 08:00:08 +0200
+
 metlibs-common-putools (5.1.10-1) unstable; urgency=low
 
   * fix boost dependency and pkg-config file
