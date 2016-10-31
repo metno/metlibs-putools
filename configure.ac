@@ -8,8 +8,11 @@ AC_INIT([puTools], [5.1.11], [diana@met.no])
 AM_INIT_AUTOMAKE([foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
+AC_CONFIG_SRCDIR([src/miString.h])
+AC_CONFIG_MACRO_DIR([m4])
+
 ## check version consistency
-V_HEADER_FILE=src/puToolsVersion.h
+V_HEADER_FILE=${srcdir}/src/puToolsVersion.h
 V_MAJOR=`grep '^#define METLIBS_PUTOOLS_VERSION_MAJOR' "${V_HEADER_FILE}" | cut -d' ' -f3`
 V_MINOR=`grep '^#define METLIBS_PUTOOLS_VERSION_MINOR' "${V_HEADER_FILE}" | cut -d' ' -f3`
 V_PATCH=`grep '^#define METLIBS_PUTOOLS_VERSION_PATCH' "${V_HEADER_FILE}" | cut -d' ' -f3`
@@ -18,9 +21,6 @@ if echo "$VERSION" | grep -q "^${V_MAJOR}\\.${V_MINOR}\\.${V_PATCH}\\($\\|[^0-9]
 else
   AC_MSG_ERROR([expected version $VERSION but found ${V_MAJOR}.${V_MINOR}.${V_PATCH} in ${V_HEADER_FILE}])
 fi
-
-AC_CONFIG_SRCDIR([src/miString.h])
-AC_CONFIG_MACRO_DIR([m4])
 
 METNO_SET_VERSION_INFO(6.0.0)
 METNO_PROG_PKG_CONFIG
