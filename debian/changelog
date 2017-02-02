@@ -1,6 +1,6 @@
-metlibs-common-putools (5.1.12-1) unstable; urgency=low
+metlibs-common-putools (5.1.13-1) unstable; urgency=low
 
-  * fix version mismatch between puToolsVersion.h and configure.ac
+  * we do not use curl, but we use boost date time
 
  -- Alexander Bürger <alexander.buerger@met.no>  Thu, 02 Feb 2017 08:00:08 +0100
 
