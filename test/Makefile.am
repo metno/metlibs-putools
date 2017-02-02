@@ -13,11 +13,11 @@ checks_SOURCES = check-miClock.cc \
 	check-MinMax.cc \
 	check-mathalgo.cc
 checks_CPPFLAGS = -I$(top_srcdir)/src \
-	$(CURL_CPPFLAGS) $(PUCTOOLS_CPPFLAGS) $(BOOST_CPPFLAGS) $(gtest_CPPFLAGS)
+	$(PUCTOOLS_CPPFLAGS) $(BOOST_CPPFLAGS) $(gtest_CPPFLAGS)
 checks_LDFLAGS = \
-	$(CURL_LDFLAGS)  $(PUCTOOLS_LDFLAGS) $(BOOST_LDFLAGS)  $(gtest_LDFLAGS)
+	$(PUCTOOLS_LDFLAGS) $(BOOST_LDFLAGS)  $(gtest_LDFLAGS)
 checks_LDADD = -lgtest_main $(top_builddir)/src/libpuTools.la \
-	$(CURL_LIBS) $(PUCTOOLS_LIBS) $(BOOST_LIBS)  $(gtest_LIBS)
+	$(PUCTOOLS_LIBS) $(BOOST_LIBS)  $(gtest_LIBS)
 
 TESTS = ${check_PROGRAMS}
 endif # HAVE_GTEST

@@ -29,14 +29,14 @@ pkg_include_HEADERS = \
 	mi_boost_compatibility.hh
 
 libpuTools_la_CPPFLAGS = -fPIC \
-	$(CURL_CPPFLAGS) $(PUCTOOLS_CPPFLAGS) $(BOOST_CPPFLAGS)
+	$(PUCTOOLS_CPPFLAGS) $(BOOST_CPPFLAGS)
 
 libpuTools_la_LDFLAGS = -fPIC ${VERSION_INFO}
 if ENABLE_SHARED_LIBRARY
 libpuTools_la_LDFLAGS += \
-	$(CURL_LDFLAGS)  $(PUCTOOLS_LDFLAGS) $(BOOST_LDFLAGS)
+	$(PUCTOOLS_LDFLAGS) $(BOOST_LDFLAGS)
 libpuTools_la_LIBADD = \
-	$(CURL_LIBS) $(PUCTOOLS_LIBS) $(BOOST_LIBS)
+	$(PUCTOOLS_LIBS) $(BOOST_LIBS)
 endif
 
 INSTALL=install -p # tells install to preserve timestamp
