@@ -1,0 +1,3 @@
+usr/include/metlibs/puTools/*
+usr/lib/*/libmetlibs*.so
+usr/lib/*/pkgconfig/*.pc

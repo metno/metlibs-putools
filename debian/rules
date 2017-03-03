@@ -1,13 +1,24 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
 
-%:
-	dh $@ --parallel
+DH_COMMAND = dh
 
-.PHONY: override_dh_auto_configure
-override_dh_auto_configure:
-	./autogen.sh
-	dh_auto_configure -- \
-	    --includedir=\$${prefix}/include/metlibs \
-	    --disable-shared \
-	    CFLAGS="$(CFLAGS)" LDFLAGS="-Wl,-z,defs"
+V_HEADER_FILE=src/puToolsVersion.h
+
+%:
+	$(DH_COMMAND) $@ --parallel
+
+.PHONY: override_dh_auto_configure version-check
+override_dh_auto_configure: version-check
+	dh_auto_configure
+
+version-check:
+	@ V_MAJOR=`grep '^#define METLIBS_.*_VERSION_MAJOR ' "${V_HEADER_FILE}" | cut -d' ' -f3` ; \
+	V_MINOR=`grep '^#define METLIBS_.*_VERSION_MINOR ' "${V_HEADER_FILE}" | cut -d' ' -f3` ; \
+	V_PATCH=`grep '^#define METLIBS_.*_VERSION_PATCH ' "${V_HEADER_FILE}" | cut -d' ' -f3` ; \
+	head -n1 debian/changelog | grep -q "$${V_MAJOR}\\.$${V_MINOR}\\.$${V_PATCH}-" || \
+	{ echo "version mismatch ${V_HEADER_FILE} vs debian/changelog" ; false ; }
+
+.PHONY: override_dh_strip
+override_dh_strip:
+	dh_strip --dbg-package=libmetlibs-putools6-dbg

@@ -1,6 +1,10 @@
 /debian/.debhelper/
 /debian/debhelper-build-stamp
-/debian/metlibs-putools-dev.debhelper.log
-/debian/metlibs-putools-dev.substvars
-/debian/metlibs-putools-dev
+/debian/*.debhelper.log
+/debian/*.substvars
 /debian/files
+debian/tmp/
+/debian/metlibs-putools-dev/
+/debian/libmetlibs-putools6-dbg/
+/debian/libmetlibs-putools6/
+/obj-x86_64-linux-gnu/

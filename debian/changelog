@@ -1,3 +1,10 @@
+metlibs-common-putools (6.0.0-1) unstable; urgency=low
+
+  * CMake build
+  * shared library
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 03 Mar 2017 08:00:08 +0100
+
 metlibs-common-putools (5.1.13-1) unstable; urgency=low
 
   * we do not use curl, but we use boost date time
