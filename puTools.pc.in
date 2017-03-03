@@ -1,11 +1,4 @@
-prefix=@prefix@
-exec_prefix=@exec_prefix@
-libdir=@libdir@
-includedir=@includedir@
-
 Name: puTools
-Description: The puTools Library
-Version: @VERSION@
-Requires: puCtools >= 5.0.0
-Libs: -fPIC -L${libdir} -lpuTools @BOOST_LDFLAGS@ @BOOST_DATE_TIME_LIBS@
-Cflags: -I${includedir} -fPIC @BOOST_CPPFLAGS@
+Description: MET Norway pu tools
+Version: @PUTOOLS_PVERSION_FULL@
+Requires: metlibs-putools = @PUTOOLS_PVERSION_FULL@
