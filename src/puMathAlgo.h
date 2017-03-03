@@ -81,7 +81,7 @@ inline typename C::value_type median(const C& seq_sorted)
 template<class C>
 typename C::value_type mean(const C& seq)
 {
-  typename C::value_type zero;
+  typename C::value_type zero = 0;
   if (seq.empty())
     return zero;
   else
