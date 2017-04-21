@@ -20,6 +20,7 @@ ADD_EXECUTABLE(putools_test
 
 TARGET_LINK_LIBRARIES(putools_test
   putools
+  ${GTEST_LIBRARY}
   ${GTEST_MAIN_LIBRARY}
 )
 
