@@ -21,4 +21,4 @@ version-check:
 
 .PHONY: override_dh_strip
 override_dh_strip:
-	dh_strip --dbg-package=libmetlibs-putools6-dbg
+	dh_strip --dbg-package=libmetlibs-putools7-dbg

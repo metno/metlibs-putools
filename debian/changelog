@@ -1,3 +1,10 @@
+metlibs-common-putools (7.0.0-1) unstable; urgency=low
+
+  * utf-8 time formatting
+  * added new overloads of functions, need to increase so version
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 26 Apr 2017 08:00:08 +0200
+
 metlibs-common-putools (6.0.0-1) unstable; urgency=low
 
   * CMake build
