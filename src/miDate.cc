@@ -268,6 +268,12 @@ miutil::miDate::weekday(const lang l) const
 std::string
 miutil::miDate::weekday(const std::string& l) const
 {
+  return weekday(l, false);
+}
+
+std::string
+miutil::miDate::weekday(const std::string& l, bool utf8) const
+{
   if (undef()) {
     warning("weekday: Date is undefined. Can't find weekday.");
     return "";
@@ -296,8 +302,24 @@ miutil::miDate::weekday(const std::string& l) const
 			     "Fredag",
 			     "L\370rdag" }; // oslash
 
+  static const char* nameNO_utf8[]={ "Søndag", // oslash
+                             "Mandag",
+                             "Tirsdag",
+                             "Onsdag",
+                             "Torsdag",
+                             "Fredag",
+                             "Lørdag" }; // oslash
+
   static const char* nameNN[]={ "S\370ndag", // oslash
 			     "M\345ndag", // aring
+                             "Tysdag",
+                             "Onsdag",
+                             "Torsdag",
+                             "Fredag",
+                             "Laurdag" };
+
+  static const char* nameNN_utf8[]={ "Søndag", // oslash
+                             "Måndag", // aring
 			     "Tysdag",
 			     "Onsdag",
 			     "Torsdag",
@@ -319,14 +341,23 @@ miutil::miDate::weekday(const std::string& l) const
 			     "Torsdag",
 			     "Fredag",
 			     "L\366rdag" }; // oumlaut
+
+  static const char* nameSE_utf8[]={ "Söndag", // oumlaut
+                             "Måndag", // aring
+                             "Tisdag",
+                             "Onsdag",
+                             "Torsdag",
+                             "Fredag",
+                             "Lördag" }; // oumlaut
+
   if (la=="no" || la=="nb")
-    return nameNO[a];
+    return utf8 ? nameNO_utf8[a] : nameNO[a];
   if (la=="nn")
-    return nameNN[a];
+    return utf8 ? nameNN_utf8[a] : nameNN[a];
   if (la=="de")
     return nameDE[a];
   if (la=="se" || la=="sv")
-    return nameSE[a];
+    return utf8 ? nameSE_utf8[a] : nameSE[a];
 
   return nameEN[a];
 }
@@ -341,6 +372,12 @@ miutil::miDate::shortweekday(const lang l) const
 
 std::string
 miutil::miDate::shortweekday(const std::string& l) const
+{
+  return shortweekday(l, false);
+}
+
+std::string
+miutil::miDate::shortweekday(const std::string& l, bool utf8) const
 {
   if (undef()) {
     warning("shortWeekday: Date is undefined. Can't find weekday.");
@@ -370,8 +407,24 @@ miutil::miDate::shortweekday(const std::string& l) const
 			     "Fre",
 			     "L\370r" }; // oslash
 
+  static const char* nameNO_utf8[]={ "Søn", // oslash
+                             "Man",
+                             "Tir",
+                             "Ons",
+                             "Tor",
+                             "Fre",
+                             "Lør" }; // oslash
+
   static const char* nameNN[]={ "S\370n", // oslash
-			     "M\345n", // aring
+                             "M\345n", // aring
+                             "Tys",
+                             "Ons",
+                             "Tor",
+                             "Fre",
+                             "Lau" };
+
+  static const char* nameNN_utf8[]={ "Søn", // oslash
+                             "Mån", // aring
 			     "Tys",
 			     "Ons",
 			     "Tor",
@@ -393,14 +446,23 @@ miutil::miDate::shortweekday(const std::string& l) const
 			     "Tor",
 			     "Fre",
 			     "L\366r" }; // oumlaut
+
+  static const char* nameSE_utf8[]={ "Sön", // oumlaut
+                             "Mån",// aring
+                             "Tis",
+                             "Ons",
+                             "Tor",
+                             "Fre",
+                             "Lör" }; // oumlaut
+
   if (la=="no" || la=="nb")
-    return nameNO[a];
+    return utf8 ? nameNO_utf8[a] : nameNO[a];
   if (la=="nn")
-    return nameNN[a];
+    return utf8 ? nameNN_utf8[a] : nameNN[a];
   if (la=="de")
     return nameDE[a];
   if (la=="se" || la=="sv")
-    return nameSE[a];
+    return utf8 ? nameSE_utf8[a] : nameSE[a];
 
   return nameEN[a];
 }
@@ -413,6 +475,12 @@ miutil::miDate::monthname(const lang l) const
 
 std::string
 miutil::miDate::monthname(const std::string& l) const
+{
+  return monthname(l, false);
+}
+
+std::string
+miutil::miDate::monthname(const std::string& l, bool utf8) const
 {
   if (undef()) {
     warning("monthname: Date is undefined. Can't return month name.");
@@ -463,6 +531,19 @@ miutil::miDate::monthname(const std::string& l) const
                                 "November",
                                 "Dezember" };
 
+  static const char* nameDE_utf8[]={ "Januar",
+                                "Februar",
+                                "März", // utf8 a umlaut
+                                "April",
+                                "Mai",
+                                "Juni",
+                                "Juli",
+                                "August",
+                                "September",
+                                "Oktober",
+                                "November",
+                                "Dezember" };
+
   static const char* nameSE[]={ "Januari",
                                 "Februari",
                                 "Mars",
@@ -479,7 +560,7 @@ miutil::miDate::monthname(const std::string& l) const
   if (la=="no" || la=="nb" || la=="nn")
     return nameNO[Month-1];
   if( la=="de")
-    return nameDE[Month-1];
+    return utf8 ? nameDE_utf8[Month-1] : nameDE[Month-1];
   if (la=="se" || la=="sv")
     return nameSE[Month-1];
 
@@ -495,6 +576,12 @@ miutil::miDate::shortmonthname(const lang l) const
 
 std::string
 miutil::miDate::shortmonthname(const std::string& l) const
+{
+  return shortmonthname(l, false);
+}
+
+std::string
+miutil::miDate::shortmonthname(const std::string& l, bool utf8) const
 {
   if (undef()) {
     warning("monthShortname: Date is undefined. Can't return month name.");
@@ -545,6 +632,19 @@ miutil::miDate::shortmonthname(const std::string& l) const
                                 "Nov",
                                 "Dez" };
 
+  static const char* nameDE_utf8[]={ "Jan",
+                                "Feb",
+                                "Mär", // utf8 a umlaut
+                                "Apr",
+                                "Mai",
+                                "Jun",
+                                "Jul",
+                                "Aug",
+                                "Sep",
+                                "Okt",
+                                "Nov",
+                                "Dez" };
+
   static const char* nameSE[]={ "Jan",
                                 "Feb",
                                 "Mar",
@@ -560,7 +660,7 @@ miutil::miDate::shortmonthname(const std::string& l) const
   if (la=="no" || la=="nb" || la=="nn")
       return nameNO[Month-1];
   if (la=="de")
-      return nameDE[Month-1];
+      return utf8 ? nameDE_utf8[Month-1] : nameDE[Month-1];
   if (la=="se" || la=="sv")
       return nameSE[Month-1];
   
@@ -613,6 +713,12 @@ miutil::miDate::format(const std::string& newDate,const lang l) const
 std::string
 miutil::miDate::format(const std::string& newDate, const std::string& l) const
 {
+  return format(newDate, l, false);
+}
+
+std::string
+miutil::miDate::format(const std::string& newDate, const std::string& l, bool utf8) const
+{
   if(undef())
     return newDate;
 
@@ -626,15 +732,15 @@ miutil::miDate::format(const std::string& newDate, const std::string& l) const
 
   miutil::replace(d, "%D", isoDate());            //!%D  date (yyyy-mm-dd)
 
-  miutil::replace(d, "%B", monthname(l));         //!%B  month  name,  (January..December)
-  miutil::replace(d, "%b", shortmonthname(l));    //!%b  short month  name,  (Jan..Dec)
-  miutil::replace(d, "%A", weekday(l));           //!%A  weekday name, (Sunday..Saturday)
-  miutil::replace(d, "%a", shortweekday(l));      //!%a  shortweekday name, (Sun..Sat)
+  miutil::replace(d, "%B", monthname(l, utf8));         //!%B  month  name,  (January..December)
+  miutil::replace(d, "%b", shortmonthname(l, utf8));    //!%b  short month  name,  (Jan..Dec)
+  miutil::replace(d, "%A", weekday(l, utf8));           //!%A  weekday name, (Sunday..Saturday)
+  miutil::replace(d, "%a", shortweekday(l, utf8));      //!%a  shortweekday name, (Sun..Sat)
 
-  miutil::replace(d, "%_B", miutil::to_lower(monthname(l)));      //!%B  month  name, lowercase
-  miutil::replace(d, "%_b", miutil::to_lower(shortmonthname(l))); //!%b  short month  name, lowercase
-  miutil::replace(d, "%_A", miutil::to_lower(weekday(l)));        //!%A  weekday name,lowercase
-  miutil::replace(d, "%_a", miutil::to_lower(shortweekday(l)));   //!%a  shortweekday name,lowercase
+  miutil::replace(d, "%_B", miutil::to_lower(monthname(l, utf8)));      //!%B  month  name, lowercase
+  miutil::replace(d, "%_b", miutil::to_lower(shortmonthname(l, utf8))); //!%b  short month  name, lowercase
+  miutil::replace(d, "%_A", miutil::to_lower(weekday(l, utf8)));        //!%A  weekday name,lowercase
+  miutil::replace(d, "%_a", miutil::to_lower(shortweekday(l, utf8)));   //!%a  shortweekday name,lowercase
 
   return d;
 }

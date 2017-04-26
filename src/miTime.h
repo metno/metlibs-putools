@@ -28,7 +28,7 @@
 */
 
 // miTime.h : Declarations for miTime class
-// ØA, 1997
+// Ã˜A, 1997
 // LBS May 28 1997, comparison functions added
 
 #ifndef __dnmi_miTime__
@@ -154,6 +154,7 @@ public:
 
   // new version - use no/en/de etc for language
   std::string format(const std::string&, const std::string& lang="") const;
+  std::string format(const std::string&, const std::string& lang, bool utf8) const;
 
   // New faster version using boost date/time
   static std::string format(const miutil::miTime& time, const std::string& format);

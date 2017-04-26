@@ -29,7 +29,7 @@
 
 
 // miTime.cc : Definitions for miTime class
-// ØA, 1997
+// Ã˜A, 1997
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -426,6 +426,12 @@ miutil::miTime::format(const std::string& newTime, const miDate::lang l) const
 std::string
 miutil::miTime::format(const std::string& nt, const std::string& lang) const
 {
+  return format(nt, lang, false);
+}
+
+std::string
+miutil::miTime::format(const std::string& nt, const std::string& lang, bool utf8) const
+{
   std::string newTime(nt), l(lang);
   miutil::replace(newTime, "%c","%a %b %d %X GMT %Y");
 
@@ -513,7 +519,7 @@ miutil::miTime::format(const std::string& nt, const std::string& lang) const
     }
   }
 
-  newTime = ftim.date().format(newTime,l);
+  newTime = ftim.date().format(newTime, l, utf8);
   newTime = ftim.clock().format(newTime);
   return newTime;
 }

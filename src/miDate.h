@@ -167,6 +167,12 @@ public:
   std::string shortmonthname(  const std::string& lang="") const;
   std::string format(const std::string&, const std::string& lang="") const;
 
+  std::string weekday(         const std::string& lang, bool utf8) const;
+  std::string shortweekday(    const std::string& lang, bool utf8) const;
+  std::string monthname(       const std::string& lang, bool utf8) const;
+  std::string shortmonthname(  const std::string& lang, bool utf8) const;
+  std::string format(const std::string&, const std::string& lang, bool utf8) const;
+
 
   void setDefaultLanguage(const char* l=""){ defaultLanguage=l; }
 
