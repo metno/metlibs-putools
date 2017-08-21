@@ -1,3 +1,10 @@
+metlibs-common-putools (7.1.0-1) unstable; urgency=low
+
+  * added from_latin1_to_utf8
+  * code de-duplication in miDate/miTime formatting
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 21 Aug 2017 08:00:08 +0200
+
 metlibs-common-putools (7.0.0-1) unstable; urgency=low
 
   * utf-8 time formatting
