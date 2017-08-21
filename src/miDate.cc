@@ -84,6 +84,15 @@ int
 miutil::miDate::dayOfYear() const
 { return cum_ml[isLeap(Year)][Month]+Day; }
 
+// static
+std::string miDate::language(const std::string& l)
+{
+  std::string la = l;
+  if (la.empty())
+      la = defaultLanguage;
+  return miutil::to_lower(la);
+}
+
 /*
  * Constructors
  */
@@ -258,10 +267,18 @@ miutil::miDate::weekNo() const
   return (jdn-mon.jdn)/7+1;
 }
 
+// static
+const std::string& miDate::languagestring(miDate::lang l)
+{
+  static const std::string LANG[2] = { "en", "no" }; // must match "lang" enum
+  return LANG[l];
+}
+
+
 std::string
 miutil::miDate::weekday(const lang l) const
 {
-  return weekday( (l== Norwegian ? "no" : "" ) );
+  return weekday(languagestring(l));
 }
 
 
@@ -278,11 +295,6 @@ miutil::miDate::weekday(const std::string& l, bool utf8) const
     warning("weekday: Date is undefined. Can't find weekday.");
     return "";
   }
-
-  std::string la = l;
-  if (la.empty())
-      la = defaultLanguage;
-  la = miutil::to_lower(la);
 
   const int a = intWeekday();
 
@@ -350,6 +362,7 @@ miutil::miDate::weekday(const std::string& l, bool utf8) const
                              "Fredag",
                              "Lördag" }; // oumlaut
 
+  const std::string la = language(l);
   if (la=="no" || la=="nb")
     return utf8 ? nameNO_utf8[a] : nameNO[a];
   if (la=="nn")
@@ -365,7 +378,7 @@ miutil::miDate::weekday(const std::string& l, bool utf8) const
 std::string
 miutil::miDate::shortweekday(const lang l) const
 {
-  return shortweekday( (l== Norwegian ? "no" : "" ) );
+  return shortweekday(languagestring(l));
 }
 
 
@@ -383,11 +396,6 @@ miutil::miDate::shortweekday(const std::string& l, bool utf8) const
     warning("shortWeekday: Date is undefined. Can't find weekday.");
     return "";
   }
-
-  std::string la = l;
-  if (la.empty())
-      la = defaultLanguage;
-  la = miutil::to_lower(la);
 
   const int a = intWeekday();
 
@@ -455,6 +463,7 @@ miutil::miDate::shortweekday(const std::string& l, bool utf8) const
                              "Fre",
                              "Lör" }; // oumlaut
 
+  const std::string la = language(l);
   if (la=="no" || la=="nb")
     return utf8 ? nameNO_utf8[a] : nameNO[a];
   if (la=="nn")
@@ -470,7 +479,7 @@ miutil::miDate::shortweekday(const std::string& l, bool utf8) const
 std::string
 miutil::miDate::monthname(const lang l) const
 {
-  return monthname( (l== Norwegian ? "no" : "" ) );
+  return monthname(languagestring(l));
 }
 
 std::string
@@ -486,11 +495,6 @@ miutil::miDate::monthname(const std::string& l, bool utf8) const
     warning("monthname: Date is undefined. Can't return month name.");
     return "";
   }
-
-  std::string la = l;
-  if (la.empty())
-      la = defaultLanguage;
-  la = miutil::to_lower(la);
 
   static const char* nameEN[]={ "January",
                                 "February",
@@ -557,6 +561,7 @@ miutil::miDate::monthname(const std::string& l, bool utf8) const
                                 "November",
                                 "December" };
 
+  const std::string la = language(l);
   if (la=="no" || la=="nb" || la=="nn")
     return nameNO[Month-1];
   if( la=="de")
@@ -570,7 +575,7 @@ miutil::miDate::monthname(const std::string& l, bool utf8) const
 std::string
 miutil::miDate::shortmonthname(const lang l) const
 {
-  return shortmonthname( (l== Norwegian ? "no" : "" ) );
+  return shortmonthname(languagestring(l));
 }
 
 
@@ -587,11 +592,6 @@ miutil::miDate::shortmonthname(const std::string& l, bool utf8) const
     warning("monthShortname: Date is undefined. Can't return month name.");
     return "";
   }
-
-  std::string la = l;
-  if (la.empty())
-      la = defaultLanguage;
-  la = miutil::to_lower(la);
 
   static const char* nameEN[]={ "Jan",
                                 "Feb",
@@ -657,6 +657,8 @@ miutil::miDate::shortmonthname(const std::string& l, bool utf8) const
                                 "Okt",
                                 "Nov",
                                 "Dec" };
+
+  const std::string la = language(l);
   if (la=="no" || la=="nb" || la=="nn")
       return nameNO[Month-1];
   if (la=="de")
@@ -707,7 +709,7 @@ miutil::miDate::today()
 std::string
 miutil::miDate::format(const std::string& newDate,const lang l) const
 {
-  return format(newDate, (l== Norwegian ? "no" : "" ) );
+  return format(newDate, languagestring(l));
 }
 
 std::string

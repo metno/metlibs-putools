@@ -69,12 +69,15 @@ private:
     { return (((jdn+1)%7)+7)%7; }
 
   static const char* defaultLanguage;
+  static std::string language(const std::string& l);
 
 public:
   enum lang {
     English,
     Norwegian
   };
+
+  static const std::string& languagestring(lang l);
 
   enum days {
     Sunday=0,

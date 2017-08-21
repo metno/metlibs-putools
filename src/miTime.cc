@@ -419,7 +419,7 @@ miutil::miTime::timezone(const std::string& stz)
 std::string
 miutil::miTime::format(const std::string& newTime, const miDate::lang l) const
 {
-  return format(newTime, (l== miDate::Norwegian ? "no" : "en" ) );
+  return format(newTime, miDate::languagestring(l));
 }
 
 
