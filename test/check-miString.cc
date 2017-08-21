@@ -219,3 +219,10 @@ TEST(miStringTest, to_upper_lower)
     EXPECT_EQ("oslash\xc3\xb8\xc3\xb8 aring\xc3\xa5\xc3\xa5 uuml\xc3\xbc\xc3\xbc", miutil::to_lower(utf8));
 #endif
 }
+
+TEST(miStringTest, Latin1ToUtf8)
+{
+  EXPECT_EQ("blåbær", miutil::from_latin1_to_utf8("bl\xE5" "b\xE6" "r"));
+  EXPECT_EQ("Årø", miutil::from_latin1_to_utf8("\xC5r\xF8"));
+}
+

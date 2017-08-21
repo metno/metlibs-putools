@@ -44,6 +44,8 @@ inline int count_char(const std::string& text, char count_me)
 inline std::string from_c_str(const char* s)
 { return s ? std::string(s) : std::string(); }
 
+std::string from_latin1_to_utf8(const std::string& latin1);
+
 std::string from_number(const int d, const int width=0, const char fill='0');
 std::string from_number(const double d, const int prec =-1);
 std::string from_number(const float d, const int prec =-1);
