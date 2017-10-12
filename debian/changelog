@@ -1,3 +1,9 @@
+metlibs-common-putools (7.1.0-2) unstable; urgency=low
+
+  * version number in shlibs
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 12 Oct 2017 08:00:08 +0200
+
 metlibs-common-putools (7.1.0-1) unstable; urgency=low
 
   * added from_latin1_to_utf8
