@@ -51,12 +51,24 @@
 #define __dnmi_miDate__
 
 #include <iosfwd>
-
+#include <map>
+#include <memory>
 #include <string>
 
 namespace miutil{
 
 class miDate {
+public:
+  class Translations {
+  public:
+    virtual ~Translations();
+    virtual const std::string& weekday(int day, bool utf8) const = 0;
+    virtual const std::string& shortweekday(int day, bool utf8) const = 0;
+    virtual const std::string& monthname(int month, bool utf8) const = 0;
+    virtual const std::string& shortmonthname(int month, bool utf8) const= 0;
+  };
+  typedef std::shared_ptr<const Translations> Translations_cp;
+
 private:
   int Year;
   int Month;
@@ -68,8 +80,11 @@ private:
   int intWeekday() const
     { return (((jdn+1)%7)+7)%7; }
 
-  static const char* defaultLanguage;
-  static std::string language(const std::string& l);
+  typedef std::map<std::string, miDate::Translations_cp> translations_t;
+  static translations_t translations;
+  static void initTranslations();
+  static Translations_cp defaultLanguage;
+  static Translations_cp language(const std::string& l);
 
 public:
   enum lang {
@@ -177,7 +192,8 @@ public:
   std::string format(const std::string&, const std::string& lang, bool utf8) const;
 
 
-  void setDefaultLanguage(const char* l=""){ defaultLanguage=l; }
+  static void installTranslation(Translations_cp t, const std::string& languagecode);
+  static void setDefaultLanguage(const std::string& l);
 
   static miDate today(); // return system date
 

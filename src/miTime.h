@@ -159,8 +159,7 @@ public:
   // New faster version using boost date/time
   static std::string format(const miutil::miTime& time, const std::string& format);
 
-  void setDefaultLanguage(const char* l) { Date.setDefaultLanguage(l);}
-
+  static void setDefaultLanguage(const std::string& l);
 };
 
 }

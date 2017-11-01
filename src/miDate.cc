@@ -1,9 +1,7 @@
 /*
   libpuTools - Basic types/algorithms/containers
 
-  $Id$
-
-  Copyright (C) 2006 met.no
+  Copyright (C) 2006-2017 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -41,16 +39,208 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
+#include <cstdlib>
+#include <cstdio>
 
+#include <time.h>
 
 using namespace std;
 using namespace miutil;
 
+miDate::Translations::~Translations()
+{
+}
 
-const char* miutil::miDate::defaultLanguage = "";
+// ------------------------------------------------------------------------
+
+class miDateEnglish : public miDate::Translations {
+public:
+  const std::string& weekday(int day, bool) const override
+    { return days[day]; }
+  const std::string& shortweekday(int day, bool) const override
+    { return daysShort[day]; }
+  const std::string& monthname(int month, bool) const override
+    { return months[month]; }
+  const std::string& shortmonthname(int month, bool) const override
+    { return monthsShort[month]; }
+  static const std::string days[7], daysShort[7], months[12], monthsShort[12];
+};
+
+const std::string miDateEnglish::days[7] =
+  { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+const std::string miDateEnglish::daysShort[7] =
+  { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+
+const std::string miDateEnglish::months[12] =
+  { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+const std::string miDateEnglish::monthsShort[12] =
+  { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+
+// ------------------------------------------------------------------------
+
+class miDateNorwegianNB : public miDate::Translations {
+public:
+  const std::string& weekday(int day, bool utf8) const override
+    { return (utf8 ? daysU8 : daysL1)[day]; }
+  const std::string& shortweekday(int day, bool utf8) const override
+    { return (utf8 ? daysU8Short : daysL1Short)[day]; }
+  const std::string& monthname(int month, bool) const override
+    { return months[month]; }
+  const std::string& shortmonthname(int month, bool) const override
+    { return monthsShort[month]; }
+  static const std::string daysU8[7], daysL1[7], daysU8Short[7], daysL1Short[7], months[12], monthsShort[12];
+};
+
+const std::string miDateNorwegianNB::daysU8[7] =
+  { "Søndag" /* oslash */, "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag" /* oslash */ };
+const std::string miDateNorwegianNB::daysL1[7] =
+  { "S\370ndag" /* oslash */, "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "L\370rdag" /* oslash */ };
+const std::string miDateNorwegianNB::daysU8Short[7] =
+  { "Søn", "Man", "Tir", "Ons", "Tor", "Fre", "Lør" };
+const std::string miDateNorwegianNB::daysL1Short[7] =
+  { "S\370n", "Man", "Tir", "Ons", "Tor", "Fre", "L\370r" };
+
+const std::string miDateNorwegianNB::months[12] =
+  { "Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember" };
+const std::string miDateNorwegianNB::monthsShort[12] =
+  { "Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Des" };
+
+// ------------------------------------------------------------------------
+
+class miDateNorwegianNN : public miDateNorwegianNB {
+public:
+  const std::string& weekday(int day, bool utf8) const override
+    { return (utf8 ? daysU8 : daysL1)[day]; }
+  const std::string& shortweekday(int day, bool utf8) const override
+    { return (utf8 ? daysU8Short : daysL1Short)[day]; }
+  static const std::string daysU8[7], daysL1[7], daysU8Short[7], daysL1Short[7];
+};
+
+const std::string miDateNorwegianNN::daysU8[7] =
+  { "Søndag", "Måndag", "Tysdag", "Onsdag", "Torsdag", "Fredag", "Laurdag" };
+const std::string miDateNorwegianNN::daysL1[7] =
+  { "S\370ndag", "M\345ndag", "Tysdag", "Onsdag", "Torsdag", "Fredag", "Laurdag" };
+
+const std::string miDateNorwegianNN::daysU8Short[7] =
+  { "Søn", "Mån", "Tys", "Ons", "Tor", "Fre", "Lau" };
+const std::string miDateNorwegianNN::daysL1Short[7] =
+  { "S\370n", "M\345n" /* aring */, "Tys", "Ons", "Tor", "Fre", "Lau" };
+
+// ------------------------------------------------------------------------
+
+class miDateGerman : public miDate::Translations {
+public:
+  const std::string& weekday(int day, bool) const override
+    { return days[day]; }
+  const std::string& shortweekday(int day, bool) const override
+    { return daysShort[day]; }
+  const std::string& monthname(int month, bool utf8) const override
+  { return (utf8 ? monthsU8 : monthsL1)[month]; }
+  const std::string& shortmonthname(int month, bool utf8) const override
+    { return (utf8 ? monthsU8Short : monthsL1Short)[month]; }
+  static const std::string days[7], daysShort[7], monthsL1[12], monthsU8[12], monthsL1Short[12], monthsU8Short[12];
+};
+
+const std::string miDateGerman::days[7] =
+  { "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag" };
+const std::string miDateGerman::daysShort[7] =
+  { "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"};
+
+const std::string miDateGerman::monthsL1[12] =
+  { "Jan", "Feb", "M\344r", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez" };
+const std::string miDateGerman::monthsU8[12] =
+  { "Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez" };
+const std::string miDateGerman::monthsL1Short[12] =
+  { "Januar", "Februar", "M\344rz", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember" };
+const std::string miDateGerman::monthsU8Short[12] =
+  { "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember" };
+
+// ------------------------------------------------------------------------
+
+class miDateSwedish : public miDate::Translations {
+public:
+  const std::string& weekday(int day, bool utf8) const override
+    { return (utf8 ? daysU8 : daysL1)[day]; }
+  const std::string& shortweekday(int day, bool utf8) const override
+    { return (utf8 ? daysU8Short : daysL1Short)[day]; }
+  const std::string& monthname(int month, bool) const override
+    { return months[month]; }
+  const std::string& shortmonthname(int month, bool) const override
+    { return monthsShort[month]; }
+  static const std::string daysU8[7], daysL1[7], daysU8Short[7], daysL1Short[7], months[12], monthsShort[12];
+};
+
+const std::string miDateSwedish::daysU8[7] =
+  { "Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag" };
+const std::string miDateSwedish::daysL1[7] =
+  { "S\366ndag", "M\345ndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "L\366rdag" };
+const std::string miDateSwedish::daysU8Short[7] =
+  { "Sön",  "Mån", "Tis", "Ons", "Tor", "Fre", "Lör" };
+const std::string miDateSwedish::daysL1Short[7] =
+  { "S\366n", "M\345n", "Tis", "Ons", "Tor", "Fre", "L\366r" };
+
+const std::string miDateSwedish::months[12] =
+  { "Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December" };
+const std::string miDateSwedish::monthsShort[12] =
+  { "Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec" };
+
+
+// ------------------------------------------------------------------------
+
+// static
+miDate::translations_t miDate::translations;
+
+// static
+void miDate::initTranslations()
+{
+  if (translations.empty()) {
+    translations["nb"] = translations["no"] = std::make_shared<miDateNorwegianNB>();
+    translations["nn"] = std::make_shared<miDateNorwegianNN>();
+    translations["de"] = std::make_shared<miDateGerman>();
+    translations["se"] = translations["sv"] = std::make_shared<miDateSwedish>();
+    translations["en"] = std::make_shared<miDateEnglish>();
+  }
+  if (!defaultLanguage) {
+    translations_t::const_iterator it = translations.find("en");
+    if (it == translations.end())
+      it = translations.begin();
+    defaultLanguage = it->second;
+  }
+}
+
+miDate::Translations_cp miutil::miDate::defaultLanguage;
+
+// static
+void miDate::installTranslation(miDate::Translations_cp t, const std::string& languagecode)
+{
+  if (t) {
+    translations[languagecode] = t;
+    defaultLanguage = t;
+  }
+}
+
+// static
+void miDate::setDefaultLanguage(const std::string& l)
+{
+  defaultLanguage = language(l);
+}
+
+// static
+miDate::Translations_cp miDate::language(const std::string& l)
+{
+  initTranslations();
+
+  if (!l.empty()) {
+    translations_t::const_iterator it = translations.find(l);
+    if (it == translations.end())
+      it = translations.find(miutil::to_lower(l));
+    if (it != translations.end())
+      return it->second;
+  }
+  return defaultLanguage;
+}
+
+// ########################################################################
 
 static inline void warning(const std::string& s)
 {
@@ -83,19 +273,6 @@ miutil::miDate::daysInMonth() const
 int
 miutil::miDate::dayOfYear() const
 { return cum_ml[isLeap(Year)][Month]+Day; }
-
-// static
-std::string miDate::language(const std::string& l)
-{
-  std::string la = l;
-  if (la.empty())
-      la = defaultLanguage;
-  return miutil::to_lower(la);
-}
-
-/*
- * Constructors
- */
 
 void
 miutil::miDate::setDate(int y, int m, int d)
@@ -296,83 +473,7 @@ miutil::miDate::weekday(const std::string& l, bool utf8) const
     return "";
   }
 
-  const int a = intWeekday();
-
-  static const char* nameEN[]={ "Sunday",
-			     "Monday",
-			     "Tuesday",
-			     "Wednesday",
-			     "Thursday",
-			     "Friday",
-			     "Saturday" };
-
-  static const char* nameNO[]={ "S\370ndag", // oslash
-			     "Mandag",
-			     "Tirsdag",
-			     "Onsdag",
-			     "Torsdag",
-			     "Fredag",
-			     "L\370rdag" }; // oslash
-
-  static const char* nameNO_utf8[]={ "Søndag", // oslash
-                             "Mandag",
-                             "Tirsdag",
-                             "Onsdag",
-                             "Torsdag",
-                             "Fredag",
-                             "Lørdag" }; // oslash
-
-  static const char* nameNN[]={ "S\370ndag", // oslash
-			     "M\345ndag", // aring
-                             "Tysdag",
-                             "Onsdag",
-                             "Torsdag",
-                             "Fredag",
-                             "Laurdag" };
-
-  static const char* nameNN_utf8[]={ "Søndag", // oslash
-                             "Måndag", // aring
-			     "Tysdag",
-			     "Onsdag",
-			     "Torsdag",
-			     "Fredag",
-			     "Laurdag" };
-
-  static const char* nameDE[]={ "Sonntag",
-			     "Montag",
-			     "Dienstag",
-			     "Mittwoch",
-			     "Donnerstag",
-			     "Freitag",
-			     "Samstag" };
-
-  static const char* nameSE[]={ "S\366ndag", // oumlaut
-			     "M\345ndag", // aring
-			     "Tisdag",
-			     "Onsdag",
-			     "Torsdag",
-			     "Fredag",
-			     "L\366rdag" }; // oumlaut
-
-  static const char* nameSE_utf8[]={ "Söndag", // oumlaut
-                             "Måndag", // aring
-                             "Tisdag",
-                             "Onsdag",
-                             "Torsdag",
-                             "Fredag",
-                             "Lördag" }; // oumlaut
-
-  const std::string la = language(l);
-  if (la=="no" || la=="nb")
-    return utf8 ? nameNO_utf8[a] : nameNO[a];
-  if (la=="nn")
-    return utf8 ? nameNN_utf8[a] : nameNN[a];
-  if (la=="de")
-    return nameDE[a];
-  if (la=="se" || la=="sv")
-    return utf8 ? nameSE_utf8[a] : nameSE[a];
-
-  return nameEN[a];
+  return language(l)->weekday(intWeekday(), utf8);
 }
 
 std::string
@@ -380,8 +481,6 @@ miutil::miDate::shortweekday(const lang l) const
 {
   return shortweekday(languagestring(l));
 }
-
-
 
 std::string
 miutil::miDate::shortweekday(const std::string& l) const
@@ -397,84 +496,9 @@ miutil::miDate::shortweekday(const std::string& l, bool utf8) const
     return "";
   }
 
-  const int a = intWeekday();
-
-  static const char* nameEN[]={ "Sun",
-			     "Mon",
-			     "Tue",
-			     "Wed",
-			     "Thu",
-			     "Fri",
-			     "Sat" };
-
-  static const char* nameNO[]={ "S\370n", // oslash
-			     "Man",
-			     "Tir",
-			     "Ons",
-			     "Tor",
-			     "Fre",
-			     "L\370r" }; // oslash
-
-  static const char* nameNO_utf8[]={ "Søn", // oslash
-                             "Man",
-                             "Tir",
-                             "Ons",
-                             "Tor",
-                             "Fre",
-                             "Lør" }; // oslash
-
-  static const char* nameNN[]={ "S\370n", // oslash
-                             "M\345n", // aring
-                             "Tys",
-                             "Ons",
-                             "Tor",
-                             "Fre",
-                             "Lau" };
-
-  static const char* nameNN_utf8[]={ "Søn", // oslash
-                             "Mån", // aring
-			     "Tys",
-			     "Ons",
-			     "Tor",
-			     "Fre",
-			     "Lau" };
-
-  static const char* nameDE[]={ "So",
-			     "Mo",
-			     "Di",
-			     "Mi",
-			     "Do",
-			     "Fr",
-			     "Sa" };
-
-  static const char* nameSE[]={ "S\366n", // oumlaut
-			     "M\345n",// aring
-			     "Tis",
-			     "Ons",
-			     "Tor",
-			     "Fre",
-			     "L\366r" }; // oumlaut
-
-  static const char* nameSE_utf8[]={ "Sön", // oumlaut
-                             "Mån",// aring
-                             "Tis",
-                             "Ons",
-                             "Tor",
-                             "Fre",
-                             "Lör" }; // oumlaut
-
-  const std::string la = language(l);
-  if (la=="no" || la=="nb")
-    return utf8 ? nameNO_utf8[a] : nameNO[a];
-  if (la=="nn")
-    return utf8 ? nameNN_utf8[a] : nameNN[a];
-  if (la=="de")
-    return nameDE[a];
-  if (la=="se" || la=="sv")
-    return utf8 ? nameSE_utf8[a] : nameSE[a];
-
-  return nameEN[a];
+  return language(l)->shortweekday(intWeekday(), utf8);
 }
+
 
 std::string
 miutil::miDate::monthname(const lang l) const
@@ -496,88 +520,15 @@ miutil::miDate::monthname(const std::string& l, bool utf8) const
     return "";
   }
 
-  static const char* nameEN[]={ "January",
-                                "February",
-                                "March",
-                                "April",
-                                "May",
-                                "June",
-                                "July",
-                                "August",
-                                "September",
-                                "October",
-                                "November",
-                                "December" };
-
-  static const char* nameNO[]={ "Januar",
-                                "Februar",
-                                "Mars",
-                                "April",
-                                "Mai",
-                                "Juni",
-                                "Juli",
-                                "August",
-                                "September",
-                                "Oktober",
-                                "November",
-                                "Desember" };
-
-  static const char* nameDE[]={ "Januar",
-                                "Februar",
-                                "M\344rz", // latin1 a umlaut
-                                "April",
-                                "Mai",
-                                "Juni",
-                                "Juli",
-                                "August",
-                                "September",
-                                "Oktober",
-                                "November",
-                                "Dezember" };
-
-  static const char* nameDE_utf8[]={ "Januar",
-                                "Februar",
-                                "März", // utf8 a umlaut
-                                "April",
-                                "Mai",
-                                "Juni",
-                                "Juli",
-                                "August",
-                                "September",
-                                "Oktober",
-                                "November",
-                                "Dezember" };
-
-  static const char* nameSE[]={ "Januari",
-                                "Februari",
-                                "Mars",
-                                "April",
-                                "Maj",
-                                "Juni",
-                                "Juli",
-                                "Augusti",
-                                "September",
-                                "Oktober",
-                                "November",
-                                "December" };
-
-  const std::string la = language(l);
-  if (la=="no" || la=="nb" || la=="nn")
-    return nameNO[Month-1];
-  if( la=="de")
-    return utf8 ? nameDE_utf8[Month-1] : nameDE[Month-1];
-  if (la=="se" || la=="sv")
-    return nameSE[Month-1];
-
-  return nameEN[Month-1];
+  return language(l)->monthname(Month-1, utf8);
 }
+
 
 std::string
 miutil::miDate::shortmonthname(const lang l) const
 {
   return shortmonthname(languagestring(l));
 }
-
 
 std::string
 miutil::miDate::shortmonthname(const std::string& l) const
@@ -593,80 +544,7 @@ miutil::miDate::shortmonthname(const std::string& l, bool utf8) const
     return "";
   }
 
-  static const char* nameEN[]={ "Jan",
-                                "Feb",
-                                "Mar",
-                                "Apr",
-                                "May",
-                                "Jun",
-                                "Jul",
-                                "Aug",
-                                "Sep",
-                                "Oct",
-                                "Nov",
-                                "Dec" };
-
-  static const char* nameNO[]={ "Jan",
-                                "Feb",
-                                "Mar",
-                                "Apr",
-                                "Mai",
-                                "Jun",
-                                "Jul",
-                                "Aug",
-                                "Sep",
-                                "Okt",
-                                "Nov",
-                                "Des" };
-  
-  static const char* nameDE[]={ "Jan",
-                                "Feb",
-                                "M\344r", // latin1 a umlaut
-                                "Apr",
-                                "Mai",
-                                "Jun",
-                                "Jul",
-                                "Aug",
-                                "Sep",
-                                "Okt",
-                                "Nov",
-                                "Dez" };
-
-  static const char* nameDE_utf8[]={ "Jan",
-                                "Feb",
-                                "Mär", // utf8 a umlaut
-                                "Apr",
-                                "Mai",
-                                "Jun",
-                                "Jul",
-                                "Aug",
-                                "Sep",
-                                "Okt",
-                                "Nov",
-                                "Dez" };
-
-  static const char* nameSE[]={ "Jan",
-                                "Feb",
-                                "Mar",
-                                "Apr",
-                                "Maj",
-                                "Jun",
-                                "Jul",
-                                "Aug",
-                                "Sep",
-                                "Okt",
-                                "Nov",
-                                "Dec" };
-
-  const std::string la = language(l);
-  if (la=="no" || la=="nb" || la=="nn")
-      return nameNO[Month-1];
-  if (la=="de")
-      return utf8 ? nameDE_utf8[Month-1] : nameDE[Month-1];
-  if (la=="se" || la=="sv")
-      return nameSE[Month-1];
-  
-  return nameEN[Month-1];
+  return language(l)->shortmonthname(Month-1, utf8);
 }
 
 

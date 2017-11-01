@@ -548,3 +548,10 @@ std::string miutil::miTime::format(const miutil::miTime& time, const std::string
 	tf.put(log_stream, log_stream,' ', _time);
 	return log_stream.str();
 }
+
+// static
+void miTime::setDefaultLanguage(const std::string& l)
+{
+  miDate::setDefaultLanguage(l);
+}
+
