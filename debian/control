@@ -16,7 +16,7 @@ Section: libs
 Package: metlibs-putools-dev
 Section: libdevel
 Architecture: any
-Depends: libmetlibs-putools7 (= ${binary:Version}),
+Depends: libmetlibs-putools8 (= ${binary:Version}),
  metlibs-puctools-dev (>= 6.0.0),
  ${shlibs:Depends},
  ${misc:Depends}
@@ -26,7 +26,7 @@ Description: MET Norway pu tools
  .
  This package contains the development files.
 
-Package: libmetlibs-putools7
+Package: libmetlibs-putools8
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}
@@ -36,11 +36,11 @@ Description: MET Norway pu tools
  .
  This package contains the shared library.
 
-Package: libmetlibs-putools7-dbg
+Package: libmetlibs-putools8-dbg
 Section: debug
 Priority: extra
 Architecture: any
-Depends: libmetlibs-putools7 (= ${binary:Version})
+Depends: libmetlibs-putools8 (= ${binary:Version})
 Description: MET Norway pu tools
  MET Norway pu C tools library with some utility classes like miTime,
  miString, etc.
