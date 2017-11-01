@@ -386,7 +386,6 @@ miutil::miTime::dst() const
 int
 miutil::miTime::timezone(const std::string& stz)
 {
-
   if(stz=="UTC"   ) return  0;
   if(stz=="GMT"   ) return  0;
   if(stz=="CET"   ) return  1;
@@ -437,7 +436,6 @@ miutil::miTime::format(const std::string& nt, const std::string& lang, bool utf8
 
   miTime ftim(Date,Clock);
 
-  int k;
   vector<std::string> token,remove;
 
   if(miutil::contains(newTime, "$")) {
@@ -446,6 +444,7 @@ miutil::miTime::format(const std::string& nt, const std::string& lang, bool utf8
     for(unsigned int i=0;i<token.size();i++) {
       if(miutil::contains(token[i], "$")) {
 
+        std::string::size_type k;
         if((k=token[i].find("$tz="))!=string::npos) {
 	  token[i]= token[i].substr(k+4);
 	  miutil::replace(newTime, "%tz", token[i]);
