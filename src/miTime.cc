@@ -59,13 +59,13 @@ bool show_message()
   }
 }
 
-inline void warning(const std::string& s)
+void warning(const std::string& s)
 {
   if (show_message())
     std::cerr << "Warning: miTime::" << s << std::endl;
 }
 
-inline void invalid(const std::string& s)
+void invalid(const std::string& s)
 {
   if (show_message())
     std::cerr << "Warning: miTime::setTime: (" << s << ") is not a valid time" << std::endl;
