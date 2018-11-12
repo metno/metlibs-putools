@@ -1,3 +1,9 @@
+metlibs-common-putools (8.1.0-1) unstable; urgency=low
+
+  * miDate: format supports "%V" for week number
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 12 Nov 2018 08:00:08 +0100
+
 metlibs-common-putools (8.0.0-1) unstable; urgency=low
 
   * miDate::Translations class

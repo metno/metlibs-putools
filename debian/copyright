@@ -3,7 +3,7 @@ Upstream-Name: metlibs
 Source: https://svn.met.no/metlibs
 
 Files: *
-Copyright: 2001-2014 Norwegian Meteorological Institute <diana@met.no>
+Copyright: 2001-2018 Norwegian Meteorological Institute <diana@met.no>
 License: GPL-2.1+
 
 License: GPL-2.1+
