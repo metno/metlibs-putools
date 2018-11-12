@@ -1,7 +1,7 @@
 /*
   libpuTools - Basic types/algorithms/containers
 
-  Copyright (C) 2006-2017 met.no
+  Copyright (C) 2006-2018 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -616,6 +616,8 @@ miutil::miDate::format(const std::string& newDate, const std::string& l, bool ut
   miutil::replace(d, "%b", shortmonthname(l, utf8));    //!%b  short month  name,  (Jan..Dec)
   miutil::replace(d, "%A", weekday(l, utf8));           //!%A  weekday name, (Sunday..Saturday)
   miutil::replace(d, "%a", shortweekday(l, utf8));      //!%a  shortweekday name, (Sun..Sat)
+
+  miutil::replace(d, "%V", miutil::from_number(weekNo())); //!%V  week number
 
   miutil::replace(d, "%_B", miutil::to_lower(monthname(l, utf8)));      //!%B  month  name, lowercase
   miutil::replace(d, "%_b", miutil::to_lower(shortmonthname(l, utf8))); //!%b  short month  name, lowercase

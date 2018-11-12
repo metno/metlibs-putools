@@ -87,3 +87,11 @@ TEST(MiDateTest, format)
         EXPECT_EQ("2013-01-01", d.format("%Y-%m-%d"));
     }
 }
+
+TEST(MiDateTest, formatWeekNumber)
+{
+    {
+        const miDate d(2018, 11, 11);
+        EXPECT_EQ("45", d.format("%V"));
+    }
+}
