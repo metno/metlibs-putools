@@ -1,3 +1,10 @@
+metlibs-common-putools (8.1.1-1) unstable; urgency=low
+
+  * miTime: catch exceptions in miTime::format
+  * miTime: bugfix, tests added
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 11 Dec 2018 08:00:08 +0100
+
 metlibs-common-putools (8.1.0-1) unstable; urgency=low
 
   * miDate: format supports "%V" for week number
