@@ -1,9 +1,7 @@
 /*
   libpuTools - Basic types/algorithms/containers
 
-  $Id$
-
-  Copyright (C) 2006 met.no
+  Copyright (C) 2006-2018 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -430,88 +428,87 @@ miutil::miTime::format(const std::string& nt, const std::string& lang) const
   return format(nt, lang, false);
 }
 
-std::string
-miutil::miTime::format(const std::string& nt, const std::string& lang, bool utf8) const
+std::string miutil::miTime::format(const std::string& nt, const std::string& lang, bool utf8) const
 {
   std::string newTime(nt), l(lang);
-  miutil::replace(newTime, "%c","%a %b %d %X GMT %Y");
+  miutil::replace(newTime, "%c", "%a %b %d %X GMT %Y");
 
-  miTime ftim(Date,Clock);
+  miTime ftim(Date, Clock);
 
-  vector<std::string> token,remove;
+  vector<std::string> token, remove;
 
-  if(miutil::contains(newTime, "$")) {
+  if (miutil::contains(newTime, "$")) {
     token = miutil::split(newTime);
 
-    for(unsigned int i=0;i<token.size();i++) {
-      if(miutil::contains(token[i], "$")) {
+    for (unsigned int i = 0; i < token.size(); i++) {
+      if (miutil::contains(token[i], "$")) {
 
         std::string::size_type k;
-        if((k=token[i].find("$tz="))!=string::npos) {
-	  token[i]= token[i].substr(k+4);
-	  miutil::replace(newTime, "%tz", token[i]);
-	  ftim.addHour( ftim.timezone(token[i]) );
-	  remove.push_back("$tz=" + token[i]);
+        if ((k = token[i].find("$tz=")) != string::npos) {
+          token[i] = token[i].substr(k + 4);
+          miutil::replace(newTime, "%tz", token[i]);
+          ftim.addHour(ftim.timezone(token[i]));
+          remove.push_back("$tz=" + token[i]);
         }
-        if(miutil::contains(token[i], "$dst")){
-	  ftim.addHour(ftim.dst());
+        if (miutil::contains(token[i], "$dst")) {
+          ftim.addHour(ftim.dst());
           remove.push_back("$dst");
         }
-        if(miutil::contains(token[i], "$time")){
-	  miutil::replace(newTime, token[i], YMD_HMS);
+        if (miutil::contains(token[i], "$time")) {
+          miutil::replace(newTime, token[i], YMD_HMS);
         }
-        if(miutil::contains(token[i], "$date")){
-	  miutil::replace(newTime, token[i], YMD);
+        if (miutil::contains(token[i], "$date")) {
+          miutil::replace(newTime, token[i], YMD);
         }
-        if(miutil::contains(token[i], "$clock")){
-      miutil::replace(newTime, token[i], HMS);
+        if (miutil::contains(token[i], "$clock")) {
+          miutil::replace(newTime, token[i], HMS);
         }
-        if(miutil::contains(token[i], "$autoclock")){
-          if(Clock.sec()!=0)
-        miutil::replace(newTime, token[i], HMS);
-          else if(Clock.min()!=0)
-	    miutil::replace(newTime, token[i],"%H:%M");
-	  else
-	    miutil::replace(newTime, token[i],"%H");
+        if (miutil::contains(token[i], "$autoclock")) {
+          if (Clock.sec() != 0)
+            miutil::replace(newTime, token[i], HMS);
+          else if (Clock.min() != 0)
+            miutil::replace(newTime, token[i], "%H:%M");
+          else
+            miutil::replace(newTime, token[i], "%H");
         }
-        if(miutil::contains(token[i], "$miniclock")){
-          if(Clock.min()!=0)
-	    miutil::replace(newTime, token[i],"%H:%M");
-	  else
-	    miutil::replace(newTime, token[i],"%H");
+        if (miutil::contains(token[i], "$miniclock")) {
+          if (Clock.min() != 0)
+            miutil::replace(newTime, token[i], "%H:%M");
+          else
+            miutil::replace(newTime, token[i], "%H");
         }
-        if((k=token[i].find("$lg="))!=string::npos) {
-	  token[i]= token[i].substr(k+4);
-	  if(miutil::contains(token[i], "nor"))
-	    l = "no";
-	  else if(miutil::contains(token[i], "eng"))
-	    l = "en";
-	  else if(miutil::contains(token[i], "swe"))
-	    l = "se";
-	  else
-	    l=token[i];
-	  remove.push_back("$lg=" + token[i]);
+        if ((k = token[i].find("$lg=")) != string::npos) {
+          token[i] = token[i].substr(k + 4);
+          if (miutil::contains(token[i], "nor"))
+            l = "no";
+          else if (miutil::contains(token[i], "eng"))
+            l = "en";
+          else if (miutil::contains(token[i], "swe"))
+            l = "se";
+          else
+            l = token[i];
+          remove.push_back("$lg=" + token[i]);
         }
 
         if (remove.size()) {
-          for (unsigned int n=0; n<remove.size(); n++) {
-	    std::string rm1= " " + remove[n];
-	    std::string rm2= remove[n] + " ";
-	    if (miutil::contains(newTime, rm1))
-	      miutil::replace(newTime, rm1, "");
-	    else if (miutil::contains(newTime, rm2))
-	      miutil::replace(newTime, rm2, "");
-	    else
-	      miutil::replace(newTime, remove[n], "");
-	  }
-	  remove.clear();
+          for (unsigned int n = 0; n < remove.size(); n++) {
+            std::string rm1 = " " + remove[n];
+            std::string rm2 = remove[n] + " ";
+            if (miutil::contains(newTime, rm1))
+              miutil::replace(newTime, rm1, "");
+            else if (miutil::contains(newTime, rm2))
+              miutil::replace(newTime, rm2, "");
+            else
+              miutil::replace(newTime, remove[n], "");
+          }
+          remove.clear();
         }
       }
     }
   }
 
-  if (miutil::contains(newTime, "$midnight24")){
-    if (ftim.clock().isoClock() == "00:00:00"){
+  if (miutil::contains(newTime, "$midnight24")) {
+    if (ftim.clock().isoClock() == "00:00:00") {
       ftim.addDay(-1);
     } else {
       miutil::replace(newTime, " $midnight24", "");
@@ -562,4 +559,3 @@ void miTime::setDefaultLanguage(const std::string& l)
 {
   miDate::setDefaultLanguage(l);
 }
-
