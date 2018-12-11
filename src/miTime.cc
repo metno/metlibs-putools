@@ -44,7 +44,6 @@
 
 using namespace std;
 using namespace miutil;
-using namespace boost::posix_time;
 
 namespace /*anonymous*/ {
 bool show_message()
@@ -523,30 +522,36 @@ miutil::miTime::format(const std::string& nt, const std::string& lang, bool utf8
   return newTime;
 }
 
+// static
 std::string miutil::miTime::format(const miutil::miTime& time, const std::string& format)
 {
-	if (time.undef()){
-		warning("format: Object is not initialised.");
-		return format;
-	}
-	
-	time_facet tf(format.c_str());
-	stringstream log_stream;
+  using namespace boost::posix_time;
+  if (time.undef()) {
+    warning("format: Object is not initialised.");
+    return format;
+  }
 
-	struct tm t;
-	t.tm_sec=time.sec();
-	t.tm_min=time.min();
-	t.tm_hour=time.hour();
-	t.tm_mday=time.day();
-	t.tm_mon=time.month() - 1;
-	t.tm_year=time.year() - 1900;  
-	t.tm_wday=time.dayOfWeek();
-	t.tm_yday=time.dayOfYear();
-	t.tm_isdst=0;  
+  try {
+    struct tm t;
+    t.tm_sec = time.sec();
+    t.tm_min = time.min();
+    t.tm_hour = time.hour();
+    t.tm_mday = time.day();
+    t.tm_mon = time.month() - 1;
+    t.tm_year = time.year() - 1900;
+    t.tm_wday = time.dayOfWeek();
+    t.tm_yday = time.dayOfYear();
+    t.tm_isdst = 0;
 
-	ptime _time = ptime_from_tm(t);
-	tf.put(log_stream, log_stream,' ', _time);
-	return log_stream.str();
+    std::unique_ptr<time_facet> tf(new time_facet(format.c_str()));
+    std::ostringstream ost;
+    ost.imbue(std::locale(ost.getloc(), tf.release()));
+    ost << ptime_from_tm(t);
+    return ost.str();
+  } catch (std::exception& ex) {
+    warning(std::string("format exception: ") + ex.what());
+    return format;
+  }
 }
 
 // static

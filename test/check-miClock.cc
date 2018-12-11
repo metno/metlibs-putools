@@ -80,6 +80,21 @@ TEST(MiTimeTest, format)
     }
 }
 
+TEST(MiTimeTest, formatStatic)
+{
+  {
+    const miTime t(2013, 1, 1, 22, 58, 58);
+    EXPECT_EQ("2013-01-01 22:58:58", miTime::format(t, "%Y-%m-%d %H:%M:%S"));
+  }
+  {
+    // swap first two digits of year -- this moves the year outside the
+    // accepted timespan for boost::posix_time, which yields an exception,
+    // which we do not want to see
+    const miTime t("0213-01-01 22:58:58");
+    ASSERT_NO_THROW(miTime::format(t, "%Y-%m-%d %H:%M:%S"));
+  }
+}
+
 TEST(MiDateTest, format)
 {
     {
