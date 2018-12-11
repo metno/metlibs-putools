@@ -1,8 +1,6 @@
 /*
   libpuTools - Basic types/algorithms/containers
 
-  $Id$
-
   Copyright (C) 2006 met.no
 
   Contact information:
@@ -35,7 +33,7 @@
    The default value of an miClock is `undef', and there is a function
    undef() to check for this state.
 
-   Author: ØA/LBS DNMI/FoU 1997, 1998, 1999
+   Author: Ã˜A/LBS DNMI/FoU 1997, 1998, 1999
    Part of the puTools kit. */
 
 #ifndef __dnmi_miClock__
