@@ -80,6 +80,18 @@ TEST(MiTimeTest, format)
     }
 }
 
+TEST(MiTimeTest, isoTime)
+{
+  const miTime t(2013, 1, 1, 22, 58, 58);
+  EXPECT_EQ("2013-01-01 22:58:58", t.isoTime());
+  EXPECT_EQ("2013-01-01T22:58:58", t.isoTime("T"));
+
+  EXPECT_EQ("2013-01-01 22:58:58", t.isoTime(true, true));
+  EXPECT_EQ("2013-01-01 22:58", t.isoTime(true, false));
+  EXPECT_EQ("2013-01-01 22", t.isoTime(false, true));
+  EXPECT_EQ("2013-01-01 22", t.isoTime(false, false));
+}
+
 TEST(MiTimeTest, formatStatic)
 {
   {

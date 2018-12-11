@@ -69,6 +69,10 @@ void invalid(const std::string& s)
   if (show_message())
     std::cerr << "Warning: miTime::setTime: (" << s << ") is not a valid time" << std::endl;
 }
+
+const std::string YMD = "%Y-%m-%d";
+const std::string HMS = "%H:%M:%S";
+const std::string YMD_HMS = YMD + " " + HMS;
 } // anonymous namespace
 
 /* Construct miTime from UNIX time (this function has a Y2038 problem
@@ -211,9 +215,8 @@ miutil::miTime::isoTime(const std::string& delim) const
     warning("isoTime: Object is not initialised.");
     return std::string("0000-00-00") + delim + std::string("--:--:--");
   }
-  std::string _format = std::string("%Y-%m-%d") + delim + std::string("%H:%M:%S");
+  std::string _format = YMD + delim + HMS;
   return format(*this, _format);
-  //return Date.isoDate() + delim + Clock.isoClock();
 }
 
 std::string
@@ -223,13 +226,13 @@ miutil::miTime::isoTime(bool withmin, bool withsec) const
     warning("isoTime: Object is not initialised.");
     return std::string("0000-00-00 ") + std::string("--:--:--");
   }
-  std::string _format;
+  std::string _format = YMD + " ";
   if (withmin && withsec)
-	_format= std::string("%Y-%m-%d") + " " + std::string("%H:%M:%S");
-  if (!withmin && !withsec)
-	_format= std::string("%Y-%m-%d") + " " + std::string("%H");
-  if (withmin && !withsec)
-    _format= std::string("%Y-%m-%d") + " " + std::string("%H:%M");
+    _format += HMS;
+  else if (withmin && !withsec)
+    _format += "%H:%M";
+  else
+    _format += "%H";
   return format(*this, _format);
 }
 
@@ -455,17 +458,17 @@ miutil::miTime::format(const std::string& nt, const std::string& lang, bool utf8
           remove.push_back("$dst");
         }
         if(miutil::contains(token[i], "$time")){
-	  miutil::replace(newTime, token[i],"%Y-%m-%d %H:%M:%S");
+	  miutil::replace(newTime, token[i], YMD_HMS);
         }
         if(miutil::contains(token[i], "$date")){
-	  miutil::replace(newTime, token[i],"%Y-%m-%d");
+	  miutil::replace(newTime, token[i], YMD);
         }
         if(miutil::contains(token[i], "$clock")){
-	  miutil::replace(newTime, token[i],"%H:%M:%S");
+      miutil::replace(newTime, token[i], HMS);
         }
         if(miutil::contains(token[i], "$autoclock")){
           if(Clock.sec()!=0)
-	    miutil::replace(newTime, token[i],"%H:%M:%S");
+        miutil::replace(newTime, token[i], HMS);
           else if(Clock.min()!=0)
 	    miutil::replace(newTime, token[i],"%H:%M");
 	  else
