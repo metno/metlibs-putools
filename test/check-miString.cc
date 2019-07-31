@@ -1,15 +1,35 @@
 /*
- * Test cases for the miString class
- */
+  libpuTools - Basic types/algorithms/containers
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+  Copyright (C) 2006-2019 met.no
+
+  Contact information:
+  Norwegian Meteorological Institute
+  Box 43 Blindern
+  0313 OSLO
+  NORWAY
+  email: diana@met.no
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+// Test cases for the miString class
 
 #define METLIBS_SUPPRESS_DEPRECATED
 #include "miString.h"
 #include <gtest/gtest.h>
-#include <boost/range.hpp>
 
 using miutil::miString;
 
@@ -62,23 +82,23 @@ TEST(miStringTest, trim)
 
 TEST(miStringTest, trim_remove_empty)
 {
-    const char* t1[] = { " hi  ", " you", "out ", "", "there", "" };
-    std::vector<std::string> vt1(t1, boost::end(t1));
+    const std::vector<std::string> t1 = { " hi  ", " you", "out ", "", "there", "" };
+    const std::vector<std::string> e1 = { "hi", "you", "out", "there" };
 
-    const char* e1[] = { "hi", "you", "out", "there" };
-    const std::vector<std::string> ve1(e1, boost::end(e1));
-
+    std::vector<std::string> vt1(t1);
     miutil::trim_remove_empty(vt1);
-    ASSERT_EQ(ve1, vt1);
+    ASSERT_EQ(e1, vt1);
+
+    std::vector<std::string> ve1(e1);
+    miutil::trim_remove_empty(ve1);
+    ASSERT_EQ(e1, ve1);
 }
 
 TEST(miStringTest, split)
 {
     const char t1[] = " this   is a  string  ";
-    const char* e1[] = { "this", "is", "a  string" };
-    const char* e2[] = { "this", "is", "a", "string" };
-    const std::vector<std::string> ve1(e1, boost::end(e1));
-    const std::vector<std::string> ve2(e2, boost::end(e2));
+    const std::vector<std::string> ve1 = { "this", "is", "a  string" };
+    const std::vector<std::string> ve2 = { "this", "is", "a", "string" };
 
     {
         const std::vector<miString> ms1 = miString(t1).split(2);
@@ -105,10 +125,8 @@ TEST(miStringTest, split_protected)
 {
     const char t1[] = " (protected text) in a  \"string  ";
 
-    const char* e1[] = { "(protected text)", "in", "a", "\"string" };
-    const char* e2[] = { "(protected", "text)", "in", "a" };
-    const std::vector<std::string> ve1(e1, boost::end(e1));
-    const std::vector<std::string> ve2(e2, boost::end(e2));
+    const std::vector<std::string> ve1 = { "(protected text)", "in", "a", "\"string" };
+    const std::vector<std::string> ve2 = { "(protected", "text)", "in", "a" };
 
     {
         const std::vector<miString> ms1 = miString(t1).split('(', ')');

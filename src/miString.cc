@@ -1,9 +1,7 @@
 /*
   libpuTools - Basic types/algorithms/containers
 
-  $Id$
-
-  Copyright (C) 2006 met.no
+  Copyright (C) 2006-2019 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -27,10 +25,6 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #define METLIBS_SUPPRESS_DEPRECATED
 #include "miString.h"
 
@@ -38,16 +32,6 @@
 #include <iomanip>
 
 using namespace puAlgo;
-
-namespace /* anonymous */ {
-bool empty_after_trim(std::string& text)
-{
-    miutil::trim(text);
-    return text.empty();
-}
-} /* anonymous namespace */
-
-// ########################################################################
 
 namespace miutil {
 
@@ -101,37 +85,75 @@ std::string from_number(const float d, const int prec)
     return ost.str();
 }
 
+namespace {
+bool trim_limits(const std::string& text, bool left, bool right, const char* wspace, size_t& begin, size_t& end)
+{
+  const size_t len = text.length();
+  begin = 0;
+  end = len;
+  if (left) {
+    begin = text.find_first_not_of(wspace);
+    if (begin == std::string::npos)
+      begin = len;
+  }
+  if (right) {
+    const size_t e = text.find_last_not_of(wspace);
+    if (e != std::string::npos)
+      end = e + 1;
+  }
+  return begin != 0 || end != len;
+}
+
+bool trim_will_change(const std::string& text, bool left, bool right, const char* wspace)
+{
+  size_t begin, end;
+  return trim_limits(text, left, right, wspace, begin, end);
+}
+
+std::string do_trim(const std::string& text, size_t begin, size_t end)
+{
+  return std::string(text.begin() + begin, text.begin() + end);
+}
+
+bool trim_changed(std::string& text, bool left, bool right, const char* wspace)
+{
+  size_t begin, end;
+  if (!trim_limits(text, left, right, wspace, begin, end))
+    return false;
+
+  text = do_trim(text, begin, end);
+  return true;
+}
+} // namespace
+
 void trim(std::string& text, bool left, bool right, const char* wspace)
 {
-    if (text.empty())
-        return;
-    
-    const size_t len = text.length();
-    if (left) {
-        const size_t pos = text.find_first_not_of(wspace);
-        if (pos==std::string::npos) {
-            text.clear();
-            return;
-        }
-        if (pos>0 && pos<len)
-            text = text.substr(pos, len-pos);
-    }
-    if (right) {
-        const size_t pos = text.find_last_not_of(wspace);
-        if (pos==std::string::npos) {
-            text.clear();
-            return;
-        }
-        if (pos<len-1)
-            text = text.substr(0, pos+1);
-    }
+  trim_changed(text, left, right, wspace);
 }
 
 void trim_remove_empty(std::vector<std::string>& vec)
 {
-    std::vector<std::string> cleaned;
-    std::remove_copy_if(vec.begin(), vec.end(), std::back_inserter(cleaned), empty_after_trim);
-    vec = cleaned;
+  const bool left = true, right = true;
+  const char* wspace = whitespaces;
+
+  const auto first_changed = std::find_if(vec.begin(), vec.end(), [=](const std::string& s) { return s.empty() || trim_will_change(s, left, right, wspace); });
+  if (first_changed == vec.end())
+    return;
+
+  std::vector<std::string> cleaned(vec.begin(), first_changed);
+  cleaned.reserve(vec.size());
+  for (auto it = first_changed; it != vec.end(); ++it) {
+    if (it->empty())
+      continue;
+    size_t begin, end;
+    if (trim_limits(*it, left, right, wspace, begin, end)) {
+      if (begin != end)
+        cleaned.push_back(do_trim(*it, begin, end));
+    } else {
+      cleaned.push_back(*it);
+    }
+  }
+  vec = std::move(cleaned);
 }
 
 std::vector<std::string> split(const std::string& text, int nos, const char* separator_chars, const bool clean)
