@@ -1,7 +1,7 @@
 /*
   libpuTools - Basic types/algorithms/containers
 
-  Copyright (C) 2006-2018 met.no
+  Copyright (C) 2006-2019 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -262,6 +262,19 @@ static inline long lfloor(const long a, const long b) // assumes b positive
 static inline int isLeap(const int y)
 { return ((y%4==0 && y%100!=0) || y%400==0); }
 
+static bool scan_date(const std::string& str, int& y, int& m, int& d)
+{
+  int n = -1;
+  if (str.size() == 4 + 1 + 2 + 1 + 2)
+    n = sscanf(str.c_str(), "%4d-%2d-%2d", &y, &m, &d);
+  else if (str.size() == 4 + 2 + 2)
+    n = sscanf(str.c_str(), "%4d%2d%2d", &y, &m, &d);
+  if (n == 3)
+    return true;
+  y = m = d = 0;
+  return false;
+}
+
 int
 miutil::miDate::daysInYear() const
 { return 365+isLeap(Year); }
@@ -278,8 +291,11 @@ void
 miutil::miDate::setDate(int y, int m, int d)
 {
   if(!isValid(y,m,d) ) {
-    std::string w = std::string("setDate: Illegal date! YYYY:MM:DD (")
-        + miutil::from_number(y) + std::string(":") + miutil::from_number(m) + std::string(":") + miutil::from_number(d) + std::string(")");
+#if 0 // this is called from the default ctor with y=m=d=0
+    std::ostringstream w;
+    w << "setDate: Illegal date! YYYY-MM-DD (" << y << '-' << m << '-' << d << ')';
+    warning(w.str());
+#endif
     Year=Month=Day=jdn=0;
     return;
   }
@@ -296,13 +312,8 @@ miutil::miDate::setDate(int y, int m, int d)
 void
 miutil::miDate::setDate(const std::string& str)
 {
-  int y=0, m=0, d=0;
-  std::string str_=str;
-  miutil::remove(str_,'-');
-  if(!isValid(str_))
-    warning( "setDate: Error in format. YYYY-MM-DD or YYYYMMDD (" + str + ")" );
-  else
-    sscanf(str_.c_str(), "%4d%2d%2d",&y, &m, &d);
+  int y, m, d;
+  scan_date(str, y, m, d);
   setDate(y,m,d);
 }
 
@@ -319,10 +330,8 @@ miutil::miDate::isValid(int y, int m, int d)
 bool
 miutil::miDate::isValid(const std::string& str)
 {
-  int y=0, m=0, d=0;
-  std::string str_=str;
-  miutil::remove(str_,'-');
-  if(sscanf(str_.c_str(), "%4d%2d%2d",&y, &m, &d)!=3 )
+  int y, m, d;
+  if (!scan_date(str, y, m, d))
     return false;
   return isValid(y,m,d);
 }

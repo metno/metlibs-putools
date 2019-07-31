@@ -1,10 +1,31 @@
 /*
- * Test cases for the miClock class
- */
+  libpuTools - Basic types/algorithms/containers
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+  Copyright (C) 2006-2019 met.no
+
+  Contact information:
+  Norwegian Meteorological Institute
+  Box 43 Blindern
+  0313 OSLO
+  NORWAY
+  email: diana@met.no
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+// Test cases for the miClock class
 
 #include "miTime.h"
 #include <gtest/gtest.h>
@@ -121,4 +142,12 @@ TEST(MiDateTest, formatWeekNumber)
         const miDate d(2018, 11, 11);
         EXPECT_EQ("45", d.format("%V"));
     }
+}
+
+TEST(MiTimeTest, FromText)
+{
+  const miTime t(2013, 1, 1, 22, 58, 58);
+  EXPECT_EQ(miTime("2013-01-01 22:58:58"), t);
+
+  EXPECT_EQ(miTime("20130101T225858"), t);
 }

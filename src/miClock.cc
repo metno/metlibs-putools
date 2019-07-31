@@ -1,9 +1,7 @@
 /*
   libpuTools - Basic types/algorithms/containers
 
-  $Id$
-
-  Copyright (C) 2006 met.no
+  Copyright (C) 2006-2019 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -57,6 +55,26 @@ static inline void warning(const std::string& s)
   std::cerr << "Warning: miClock::" << s << std::endl;
 }
 
+static bool scan_clock(const std::string& str, int& h, int& m, int& s)
+{
+  m = s = 0;
+  bool bad = true;
+  if (str.size() == 8)
+    bad = (sscanf(str.c_str(), "%2d:%2d:%2d", &h, &m, &s) != 3);
+  else if (str.size() == 6)
+    bad = (sscanf(str.c_str(), "%2d%2d%2d", &h, &m, &s) != 3);
+  else if (str.size() == 5)
+    bad = (sscanf(str.c_str(), "%2d:%2d", &h, &m) != 2);
+  else if (str.size() == 4)
+    bad = (sscanf(str.c_str(), "%2d%2d", &h, &m) != 2);
+  else if (str.size() == 2)
+    bad = (sscanf(str.c_str(), "%2d", &h) != 1);
+  if (!bad)
+    return true;
+  h = m = s = -2;
+  return false;
+}
+
 void
 miutil::miClock::accSecToClock()
 {
@@ -74,35 +92,30 @@ miutil::miClock::setClock(int h, int m, int s)
 {
   // if any of the arguments have imposible values, prepare for undef
   if (!isValid(h,m,s)){
-    std::string w="setClock: Illegal clock HH:MM:SS ("
-        + miutil::from_number(h)+":"+miutil::from_number(m)+":"+miutil::from_number(s)+")";
-    warning(w);
+    std::ostringstream w;
+    w << "setClock: Illegal clock HH:MM:SS (" << h << ':' << m << ':' << s << ')';
+    warning(w.str());
+
     Hour   = -1;
     Min    = -1;
     Sec    = -1;
-    accSec = Hour*3600+Min*60+Sec;
-  }
-  else {
+  } else {
     Hour=h;
     Min=m;
     Sec=s;
-    accSec=Hour*3600+Min*60+Sec;  // seconds since 00:00:00
   }
+  accSec = Hour * 3600 + Min * 60 + Sec; // seconds since 00:00:00
 }
 
 // converts "hh:mm:ss" to miClock
 void
 miutil::miClock::setClock(const std::string& str)
 {
-  int h=0, m=0, s=0;
-  std::string str_=str;
-  miutil::remove(str_,':');
-  sscanf(str_.c_str(), "%2d%2d%2d",&h, &m, &s);
-  if (!isValid(str_))
-    warning("setClock: Error in format. Should be `HH:MM:SS' or `HHMMSS' (" + str + ")");
-  else
-    sscanf(str_.c_str(), "%2d%2d%2d",&h, &m, &s);
+  int h, m, s;
+  scan_clock(str, h, m, s);
   setClock(h,m,s);
+  if (undef())
+    warning(str);
 }
 
 bool
@@ -117,10 +130,9 @@ miutil::miClock::isValid(int h, int m, int s)
 bool
 miutil::miClock::isValid(const std::string& str)
 {
-  int h=0,m=0,s=0;
-  std::string str_=str;
-  miutil::remove(str_,':');
-  sscanf(str_.c_str(), "%2d%2d%2d",&h, &m, &s);
+  int h, m, s;
+  if (!scan_clock(str, h, m, s))
+    return false;
   return isValid(h,m,s);
 }
 
@@ -280,10 +292,3 @@ miutil::miClock::format(const std::string& newClock) const
 
   return c;
 }
-
-
-
-
-
-
-
