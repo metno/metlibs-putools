@@ -1,3 +1,10 @@
+metlibs-common-putools (8.1.2-1) unstable; urgency=low
+
+  * faster miutil::trim_remove_empty
+  * faster miDate and miClock from std::string
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 1 Aug 2019 08:00:08 +0200
+
 metlibs-common-putools (8.1.1-1) unstable; urgency=low
 
   * miTime: catch exceptions in miTime::format
