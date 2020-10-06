@@ -22,6 +22,7 @@ TARGET_LINK_LIBRARIES(putools_test
   putools
   ${GTEST_LIBRARY}
   ${GTEST_MAIN_LIBRARY}
+  Threads::Threads
 )
 
 ADD_TEST(NAME putools_test
