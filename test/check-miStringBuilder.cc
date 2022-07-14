@@ -2,10 +2,6 @@
  * Test cases for the miutil::StringBuilder class
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #define METLIBS_SUPPRESS_DEPRECATED
 #include "miStringBuilder.h"
 #include <gtest/gtest.h>

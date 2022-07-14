@@ -1,5 +1,5 @@
 
-INCLUDE_DIRECTORIES(${PC_METLIBS_INCLUDE_DIRS} ${BOOST_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR} ${PC_METLIBS_INCLUDE_DIRS} ${BOOST_INCLUDE_DIRS})
 ADD_DEFINITIONS(-W -Wall ${PC_METLIBS_CFLAGS_OTHER})
 LINK_DIRECTORIES(${PC_METLIBS_LIBRARY_DIRS} ${BOOST_LIBRARY_DIRS})
 
@@ -25,6 +25,8 @@ LIST(APPEND putools_HEADERS
   puAlgo.h
   puToolsVersion.h
 )
+
+configure_file(config.h.in config.h @ONLY)
 
 ########################################################################
 

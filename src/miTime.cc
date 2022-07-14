@@ -29,10 +29,6 @@
 // miTime.cc : Definitions for miTime class
 // ØA, 1997
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "miTime.h"
 #include "miString.h"
 
