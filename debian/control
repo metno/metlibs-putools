@@ -3,7 +3,6 @@ Priority: optional
 Maintainer: MET Norway <diana@met.no>
 Build-Depends: debhelper (>= 11),
  cmake (>= 3.10),
- liblog4cpp5-dev,
  libboost-dev,
  libboost-date-time-dev,
  libboost-system-dev,
