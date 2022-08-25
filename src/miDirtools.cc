@@ -25,10 +25,6 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "miDirtools.h"
 
 #include "miStringFunctions.h"
@@ -37,12 +33,13 @@
 #include <cstring>
 
 #include <dirent.h>
-#include <libgen.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#if defined(WITH_REGEXP) && defined(linux)
+#include "config.h"
+
+#if defined(HAVE_REGEX_H)
 #include <regex.h>
 #endif
 
@@ -150,9 +147,9 @@ std::string hardpath(const std::string& fname)
 bool getFilenamesByRegexp(const std::string& cat,
     const std::string& reg, std::vector<std::string>& names)
 {
-#if defined(WITH_REGEXP)
+#if defined(HAVE_REGEX_H)
   std::vector<std::string> allnames;
-#ifdef linux
+#ifdef _POSIX_VERSION
   regex_t preg;
   int res= regcomp(&preg, reg.c_str(), REG_EXTENDED | REG_NOSUB);
   if (res!=0 || !getFilenames(cat, allnames))
@@ -168,7 +165,7 @@ bool getFilenamesByRegexp(const std::string& cat,
     }
   }
   regfree(&preg);
-#else // !linux
+#else // !_POSIX_VERSION
   char *creg= regcmp(reg.c_str(),(char*)0);
   char *result;
   if (!creg || !getFilenames(cat, allnames))
@@ -181,9 +178,9 @@ bool getFilenamesByRegexp(const std::string& cat,
     }
   }
   free(creg);
-#endif // !linux
+#endif // !_POSIX_VERSION
   return true;
-#else // !WITH_REGEXP
+#else // !HAVE_REGEX_H
   return false;
 #endif
 }
