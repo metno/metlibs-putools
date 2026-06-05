@@ -18,7 +18,12 @@ PKG_CHECK_MODULES(PC_METLIBS REQUIRED
 
 check_include_files("regex.h" HAVE_REGEX_H)
 
-FIND_PACKAGE(Boost COMPONENTS date_time system REQUIRED)
+FIND_PACKAGE(Boost CONFIG REQUIRED COMPONENTS date_time)
+IF(Boost_VERSION VERSION_LESS "1.89.0")
+    # Boost component "system" was removed in boost version 1.89
+    # but is needed here for earlier Boost versions.
+    FIND_PACKAGE(Boost CONFIG REQUIRED COMPONENTS date_time system)
+ENDIF()
 
 SET(lib_name "metlibs-putools")
 
